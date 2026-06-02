@@ -614,7 +614,7 @@ export default function Home() {
                         { name: 'Вингфоилинг' },
                       ].map((s, i) => (
                         <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px', background: 'rgba(0,119,190,0.08)', borderRadius: 100, fontSize: 13, fontWeight: 600, color: 'var(--accent)' }}>
-                          {s.icon} {s.name}
+                          {s.name}
                         </div>
                       ))}
                     </div>
