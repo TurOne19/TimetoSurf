@@ -949,7 +949,7 @@ export default function Home() {
               <div>
                 <div style={{ borderRadius: 20, overflow: 'hidden', border: '2px solid var(--border)', boxShadow: '0 8px 40px rgba(0,119,190,0.1)' }}>
                   <iframe
-                    src="https://maps.google.com/maps?q=59.44762%2C24.68381&z=16&output=embed"
+                    src="https://www.google.com/maps/place/Time+to+Surf+-+Surf+School/@38.6226612,-9.2248509,17z/data=!4m12!1m5!3m4!2zMzjCsDM3JzIxLjYiTiA5wrAxMycyMC4yIlc!8m2!3d38.622657!4d-9.222276!3m5!1s0xd1ecada44898f47:0x9b5e7aa5405c8237!8m2!3d38.6226909!4d-9.2223566!16s%2Fg%2F11b7dsdy1m?entry=ttu&g_ep=EgoyMDI2MDUyNy4wIKXMDSoASAFQAw%3D%3D"
                     width="100%"
                     height="350"
                     style={{ border: 0, display: 'block' }}
@@ -960,7 +960,7 @@ export default function Home() {
                   />
                 </div>
                 <a
-                  href="https://www.google.com/maps/search/?api=1&query=59.44762%2C24.68381"
+                  href="https://www.google.com/maps/place/Time+to+Surf+-+Surf+School/@38.6226612,-9.2248509,17z/data=!4m12!1m5!3m4!2zMzjCsDM3JzIxLjYiTiA5wrAxMycyMC4yIlc!8m2!3d38.622657!4d-9.222276!3m5!1s0xd1ecada44898f47:0x9b5e7aa5405c8237!8m2!3d38.6226909!4d-9.2223566!16s%2Fg%2F11b7dsdy1m?entry=ttu&g_ep=EgoyMDI2MDUyNy4wIKXMDSoASAFQAw%3D%3D"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn-secondary"
