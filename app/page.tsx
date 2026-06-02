@@ -7,18 +7,18 @@ const REGISTER_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSf-HIXlcSpWy0v0Mf
 
 // ─── Gallery placeholder icons ────────────────────────────────────────────────
 const GALLERY_ITEMS = [
-  { icon: '', label: { ru: 'SUP-серфинг', en: 'SUP Surfing', et: 'SUP surfamine' }, color: '#0077BE' },
-  { icon: '', label: { ru: 'Виндсерфинг', en: 'Windsurfing', et: 'Purjelaud' }, color: '#00B4D8' },
-  { icon: '', label: { ru: 'Кино-смена', en: 'Cinema Camp', et: 'Kinolaager' }, color: '#FF6F61' },
-  { icon: '', label: { ru: 'Поход', en: 'Hiking', et: 'Matkamine' }, color: '#4CAF50' },
-  { icon: '', label: { ru: 'Командные игры', en: 'Team Games', et: 'Meeskonnmängud' }, color: '#9C27B0' },
-  { icon: '', label: { ru: 'Безопасность', en: 'Water Safety', et: 'Veeohutus' }, color: '#FF9800' },
-  { icon: '', label: { ru: 'Питание', en: 'Meals', et: 'Toitlustus' }, color: '#009688' },
-  { icon: '', label: { ru: 'Природа', en: 'Nature', et: 'Loodus' }, color: '#4CAF50' },
-  { icon: '', label: { ru: 'Мастер-классы', en: 'Workshops', et: 'Töötoad' }, color: '#E91E63' },
-  { icon: '', label: { ru: 'Пляж Штромка', en: 'Stroomi Beach', et: 'Stroomi rand' }, color: '#0077BE' },
-  { icon: '', label: { ru: 'Гидрокостюмы', en: 'Wetsuits', et: 'Märjaksüidid' }, color: '#607D8B' },
-  { icon: '', label: { ru: 'Ветер и погода', en: 'Wind & Weather', et: 'Tuul ja ilm' }, color: '#00B4D8' },
+  { icon: '🏄', label: { ru: 'SUP-серфинг', en: 'SUP Surfing', et: 'SUP surfamine' }, color: '#0077BE' },
+  { icon: '⛵', label: { ru: 'Виндсерфинг', en: 'Windsurfing', et: 'Purjelaud' }, color: '#00B4D8' },
+  { icon: '🎬', label: { ru: 'Кино-смена', en: 'Cinema Camp', et: 'Kinolaager' }, color: '#FF6F61' },
+  { icon: '🧭', label: { ru: 'Поход', en: 'Hiking', et: 'Matkamine' }, color: '#4CAF50' },
+  { icon: '🤝', label: { ru: 'Командные игры', en: 'Team Games', et: 'Meeskonnmängud' }, color: '#9C27B0' },
+  { icon: '🦺', label: { ru: 'Безопасность', en: 'Water Safety', et: 'Veeohutus' }, color: '#FF9800' },
+  { icon: '🍽️', label: { ru: 'Питание', en: 'Meals', et: 'Toitlustus' }, color: '#009688' },
+  { icon: '🌿', label: { ru: 'Природа', en: 'Nature', et: 'Loodus' }, color: '#4CAF50' },
+  { icon: '🎨', label: { ru: 'Мастер-классы', en: 'Workshops', et: 'Töötoad' }, color: '#E91E63' },
+  { icon: '🏖️', label: { ru: 'Пляж Штромка', en: 'Stroomi Beach', et: 'Stroomi rand' }, color: '#0077BE' },
+  { icon: '🥽', label: { ru: 'Гидрокостюмы', en: 'Wetsuits', et: 'Märjaksüidid' }, color: '#607D8B' },
+  { icon: '🌬️', label: { ru: 'Ветер и погода', en: 'Wind & Weather', et: 'Tuul ja ilm' }, color: '#00B4D8' },
 ]
 
 export default function Home() {
@@ -726,7 +726,9 @@ export default function Home() {
                     e.currentTarget.style.boxShadow = ''
                   }}
                 >
-                  <div className="gallery-mark" style={{ background: item.color }} aria-hidden="true" />
+                  <div className="gallery-mark" style={{ background: item.color, fontSize: 24, display: 'flex', alignItems: 'center', justifyContent: 'center' }} aria-hidden="true">
+                    {item.icon}
+                  </div>
                   <div style={{ fontSize: 12, fontWeight: 700, color: item.color, textAlign: 'center', letterSpacing: '-0.01em' }}>
                     {item.label[lang]}
                   </div>
@@ -949,7 +951,7 @@ export default function Home() {
               <div>
                 <div style={{ borderRadius: 20, overflow: 'hidden', border: '2px solid var(--border)', boxShadow: '0 8px 40px rgba(0,119,190,0.1)' }}>
                   <iframe
-                    src="https://www.google.com/maps/place/Time+to+Surf+-+Surf+School/@38.6226612,-9.2248509,17z/data=!4m12!1m5!3m4!2zMzjCsDM3JzIxLjYiTiA5wrAxMycyMC4yIlc!8m2!3d38.622657!4d-9.222276!3m5!1s0xd1ecada44898f47:0x9b5e7aa5405c8237!8m2!3d38.6226909!4d-9.2223566!16s%2Fg%2F11b7dsdy1m?entry=ttu&g_ep=EgoyMDI2MDUyNy4wIKXMDSoASAFQAw%3D%3D"
+                    src="https://www.google.com/maps?q=Stroomi%20rand%2C%20Tallinn%2C%20Estonia&z=15&output=embed"
                     width="100%"
                     height="350"
                     style={{ border: 0, display: 'block' }}
@@ -960,7 +962,7 @@ export default function Home() {
                   />
                 </div>
                 <a
-                  href="https://www.google.com/maps/place/Time+to+Surf+-+Surf+School/@38.6226612,-9.2248509,17z/data=!4m12!1m5!3m4!2zMzjCsDM3JzIxLjYiTiA5wrAxMycyMC4yIlc!8m2!3d38.622657!4d-9.222276!3m5!1s0xd1ecada44898f47:0x9b5e7aa5405c8237!8m2!3d38.6226909!4d-9.2223566!16s%2Fg%2F11b7dsdy1m?entry=ttu&g_ep=EgoyMDI2MDUyNy4wIKXMDSoASAFQAw%3D%3D"
+                  href="https://www.google.com/maps/search/?api=1&query=Stroomi%20rand%2C%20Tallinn%2C%20Estonia"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn-secondary"
@@ -971,10 +973,10 @@ export default function Home() {
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                 {[
-                  { icon: null, title: c('Адрес', 'Address', 'Aadress'), desc: c('Stroomi rand, конец пляжа, Таллин, Эстония', 'Stroomi beach, end of the beach, Tallinn, Estonia', 'Stroomi rand, ranna lõpp, Tallinn, Eesti') },
-                  { icon: null, title: c('Как добраться', 'Getting there', 'Kuidas jõuda'), desc: c('Автобус № 40, 48 до остановки Stroomi rand. 20 минут из центра.', 'Bus No. 40, 48 to Stroomi rand stop. 20 minutes from the centre.', 'Buss nr 40, 48 peatuseni Stroomi rand. 20 minutit kesklinnast.') },
-                  { icon: null, title: c('Серфинг-станция', 'Surf station', 'Surfi jaam'), desc: c('Ищите флаг Time to Surf на конце пляжа, рядом с Рокка-аль-Маре.', 'Look for the Time to Surf flag at the end of the beach near Rocca al Mare.', 'Otsige Time to Surf lippu ranna lõpus Rocca al Mare lähedal.') },
-                  { icon: null, title: c('По вопросам', 'Questions', 'Küsimused'), desc: '+372 55512872 (Андрей)' },
+                  { icon: '📍', title: c('Адрес', 'Address', 'Aadress'), desc: c('Stroomi rand, конец пляжа, Таллин, Эстония', 'Stroomi beach, end of the beach, Tallinn, Estonia', 'Stroomi rand, ranna lõpp, Tallinn, Eesti') },
+                  { icon: '🚌', title: c('Как добраться', 'Getting there', 'Kuidas jõuda'), desc: c('Автобус № 40, 48 до остановки Stroomi rand. 20 минут из центра.', 'Bus No. 40, 48 to Stroomi rand stop. 20 minutes from the centre.', 'Buss nr 40, 48 peatuseni Stroomi rand. 20 minutit kesklinnast.') },
+                  { icon: '🏄', title: c('Серфинг-станция', 'Surf station', 'Surfi jaam'), desc: c('Ищите флаг Time to Surf на конце пляжа, рядом с Рокка-аль-Маре.', 'Look for the Time to Surf flag at the end of the beach near Rocca al Mare.', 'Otsige Time to Surf lippu ranna lõpus Rocca al Mare lähedal.') },
+                  { icon: '☎️', title: c('По вопросам', 'Questions', 'Küsimused'), desc: '+372 55512872 (Андрей)' },
                 ].map((item, i) => (
                   <div key={i} className="card" style={{ padding: '18px 20px', display: 'flex', gap: 14, alignItems: 'flex-start' }}>
                     {item.icon && <div style={{ fontSize: 24, flexShrink: 0, marginTop: 2 }}>{item.icon}</div>}
@@ -1062,10 +1064,10 @@ export default function Home() {
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
                 {[
-                  { icon: '', title: c('Кайтсерфинг', 'Kitesurfing', 'Kaitesurfing'), color: '#0077BE' },
-                  { icon: '', title: c('Виндсерфинг', 'Windsurfing', 'Purjelaud'), color: '#00B4D8' },
-                  { icon: '', title: 'SUP-серфинг', color: '#FF6F61' },
-                  { icon: '', title: c('Классический серфинг', 'Classic Surfing', 'Klassikaline surfamine'), color: '#4CAF50' },
+                  { icon: '🪁', title: c('Кайтсерфинг', 'Kitesurfing', 'Kaitesurfing'), color: '#0077BE' },
+                  { icon: '⛵', title: c('Виндсерфинг', 'Windsurfing', 'Purjelaud'), color: '#00B4D8' },
+                  { icon: '🏄', title: 'SUP-серфинг', color: '#FF6F61' },
+                  { icon: '🌊', title: c('Классический серфинг', 'Classic Surfing', 'Klassikaline surfamine'), color: '#4CAF50' },
                 ].map((s, i) => (
                   <div key={i} style={{
                     background: `${s.color}12`, border: `1.5px solid ${s.color}30`,
@@ -1075,7 +1077,9 @@ export default function Home() {
                     onMouseEnter={e => (e.currentTarget.style.transform = 'translateY(-3px)')}
                     onMouseLeave={e => (e.currentTarget.style.transform = '')}
                   >
-                    <div className="surf-mark" style={{ background: s.color }} aria-hidden="true" />
+                    <div className="surf-mark" style={{ background: s.color, fontSize: 24, display: 'flex', alignItems: 'center', justifyContent: 'center' }} aria-hidden="true">
+                      {s.icon}
+                    </div>
                     <div style={{ fontWeight: 700, fontSize: 13, color: s.color }}>{s.title}</div>
                   </div>
                 ))}
