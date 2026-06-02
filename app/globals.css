@@ -9,23 +9,23 @@
 
 :root {
   /* Backgrounds */
-  --bg:       #f7f9fb;
-  --bg-light: #eef2f6;
-  --bg-dark:  #001f3d;
+  --bg:       #f6fbfc;
+  --bg-light: #eaf6f5;
+  --bg-dark:  #06233f;
 
   /* Text */
-  --text:      #0d2137;
-  --text-muted:#4e7490;
-  --text-soft: #2c5470;
+  --text:      #10243a;
+  --text-muted:#557386;
+  --text-soft: #244f65;
 
   /* Accents */
-  --accent:       #0077BE;
-  --accent-light: #00B4D8;
-  --accent-coral: #FF6F61;
+  --accent:       #0479a8;
+  --accent-light: #11b7c8;
+  --accent-coral: #f5a623;
 
   /* UI */
-  --border:        #c5e4f7;
-  --border-light:  #a8d8f0;
+  --border:        #c8e8e7;
+  --border-light:  #8fd8d6;
 
   /* Font */
   --font-inter: 'Inter', system-ui, sans-serif;
@@ -36,7 +36,9 @@
 html { scroll-behavior: smooth; }
 
 body {
-  background: var(--bg);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.7), rgba(234,246,245,0.5)),
+    var(--bg);
   color: var(--text);
   font-family: var(--font-inter), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -94,23 +96,23 @@ h1, h2, h3, h4 {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: linear-gradient(135deg, #FF6F61 0%, #e85d50 100%);
+  background: linear-gradient(135deg, #f5a623 0%, #ef6f4f 100%);
   color: white;
   font-family: var(--font-inter), sans-serif;
   font-weight: 700;
   font-size: 15px;
   border: none;
   cursor: pointer;
-  border-radius: 14px;
+  border-radius: 12px;
   padding: 14px 28px;
   transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
-  box-shadow: 0 4px 24px rgba(255,111,97,0.35);
+  box-shadow: 0 8px 28px rgba(239,111,79,0.28);
   letter-spacing: -0.01em;
   text-decoration: none;
 }
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 36px rgba(255,111,97,0.45);
+  box-shadow: 0 12px 38px rgba(239,111,79,0.38);
 }
 .btn-primary:active { transform: translateY(0); opacity: 0.92; }
 
@@ -125,7 +127,7 @@ h1, h2, h3, h4 {
   font-size: 15px;
   border: none;
   cursor: pointer;
-  border-radius: 14px;
+  border-radius: 12px;
   padding: 14px 28px;
   transition: transform 0.2s, box-shadow 0.2s;
   box-shadow: 0 4px 20px rgba(0,0,0,0.12);
@@ -142,7 +144,7 @@ h1, h2, h3, h4 {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: transparent;
+  background: rgba(255,255,255,0.68);
   color: var(--text-soft);
   font-family: var(--font-inter), sans-serif;
   font-weight: 600;
@@ -202,9 +204,9 @@ h1, h2, h3, h4 {
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--accent);
-  background: rgba(0,119,190,0.08);
-  border: 1px solid rgba(0,119,190,0.2);
+  color: #046b81;
+  background: rgba(17,183,200,0.10);
+  border: 1px solid rgba(17,183,200,0.24);
   padding: 5px 14px;
   border-radius: 100px;
 }
@@ -252,10 +254,11 @@ h1, h2, h3, h4 {
 
 /* ── Cards ── */
 .card {
-  background: white;
+  background: rgba(255,255,255,0.92);
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: 14px;
   transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.8) inset;
 }
 .card:hover {
   border-color: rgba(0,119,190,0.25);
@@ -267,10 +270,59 @@ h1, h2, h3, h4 {
 .check-item {
   display: flex;
   align-items: flex-start;
-  background: white;
+  background: rgba(255,255,255,0.94);
   border: 1px solid var(--border);
   border-radius: 14px;
   transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s;
+}
+
+.mini-mark {
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: white;
+  font-size: 11px;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--accent-light), var(--accent));
+  box-shadow: 0 6px 16px rgba(4,121,168,0.18);
+}
+
+.mini-mark.large {
+  width: 36px;
+  height: 36px;
+  font-size: 13px;
+}
+
+.time-dot,
+.gallery-mark,
+.surf-mark {
+  border-radius: 999px;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.time-dot {
+  width: 12px;
+  height: 12px;
+  background: linear-gradient(135deg, var(--accent-coral), var(--accent-light));
+  box-shadow: 0 0 0 6px rgba(17,183,200,0.10);
+}
+
+.gallery-mark {
+  width: 46px;
+  height: 46px;
+  box-shadow: inset 0 0 0 10px rgba(255,255,255,0.22), 0 10px 24px rgba(4,121,168,0.14);
+}
+
+.surf-mark {
+  width: 42px;
+  height: 42px;
+  margin-bottom: 12px;
+  box-shadow: inset 0 0 0 10px rgba(255,255,255,0.35);
 }
 .check-item:hover {
   box-shadow: 0 8px 32px rgba(0,119,190,0.10);

@@ -7,18 +7,18 @@ const REGISTER_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSf-HIXlcSpWy0v0Mf
 
 // ─── Gallery placeholder icons ────────────────────────────────────────────────
 const GALLERY_ITEMS = [
-  { icon: '🏄', label: { ru: 'SUP-серфинг', en: 'SUP Surfing', et: 'SUP surfamine' }, color: '#0077BE' },
-  { icon: '🌊', label: { ru: 'Виндсерфинг', en: 'Windsurfing', et: 'Purjelaud' }, color: '#00B4D8' },
-  { icon: '🎬', label: { ru: 'Кино-смена', en: 'Cinema Camp', et: 'Kinolaager' }, color: '#FF6F61' },
-  { icon: '🏕️', label: { ru: 'Поход', en: 'Hiking', et: 'Matkamine' }, color: '#4CAF50' },
-  { icon: '🤝', label: { ru: 'Командные игры', en: 'Team Games', et: 'Meeskonnmängud' }, color: '#9C27B0' },
-  { icon: '🦺', label: { ru: 'Безопасность', en: 'Water Safety', et: 'Veeohutus' }, color: '#FF9800' },
-  { icon: '🍱', label: { ru: 'Питание', en: 'Meals', et: 'Toitlustus' }, color: '#009688' },
-  { icon: '🌿', label: { ru: 'Природа', en: 'Nature', et: 'Loodus' }, color: '#4CAF50' },
-  { icon: '🎨', label: { ru: 'Мастер-классы', en: 'Workshops', et: 'Töötoad' }, color: '#E91E63' },
-  { icon: '🏖️', label: { ru: 'Пляж Штромка', en: 'Stroomi Beach', et: 'Stroomi rand' }, color: '#0077BE' },
-  { icon: '🧥', label: { ru: 'Гидрокостюмы', en: 'Wetsuits', et: 'Märjaksüidid' }, color: '#607D8B' },
-  { icon: '🌬️', label: { ru: 'Ветер и погода', en: 'Wind & Weather', et: 'Tuul ja ilm' }, color: '#00B4D8' },
+  { icon: '', label: { ru: 'SUP-серфинг', en: 'SUP Surfing', et: 'SUP surfamine' }, color: '#0077BE' },
+  { icon: '', label: { ru: 'Виндсерфинг', en: 'Windsurfing', et: 'Purjelaud' }, color: '#00B4D8' },
+  { icon: '', label: { ru: 'Кино-смена', en: 'Cinema Camp', et: 'Kinolaager' }, color: '#FF6F61' },
+  { icon: '', label: { ru: 'Поход', en: 'Hiking', et: 'Matkamine' }, color: '#4CAF50' },
+  { icon: '', label: { ru: 'Командные игры', en: 'Team Games', et: 'Meeskonnmängud' }, color: '#9C27B0' },
+  { icon: '', label: { ru: 'Безопасность', en: 'Water Safety', et: 'Veeohutus' }, color: '#FF9800' },
+  { icon: '', label: { ru: 'Питание', en: 'Meals', et: 'Toitlustus' }, color: '#009688' },
+  { icon: '', label: { ru: 'Природа', en: 'Nature', et: 'Loodus' }, color: '#4CAF50' },
+  { icon: '', label: { ru: 'Мастер-классы', en: 'Workshops', et: 'Töötoad' }, color: '#E91E63' },
+  { icon: '', label: { ru: 'Пляж Штромка', en: 'Stroomi Beach', et: 'Stroomi rand' }, color: '#0077BE' },
+  { icon: '', label: { ru: 'Гидрокостюмы', en: 'Wetsuits', et: 'Märjaksüidid' }, color: '#607D8B' },
+  { icon: '', label: { ru: 'Ветер и погода', en: 'Wind & Weather', et: 'Tuul ja ilm' }, color: '#00B4D8' },
 ]
 
 export default function Home() {
@@ -136,7 +136,7 @@ export default function Home() {
         <div style={{ maxWidth: 1160, margin: '0 auto', padding: '0 24px', height: 64, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           {/* Logo */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-            <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20 }}>🏄</div>
+            <img src="/time-to-surf-logo.png" alt="Time to Surf" style={{ width: 42, height: 42, borderRadius: '50%', objectFit: 'cover', background: 'white', padding: 2 }} />
             <div>
               <div style={{ color: 'white', fontWeight: 800, fontSize: 16, letterSpacing: '-0.02em', lineHeight: 1.1 }}>Time to Surf</div>
               <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 10, fontWeight: 500, letterSpacing: '0.06em', textTransform: 'uppercase' }}>{c('Детские лагеря', 'Kids Camps', 'Laste laagrid')}</div>
@@ -239,9 +239,7 @@ export default function Home() {
             }}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
             </button>
-            <div style={{ fontSize: 80, marginBottom: 24, filter: 'drop-shadow(0 4px 20px rgba(0,0,0,0.2))' }}>
-              {GALLERY_ITEMS[lightbox].icon}
-            </div>
+            <img src="/time-to-surf-logo.png" alt="Time to Surf" style={{ width: 132, height: 132, borderRadius: '50%', objectFit: 'cover', background: 'white', padding: 6, marginBottom: 24, boxShadow: '0 18px 44px rgba(0,0,0,0.18)' }} />
             <div style={{ fontSize: 22, fontWeight: 800, color: 'white', letterSpacing: '-0.02em', marginBottom: 8 }}>
               {GALLERY_ITEMS[lightbox].label[lang]}
             </div>
@@ -294,9 +292,9 @@ export default function Home() {
                   fontSize: 'clamp(40px, 5.5vw, 72px)', fontWeight: 900, color: 'white',
                   lineHeight: 1.05, letterSpacing: '-0.03em', marginBottom: 24,
                 }}>
-                  {lang === 'ru' && <>Детский<br/><span style={{ color: '#CAF0F8' }}>серфинг-лагерь</span><br/>на море 🌊</>}
-                  {lang === 'en' && <>Kids<br/><span style={{ color: '#CAF0F8' }}>Surf Camp</span><br/>by the Sea 🌊</>}
-                  {lang === 'et' && <>Laste<br/><span style={{ color: '#CAF0F8' }}>surfilaager</span><br/>mere ääres 🌊</>}
+                  {lang === 'ru' && <>Детский<br/><span style={{ color: '#CAF0F8' }}>серфинг-лагерь</span><br/>на море </>}
+                  {lang === 'en' && <>Kids<br/><span style={{ color: '#CAF0F8' }}>Surf Camp</span><br/>by the Sea </>}
+                  {lang === 'et' && <>Laste<br/><span style={{ color: '#CAF0F8' }}>surfilaager</span><br/>mere ääres </>}
                 </h1>
 
                 <p style={{ fontSize: 'clamp(15px, 1.6vw, 18px)', color: 'rgba(255,255,255,0.85)', lineHeight: 1.75, maxWidth: 500, marginBottom: 20 }}>
@@ -336,8 +334,11 @@ export default function Home() {
                   border: '1px solid rgba(255,255,255,0.15)', borderRadius: 20,
                   padding: 28,
                 }}>
-                  <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 20 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 20 }}>
+                    <img src="/time-to-surf-logo.png" alt="Time to Surf" style={{ width: 76, height: 76, borderRadius: '50%', objectFit: 'cover', background: 'white', padding: 4, boxShadow: '0 18px 38px rgba(0,0,0,0.18)' }} />
+                    <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
                     {c('Форматы лагерей', 'Camp Formats', 'Laagri formaadid')}
+                    </div>
                   </div>
                   {[
                     { emoji: '', name: c('Серфинг + Кино', 'Surf + Cinema', 'Surf + Kino'), desc: c('Снимаем настоящий короткий метр', 'We shoot a real short film', 'Filmime päris lühifilmi'), color: '#FF6F61' },
@@ -400,15 +401,15 @@ export default function Home() {
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 16 }}>
               {[
-                { icon: '💪', title: c('Здоровье и сила', 'Health & Strength', 'Tervis ja tugevus'), desc: c('Свежий воздух, море, движение — перезагрузка тела и духа.', 'Sea air, movement and energy — a full recharge.', 'Mereõhk, liikumine ja energia — täielik taastumine.') },
-                { icon: '🧘', title: c('Умение быть здесь и сейчас', 'Living in the moment', 'Olevikus elamine'), desc: c('На волне невозможно думать о лишнем. Только здесь и сейчас.', 'On the wave, only the present moment matters.', 'Lainel on ainult praegune hetk oluline.') },
-                { icon: '🌊', title: c('Чувство природы', 'Connection with nature', 'Ühendus loodusega'), desc: c('Ребёнок учится читать ветер, воду и погоду.', 'Children learn to read wind, water and weather.', 'Lapsed õpivad lugema tuult, vett ja ilma.') },
-                { icon: '⚖️', title: c('Уравновешенность', 'Inner balance', 'Sisemine tasakaal'), desc: c('Вода учит спокойствию и контролю эмоций.', 'Water teaches calmness and emotional control.', 'Vesi õpetab rahulikust ja emotsioonikontrolli.') },
-                { icon: '🤝', title: c('Командный дух', 'Team spirit', 'Meeskonnavaim'), desc: c('Через игры дети учатся поддерживать друг друга.', 'Through games, children learn to support each other.', 'Mängude kaudu õpivad lapsed üksteist toetama.') },
-                { icon: '🏆', title: c('Уверенность в себе', 'Self-confidence', 'Enesekindlus'), desc: c('Встать на доску — это победа, которую ребёнок помнит всегда.', 'Standing up on a board is a victory kids always remember.', 'Lauale seismine on võit, mida lapsed alati mäletavad.') },
+                { icon: '', title: c('Здоровье и сила', 'Health & Strength', 'Tervis ja tugevus'), desc: c('Свежий воздух, море, движение — перезагрузка тела и духа.', 'Sea air, movement and energy — a full recharge.', 'Mereõhk, liikumine ja energia — täielik taastumine.') },
+                { icon: '', title: c('Умение быть здесь и сейчас', 'Living in the moment', 'Olevikus elamine'), desc: c('На волне невозможно думать о лишнем. Только здесь и сейчас.', 'On the wave, only the present moment matters.', 'Lainel on ainult praegune hetk oluline.') },
+                { icon: '', title: c('Чувство природы', 'Connection with nature', 'Ühendus loodusega'), desc: c('Ребёнок учится читать ветер, воду и погоду.', 'Children learn to read wind, water and weather.', 'Lapsed õpivad lugema tuult, vett ja ilma.') },
+                { icon: '', title: c('Уравновешенность', 'Inner balance', 'Sisemine tasakaal'), desc: c('Вода учит спокойствию и контролю эмоций.', 'Water teaches calmness and emotional control.', 'Vesi õpetab rahulikust ja emotsioonikontrolli.') },
+                { icon: '', title: c('Командный дух', 'Team spirit', 'Meeskonnavaim'), desc: c('Через игры дети учатся поддерживать друг друга.', 'Through games, children learn to support each other.', 'Mängude kaudu õpivad lapsed üksteist toetama.') },
+                { icon: '', title: c('Уверенность в себе', 'Self-confidence', 'Enesekindlus'), desc: c('Встать на доску — это победа, которую ребёнок помнит всегда.', 'Standing up on a board is a victory kids always remember.', 'Lauale seismine on võit, mida lapsed alati mäletavad.') },
               ].map((item, i) => (
                 <div key={i} className="check-item" style={{ padding: '20px', borderRadius: 14, gap: 14 }}>
-                  <div style={{ fontSize: 32, flexShrink: 0 }}>{item.icon}</div>
+                  <div className="mini-mark large" aria-hidden="true">{i + 1}</div>
                   <div>
                     <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 6, color: 'var(--text)' }}>{item.title}</div>
                     <div style={{ color: 'var(--text-muted)', fontSize: 13, lineHeight: 1.6 }}>{item.desc}</div>
@@ -493,15 +494,15 @@ export default function Home() {
                   </h4>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 24 }}>
                     {[
-                      { icon: '🌊', text: c('Серфинг на воде каждый день', 'Surfing on water every day', 'Surfamine vees iga päev') },
-                      { icon: '🎤', text: c('Ведущие снимают репортажи', 'Hosts film reports', 'Saatejuhid filmivad reportaaže') },
-                      { icon: '📹', text: c('Операторы учатся видеть кадры', 'Camera crew learns to frame shots', 'Operaatorid õpivad kaadrit nägema') },
-                      { icon: '💻', text: c('Монтажёры собирают видео', 'Editors assemble the video', 'Monteerijad koondavad video') },
-                      { icon: '✨', text: c('Все вместе создают короткий метр', 'Together they create a short film', 'Koos loovad nad lühifilmi') },
-                      { icon: '🛟', text: c('Безопасность на воде — основа', 'Water safety is a priority', 'Veeohutus on prioriteet') },
+                      { icon: '', text: c('Серфинг на воде каждый день', 'Surfing on water every day', 'Surfamine vees iga päev') },
+                      { icon: '', text: c('Ведущие снимают репортажи', 'Hosts film reports', 'Saatejuhid filmivad reportaaže') },
+                      { icon: '', text: c('Операторы учатся видеть кадры', 'Camera crew learns to frame shots', 'Operaatorid õpivad kaadrit nägema') },
+                      { icon: '', text: c('Монтажёры собирают видео', 'Editors assemble the video', 'Monteerijad koondavad video') },
+                      { icon: '', text: c('Все вместе создают короткий метр', 'Together they create a short film', 'Koos loovad nad lühifilmi') },
+                      { icon: '', text: c('Безопасность на воде — основа', 'Water safety is a priority', 'Veeohutus on prioriteet') },
                     ].map((item, i) => (
                       <div key={i} style={{ display: 'flex', gap: 12, alignItems: 'center', padding: '10px 14px', background: 'white', border: '1px solid var(--border)', borderRadius: 10 }}>
-                        <span style={{ fontSize: 20, flexShrink: 0 }}>{item.icon}</span>
+                        <span className="mini-mark" aria-hidden="true">{i + 1}</span>
                         <span style={{ color: 'var(--text-soft)', fontSize: 14 }}>{item.text}</span>
                       </div>
                     ))}
@@ -556,15 +557,15 @@ export default function Home() {
                   </h4>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 24 }}>
                     {[
-                      { icon: '🏄', text: c('Серфинг и SUP каждый день', 'Surfing and SUP every day', 'Surfamine ja SUP iga päev') },
-                      { icon: '🗺️', text: c('Ориентирование по карте и компасу', 'Map and compass navigation', 'Kaardi ja kompassi navigeerimine') },
-                      { icon: '🔥', text: c('Разведение костра', 'Fire starting', 'Lõkke tegemine') },
-                      { icon: '⛺', text: c('Установка палатки', 'Setting up a tent', 'Telgi püstitamine') },
-                      { icon: '🌲', text: c('Навыки выживания в лесу', 'Forest survival skills', 'Metsa ellujäämisoskused') },
-                      { icon: '🥾', text: c('Финальный мини-поход', 'Final mini-hike', 'Lõpumatk') },
+                      { icon: '', text: c('Серфинг и SUP каждый день', 'Surfing and SUP every day', 'Surfamine ja SUP iga päev') },
+                      { icon: '', text: c('Ориентирование по карте и компасу', 'Map and compass navigation', 'Kaardi ja kompassi navigeerimine') },
+                      { icon: '', text: c('Разведение костра', 'Fire starting', 'Lõkke tegemine') },
+                      { icon: '', text: c('Установка палатки', 'Setting up a tent', 'Telgi püstitamine') },
+                      { icon: '', text: c('Навыки выживания в лесу', 'Forest survival skills', 'Metsa ellujäämisoskused') },
+                      { icon: '', text: c('Финальный мини-поход', 'Final mini-hike', 'Lõpumatk') },
                     ].map((item, i) => (
                       <div key={i} style={{ display: 'flex', gap: 12, alignItems: 'center', padding: '10px 14px', background: 'white', border: '1px solid var(--border)', borderRadius: 10 }}>
-                        <span style={{ fontSize: 20, flexShrink: 0 }}>{item.icon}</span>
+                        <span className="mini-mark" aria-hidden="true">{i + 1}</span>
                         <span style={{ color: 'var(--text-soft)', fontSize: 14 }}>{item.text}</span>
                       </div>
                     ))}
@@ -626,15 +627,15 @@ export default function Home() {
                   </h4>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 24 }}>
                     {[
-                      { icon: '🏄', text: c('Разные виды серфинга', 'Different types of surfing', 'Erinevad surfi liigid') },
-                      { icon: '🧥', text: c('Как надевать гидрокостюм', 'How to put on a wetsuit', 'Kuidas märjaksüiti selga panna') },
-                      { icon: '⚠️', text: c('Безопасность и правила на воде', 'Water safety and rules', 'Veeohutus ja reeglid') },
-                      { icon: '🌬️', text: c('Читать ветер и погоду', 'Read wind and weather', 'Lugeda tuult ja ilma') },
-                      { icon: '🤝', text: c('Работа в команде', 'Teamwork', 'Meeskonnatöö') },
-                      { icon: '🎨', text: c('Творческие мастер-классы', 'Creative workshops', 'Loomingulised töötoad') },
+                      { icon: '', text: c('Разные виды серфинга', 'Different types of surfing', 'Erinevad surfi liigid') },
+                      { icon: '', text: c('Как надевать гидрокостюм', 'How to put on a wetsuit', 'Kuidas märjaksüiti selga panna') },
+                      { icon: '', text: c('Безопасность и правила на воде', 'Water safety and rules', 'Veeohutus ja reeglid') },
+                      { icon: '', text: c('Читать ветер и погоду', 'Read wind and weather', 'Lugeda tuult ja ilma') },
+                      { icon: '', text: c('Работа в команде', 'Teamwork', 'Meeskonnatöö') },
+                      { icon: '', text: c('Творческие мастер-классы', 'Creative workshops', 'Loomingulised töötoad') },
                     ].map((item, i) => (
                       <div key={i} style={{ display: 'flex', gap: 12, alignItems: 'center', padding: '10px 14px', background: 'white', border: '1px solid var(--border)', borderRadius: 10 }}>
-                        <span style={{ fontSize: 20, flexShrink: 0 }}>{item.icon}</span>
+                        <span className="mini-mark" aria-hidden="true">{i + 1}</span>
                         <span style={{ color: 'var(--text-soft)', fontSize: 14 }}>{item.text}</span>
                       </div>
                     ))}
@@ -664,19 +665,19 @@ export default function Home() {
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 16 }}>
               {[
-                { time: '09:00', icon: '👋', title: c('Сбор', 'Arrival', 'Kogunemine'), desc: c('Встреча детей, знакомство, настрой на день', 'Meeting kids, introductions, setting the mood', 'Laste vastuvõtt, tutvumine, päevaks häälestamine') },
-                { time: '09:30', icon: '🏃', title: c('Разминка', 'Warm-up', 'Soojendus'), desc: c('Активные тренировки и командные игры', 'Active training and team games', 'Aktiivsed treeningud ja meeskonnmängud') },
-                { time: '10:00', icon: '🌊', title: c('Водный блок', 'Water block', 'Vesiplokk'), desc: c('Безопасность, гидрокостюмы, SUP-серфинг', 'Safety, wetsuits, SUP surfing', 'Ohutus, märjaksüidid, SUP surfamine') },
-                { time: '12:00', icon: '🍱', title: c('Обед', 'Lunch', 'Lõuna'), desc: c('Индивидуальная порция в боксе, учёт аллергий', 'Individual portion in a box, allergies considered', 'Individuaalne portsjon kastis, arvestatakse allergiaid') },
-                { time: '13:30', icon: '⚡', title: c('Активная программа', 'Active programme', 'Aktiivne programm'), desc: c('Виндсёрфинг, SUP, кайт, пляжные игры, поход', 'Windsurfing, SUP, kite, beach games, hiking', 'Purjelaud, SUP, kait, rannamängud, matk') },
-                { time: '15:30', icon: '☕', title: c('Чаепитие', 'Tea time', 'Tee aeg'), desc: c('Перерыв, отдых, общение', 'Break, rest, socialising', 'Paus, puhkus, suhtlemine') },
-                { time: '16:30', icon: '🎲', title: c('Спокойный блок', 'Calm block', 'Rahulik plokk'), desc: c('Игры, творчество, интеллектуальные задания', 'Games, creativity, intellectual tasks', 'Mängud, loovus, intellektuaalsed ülesanded') },
-                { time: '17:00', icon: '👪', title: c('Домой', 'Home time', 'Kodu aeg'), desc: c('Конец программы, ожидание родителей', 'End of programme, waiting for parents', 'Programmi lõpp, vanemate ootamine') },
+                { time: '09:00', icon: '', title: c('Сбор', 'Arrival', 'Kogunemine'), desc: c('Встреча детей, знакомство, настрой на день', 'Meeting kids, introductions, setting the mood', 'Laste vastuvõtt, tutvumine, päevaks häälestamine') },
+                { time: '09:30', icon: '', title: c('Разминка', 'Warm-up', 'Soojendus'), desc: c('Активные тренировки и командные игры', 'Active training and team games', 'Aktiivsed treeningud ja meeskonnmängud') },
+                { time: '10:00', icon: '', title: c('Водный блок', 'Water block', 'Vesiplokk'), desc: c('Безопасность, гидрокостюмы, SUP-серфинг', 'Safety, wetsuits, SUP surfing', 'Ohutus, märjaksüidid, SUP surfamine') },
+                { time: '12:00', icon: '', title: c('Обед', 'Lunch', 'Lõuna'), desc: c('Индивидуальная порция в боксе, учёт аллергий', 'Individual portion in a box, allergies considered', 'Individuaalne portsjon kastis, arvestatakse allergiaid') },
+                { time: '13:30', icon: '', title: c('Активная программа', 'Active programme', 'Aktiivne programm'), desc: c('Виндсёрфинг, SUP, кайт, пляжные игры, поход', 'Windsurfing, SUP, kite, beach games, hiking', 'Purjelaud, SUP, kait, rannamängud, matk') },
+                { time: '15:30', icon: '', title: c('Чаепитие', 'Tea time', 'Tee aeg'), desc: c('Перерыв, отдых, общение', 'Break, rest, socialising', 'Paus, puhkus, suhtlemine') },
+                { time: '16:30', icon: '', title: c('Спокойный блок', 'Calm block', 'Rahulik plokk'), desc: c('Игры, творчество, интеллектуальные задания', 'Games, creativity, intellectual tasks', 'Mängud, loovus, intellektuaalsed ülesanded') },
+                { time: '17:00', icon: '', title: c('Домой', 'Home time', 'Kodu aeg'), desc: c('Конец программы, ожидание родителей', 'End of programme, waiting for parents', 'Programmi lõpp, vanemate ootamine') },
               ].map((item, i) => (
                 <div key={i} className="card" style={{ padding: 20, display: 'flex', gap: 16, alignItems: 'flex-start' }}>
                   <div style={{ textAlign: 'center', flexShrink: 0 }}>
                     <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--accent)', letterSpacing: '0.04em', marginBottom: 4 }}>{item.time}</div>
-                    <div style={{ fontSize: 28 }}>{item.icon}</div>
+                    <div className="time-dot" aria-hidden="true" />
                   </div>
                   <div>
                     <div style={{ fontWeight: 700, fontSize: 14, color: 'var(--text)', marginBottom: 4 }}>{item.title}</div>
@@ -725,7 +726,7 @@ export default function Home() {
                     e.currentTarget.style.boxShadow = ''
                   }}
                 >
-                  <div style={{ fontSize: 42 }}>{item.icon}</div>
+                  <div className="gallery-mark" style={{ background: item.color }} aria-hidden="true" />
                   <div style={{ fontSize: 12, fontWeight: 700, color: item.color, textAlign: 'center', letterSpacing: '-0.01em' }}>
                     {item.label[lang]}
                   </div>
@@ -812,17 +813,17 @@ export default function Home() {
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12 }}>
                 {[
-                  { icon: '🏄', text: c('Вся программа серфинга', 'Full surf programme', 'Kogu surfi programm') },
-                  { icon: '🍱', text: c('Питание (Tark Catering)', 'Meals (Tark Catering)', 'Toitlustus (Tark Catering)') },
-                  { icon: '☕', text: c('Полдник / чаепитие', 'Afternoon snack', 'Pärastlõunane eine') },
-                  { icon: '🧥', text: c('Гидрокостюмы', 'Wetsuits', 'Märjaksüidid') },
-                  { icon: '🛟', text: c('Жилеты', 'Life jackets', 'Päästevested') },
-                  { icon: '🏄', text: c('Всё необходимое оборудование', 'All necessary equipment', 'Kogu vajalik varustus') },
-                  { icon: '👩‍🏫', text: c('Работа инструкторов', 'Instructor work', 'Instruktorite töö') },
-                  { icon: '🎨', text: c('Мастер-классы', 'Workshops', 'Töötoad') },
+                  { icon: '', text: c('Вся программа серфинга', 'Full surf programme', 'Kogu surfi programm') },
+                  { icon: '', text: c('Питание (Tark Catering)', 'Meals (Tark Catering)', 'Toitlustus (Tark Catering)') },
+                  { icon: '', text: c('Полдник / чаепитие', 'Afternoon snack', 'Pärastlõunane eine') },
+                  { icon: '', text: c('Гидрокостюмы', 'Wetsuits', 'Märjaksüidid') },
+                  { icon: '', text: c('Жилеты', 'Life jackets', 'Päästevested') },
+                  { icon: '', text: c('Всё необходимое оборудование', 'All necessary equipment', 'Kogu vajalik varustus') },
+                  { icon: '', text: c('Работа инструкторов', 'Instructor work', 'Instruktorite töö') },
+                  { icon: '', text: c('Мастер-классы', 'Workshops', 'Töötoad') },
                 ].map((item, i) => (
                   <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-                    <span style={{ fontSize: 20, flexShrink: 0 }}>{item.icon}</span>
+                    <span className="mini-mark" aria-hidden="true">{i + 1}</span>
                     <span style={{ color: 'rgba(255,255,255,0.85)', fontSize: 13 }}>{item.text}</span>
                   </div>
                 ))}
@@ -851,7 +852,7 @@ export default function Home() {
                 }}>
                   {d.hot && (
                     <div className="date-badge" style={{ marginBottom: 10, display: 'inline-flex' }}>
-                      🔥 {d.spots}
+                       {d.spots}
                     </div>
                   )}
                   <div style={{ fontWeight: 800, fontSize: 16, color: 'var(--text)', marginBottom: 4 }}>{d.dates}</div>
@@ -948,7 +949,7 @@ export default function Home() {
               <div>
                 <div style={{ borderRadius: 20, overflow: 'hidden', border: '2px solid var(--border)', boxShadow: '0 8px 40px rgba(0,119,190,0.1)' }}>
                   <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1000!2d24.6440!3d59.4575!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4692eba9f8c28d1d%3A0xa1b9de6e7bbf6a69!2sTime%20to%20Surf!5e0!3m2!1sru!2see!4v1700000000000!5m2!1sru!2see"
+                    src="https://maps.google.com/maps?q=Paldiski%20mnt%2092%2C%20Tallinn%2C%20Estonia&z=16&output=embed"
                     width="100%"
                     height="350"
                     style={{ border: 0, display: 'block' }}
@@ -959,7 +960,7 @@ export default function Home() {
                   />
                 </div>
                 <a
-                  href="https://www.google.com/maps?cid=728070618924189737"
+                  href="https://www.google.com/maps/search/?api=1&query=Paldiski%20mnt%2092%2C%20Tallinn%2C%20Estonia"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn-secondary"
@@ -1061,10 +1062,10 @@ export default function Home() {
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
                 {[
-                  { icon: '🏄', title: c('Кайтсерфинг', 'Kitesurfing', 'Kaitesurfing'), color: '#0077BE' },
-                  { icon: '🪁', title: c('Виндсерфинг', 'Windsurfing', 'Purjelaud'), color: '#00B4D8' },
-                  { icon: '🏄‍♂️', title: 'SUP-серфинг', color: '#FF6F61' },
-                  { icon: '🌊', title: c('Классический серфинг', 'Classic Surfing', 'Klassikaline surfamine'), color: '#4CAF50' },
+                  { icon: '', title: c('Кайтсерфинг', 'Kitesurfing', 'Kaitesurfing'), color: '#0077BE' },
+                  { icon: '', title: c('Виндсерфинг', 'Windsurfing', 'Purjelaud'), color: '#00B4D8' },
+                  { icon: '', title: 'SUP-серфинг', color: '#FF6F61' },
+                  { icon: '', title: c('Классический серфинг', 'Classic Surfing', 'Klassikaline surfamine'), color: '#4CAF50' },
                 ].map((s, i) => (
                   <div key={i} style={{
                     background: `${s.color}12`, border: `1.5px solid ${s.color}30`,
@@ -1074,7 +1075,7 @@ export default function Home() {
                     onMouseEnter={e => (e.currentTarget.style.transform = 'translateY(-3px)')}
                     onMouseLeave={e => (e.currentTarget.style.transform = '')}
                   >
-                    <div style={{ fontSize: 36, marginBottom: 8 }}>{s.icon}</div>
+                    <div className="surf-mark" style={{ background: s.color }} aria-hidden="true" />
                     <div style={{ fontWeight: 700, fontSize: 13, color: s.color }}>{s.title}</div>
                   </div>
                 ))}
@@ -1089,7 +1090,7 @@ export default function Home() {
             <div className="two-col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40, marginBottom: 32 }}>
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-                  <div style={{ fontSize: 28 }}>🏄</div>
+                  <img src="/time-to-surf-logo.png" alt="Time to Surf" style={{ width: 52, height: 52, borderRadius: '50%', objectFit: 'cover', background: 'white', padding: 3 }} />
                   <div>
                     <div style={{ color: 'white', fontWeight: 800, fontSize: 18, letterSpacing: '-0.02em' }}>Time to Surf</div>
                     <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
@@ -1150,7 +1151,6 @@ export default function Home() {
     </>
   )
 }
-
 
 
 
