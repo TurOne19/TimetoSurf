@@ -246,7 +246,7 @@ export default function Home() {
               {GALLERY_ITEMS[lightbox].label[lang]}
             </div>
             <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.7)' }}>
-              {c('Фото появятся скоро', 'Photos coming soon', 'Fotod tulevad peagi')} 📸
+              {c('Фото появятся скоро', 'Photos coming soon', 'Fotod tulevad peagi')}
             </div>
             <div style={{ position: 'absolute', bottom: 16, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 6 }}>
               {GALLERY_ITEMS.map((_, i) => (
@@ -322,9 +322,9 @@ export default function Home() {
 
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                   {[
-                    c('✓ Серфинг-инструктора', '✓ Surf Instructors', '✓ Surfiinstruktorid'),
-                    c('✓ Питание включено', '✓ Meals Included', '✓ Toitlustus sees'),
-                    c('✓ Группы 12–16 чел.', '✓ Groups 12–16 kids', '✓ Grupid 12–16 last'),
+                    c('Серфинг-инструктора', 'Surf Instructors', 'Surfiinstruktorid'),
+                    c('Питание включено', 'Meals Included', 'Toitlustus sees'),
+                    c('Группы 12–16 чел.', 'Groups 12–16 kids', 'Grupid 12–16 last'),
                   ].map((p, i) => <span key={i} className="trust-pill">{p}</span>)}
                 </div>
               </div>
@@ -340,16 +340,16 @@ export default function Home() {
                     {c('Форматы лагерей', 'Camp Formats', 'Laagri formaadid')}
                   </div>
                   {[
-                    { emoji: '🏄🎬', name: c('Серфинг + Кино', 'Surf + Cinema', 'Surf + Kino'), desc: c('Снимаем настоящий короткий метр', 'We shoot a real short film', 'Filmime päris lühifilmi'), color: '#FF6F61' },
-                    { emoji: '🏄🏕️', name: c('Серфинг + Поход', 'Surf + Hike', 'Surf + Matk'), desc: c('Серфинг и настоящие приключения', 'Surfing and real adventures', 'Surfamine ja päris seiklused'), color: '#00B4D8' },
-                    { emoji: '🏄', name: c('Серфинг лагерь', 'Surf Camp', 'Surfilaager'), desc: c('Классическая программа серфинга', 'Classic surfing programme', 'Klassikaline surfi programm'), color: '#CAF0F8' },
+                    { emoji: '', name: c('Серфинг + Кино', 'Surf + Cinema', 'Surf + Kino'), desc: c('Снимаем настоящий короткий метр', 'We shoot a real short film', 'Filmime päris lühifilmi'), color: '#FF6F61' },
+                    { emoji: '', name: c('Серфинг + Поход', 'Surf + Hike', 'Surf + Matk'), desc: c('Серфинг и настоящие приключения', 'Surfing and real adventures', 'Surfamine ja päris seiklused'), color: '#00B4D8' },
+                    { emoji: '', name: c('Серфинг лагерь', 'Surf Camp', 'Surfilaager'), desc: c('Классическая программа серфинга', 'Classic surfing programme', 'Klassikaline surfi programm'), color: '#CAF0F8' },
                   ].map((f, i) => (
                     <div key={i} style={{
                       display: 'flex', alignItems: 'center', gap: 14,
                       padding: '12px 0',
                       borderBottom: i < 2 ? '1px solid rgba(255,255,255,0.08)' : 'none',
                     }}>
-                      <div style={{ fontSize: 28, flexShrink: 0 }}>{f.emoji}</div>
+                      
                       <div>
                         <div style={{ fontWeight: 700, color: 'white', fontSize: 15 }}>{f.name}</div>
                         <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: 12, marginTop: 2 }}>{f.desc}</div>
@@ -437,9 +437,9 @@ export default function Home() {
             {/* Tabs */}
             <div className="camp-tabs" style={{ display: 'flex', gap: 10, justifyContent: 'center', marginBottom: 32, flexWrap: 'wrap' }}>
               {[
-                { key: 'cinema' as const, label: c('🎬 Серфинг + Кино', '🎬 Surf + Cinema', '🎬 Surf + Kino'), color: '#FF6F61' },
-                { key: 'hike' as const, label: c('🏕️ Серфинг + Поход', '🏕️ Surf + Hike', '🏕️ Surf + Matk'), color: '#00B4D8' },
-                { key: 'surf' as const, label: c('🏄 Серфинг лагерь', '🏄 Surf Camp', '🏄 Surfilaager'), color: '#0077BE' },
+                { key: 'cinema' as const, label: c('Серфинг + Кино', 'Surf + Cinema', 'Surf + Kino'), color: '#FF6F61' },
+                { key: 'hike' as const, label: c('Серфинг + Поход', 'Surf + Hike', 'Surf + Matk'), color: '#00B4D8' },
+                { key: 'surf' as const, label: c('Серфинг лагерь', 'Surf Camp', 'Surfilaager'), color: '#0077BE' },
               ].map(tab => (
                 <button key={tab.key} onClick={() => setActiveCamp(tab.key)} style={{
                   padding: '10px 22px', borderRadius: 50, fontSize: 14, fontWeight: 700, cursor: 'pointer',
@@ -457,7 +457,7 @@ export default function Home() {
               <div className="two-col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40, animation: 'fadeIn 0.3s ease' }}>
                 <div>
                   <div style={{ background: 'linear-gradient(135deg, #FF6F61, #ff9f97)', borderRadius: 20, padding: 32, color: 'white', marginBottom: 20 }}>
-                    <div style={{ fontSize: 48, marginBottom: 16 }}>🎬🏄</div>
+                    
                     <h3 style={{ fontSize: 26, fontWeight: 800, marginBottom: 10, letterSpacing: '-0.02em' }}>
                       {c('Серфинг + Кино', 'Surf + Cinema', 'Surf + Kino')}
                     </h3>
@@ -477,7 +477,7 @@ export default function Home() {
                       {c('Ведущий кино-блока:', 'Cinema programme lead:', 'Kinoosa juht:')}
                     </div>
                     <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
-                      <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'linear-gradient(135deg, #FF6F61, #ff9f97)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, flexShrink: 0 }}>🎤</div>
+                      <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'linear-gradient(135deg, #FF6F61, #ff9f97)', display: 'none' }} />
                       <div>
                         <div style={{ fontWeight: 700, color: 'var(--text)', fontSize: 15 }}>Наталья Карасёва</div>
                         <div style={{ color: 'var(--text-muted)', fontSize: 13, lineHeight: 1.6 }}>
@@ -507,7 +507,7 @@ export default function Home() {
                     ))}
                   </div>
                   <div style={{ background: 'rgba(0,119,190,0.05)', border: '1px solid var(--border)', borderRadius: 14, padding: 16 }}>
-                    <div style={{ fontWeight: 700, color: 'var(--accent)', fontSize: 14, marginBottom: 8 }}>📅 {c('Даты смены:', 'Session dates:', 'Vahetuse kuupäevad:')}</div>
+                    <div style={{ fontWeight: 700, color: 'var(--accent)', fontSize: 14, marginBottom: 8 }}>{c('Даты смены:', 'Session dates:', 'Vahetuse kuupäevad:')}</div>
                     <div style={{ fontWeight: 700, color: 'var(--text)', fontSize: 15, marginBottom: 4 }}>15.06 – 19.06.2026</div>
                     <div style={{ fontWeight: 700, color: 'var(--text)', fontSize: 15 }}>29.06 – 03.07.2026</div>
                   </div>
@@ -520,7 +520,7 @@ export default function Home() {
               <div className="two-col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40, animation: 'fadeIn 0.3s ease' }}>
                 <div>
                   <div style={{ background: 'linear-gradient(135deg, #00B4D8, #0077BE)', borderRadius: 20, padding: 32, color: 'white', marginBottom: 20 }}>
-                    <div style={{ fontSize: 48, marginBottom: 16 }}>🏕️🏄</div>
+                    
                     <h3 style={{ fontSize: 26, fontWeight: 800, marginBottom: 10, letterSpacing: '-0.02em' }}>
                       {c('Серфинг + Поход', 'Surf + Hike', 'Surf + Matk')}
                     </h3>
@@ -540,7 +540,7 @@ export default function Home() {
                       {c('Ведущий походной программы:', 'Hiking programme lead:', 'Matkaprogrammi juht:')}
                     </div>
                     <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
-                      <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'linear-gradient(135deg, #00B4D8, #0077BE)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, flexShrink: 0 }}>🧭</div>
+                      <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'linear-gradient(135deg, #00B4D8, #0077BE)', display: 'none' }} />
                       <div>
                         <div style={{ fontWeight: 700, color: 'var(--text)', fontSize: 15 }}>Виталий Холстинин</div>
                         <div style={{ color: 'var(--text-muted)', fontSize: 13, lineHeight: 1.6 }}>
@@ -570,11 +570,11 @@ export default function Home() {
                     ))}
                   </div>
                   <div style={{ background: 'rgba(0,119,190,0.05)', border: '1px solid var(--border)', borderRadius: 14, padding: 16 }}>
-                    <div style={{ fontWeight: 700, color: 'var(--accent)', fontSize: 14, marginBottom: 8 }}>📅 {c('Даты смены:', 'Session dates:', 'Vahetuse kuupäevad:')}</div>
+                    <div style={{ fontWeight: 700, color: 'var(--accent)', fontSize: 14, marginBottom: 8 }}>{c('Даты смены:', 'Session dates:', 'Vahetuse kuupäevad:')}</div>
                     <div style={{ fontWeight: 700, color: 'var(--text)', fontSize: 15, marginBottom: 4 }}>13.07 – 17.07.2026</div>
                     <div style={{ fontWeight: 700, color: 'var(--text)', fontSize: 15 }}>17.08 – 21.08.2026</div>
                     <div style={{ marginTop: 12, padding: '8px 12px', background: 'rgba(0,180,216,0.08)', borderRadius: 8, fontSize: 13, color: 'var(--text-muted)' }}>
-                      🏆 {c('Каждый участник получает нашивку походника Time to Surf', 'Every participant gets the Time to Surf hiker badge', 'Iga osaleja saab Time to Surf matkaja märgi')}
+                      {c('Каждый участник получает нашивку походника Time to Surf', 'Every participant gets the Time to Surf hiker badge', 'Iga osaleja saab Time to Surf matkaja märgi')}
                     </div>
                   </div>
                 </div>
@@ -586,7 +586,7 @@ export default function Home() {
               <div className="two-col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40, animation: 'fadeIn 0.3s ease' }}>
                 <div>
                   <div style={{ background: 'linear-gradient(135deg, #0077BE, #004a8f)', borderRadius: 20, padding: 32, color: 'white', marginBottom: 20 }}>
-                    <div style={{ fontSize: 48, marginBottom: 16 }}>🏄</div>
+                    
                     <h3 style={{ fontSize: 26, fontWeight: 800, marginBottom: 10, letterSpacing: '-0.02em' }}>
                       {c('Серфинг лагерь', 'Surf Camp', 'Surfilaager')}
                     </h3>
@@ -607,11 +607,11 @@ export default function Home() {
                     </div>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                       {[
-                        { icon: '🏄', name: 'SUP-серфинг' },
-                        { icon: '🪁', name: c('Виндсерфинг', 'Windsurfing', 'Purjelaud') },
-                        { icon: '🪂', name: c('Кайтсерфинг', 'Kitesurfing', 'Kaitesurfing') },
-                        { icon: '🤸', name: 'Бодиборд' },
-                        { icon: '🪁', name: 'Вингфоилинг' },
+                        { name: 'SUP-серфинг' },
+                        { name: c('Виндсерфинг', 'Windsurfing', 'Purjelaud') },
+                        { name: c('Кайтсерфинг', 'Kitesurfing', 'Kaitesurfing') },
+                        { name: 'Бодиборд' },
+                        { name: 'Вингфоилинг' },
                       ].map((s, i) => (
                         <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px', background: 'rgba(0,119,190,0.08)', borderRadius: 100, fontSize: 13, fontWeight: 600, color: 'var(--accent)' }}>
                           {s.icon} {s.name}
@@ -699,7 +699,7 @@ export default function Home() {
                 {c('Атмосфера лагеря', 'Camp Atmosphere', 'Laagri atmosfäär')}
               </h2>
               <p style={{ color: 'var(--text-muted)', fontSize: 15 }}>
-                {c('Фотографии появятся с началом сезона. Пока — превью активностей 🏄', 'Photos will appear as the season begins. For now — activity previews 🏄', 'Fotod ilmuvad hooaja alguses. Praegu — tegevuste eelvaated 🏄')}
+                {c('Фотографии появятся с началом сезона. Пока — превью активностей.', 'Photos will appear as the season begins. For now — activity previews.', 'Fotod ilmuvad hooaja alguses. Praegu — tegevuste eelvaated.')}
               </p>
             </div>
             <div className="gallery-grid-inner" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
@@ -735,7 +735,7 @@ export default function Home() {
                     borderRadius: 12,
                   }}>
                     <div style={{ color: 'white', fontWeight: 700, fontSize: 14, textAlign: 'center' }}>
-                      🔍 {c('Открыть', 'Open', 'Ava')}
+                      {c('Открыть', 'Open', 'Ava')}
                     </div>
                   </div>
                 </div>
@@ -777,7 +777,7 @@ export default function Home() {
                 >
                   {plan.popular && (
                     <div style={{ position: 'absolute', top: -12, left: '50%', transform: 'translateX(-50%)', background: '#FF6F61', color: 'white', fontSize: 11, fontWeight: 800, padding: '4px 16px', borderRadius: 100, whiteSpace: 'nowrap' }}>
-                      ⭐ {c('Самый популярный', 'Most popular', 'Populaarseim')}
+                      {c('Самый популярный', 'Most popular', 'Populaarseim')}
                     </div>
                   )}
                   <div style={{ fontSize: 15, fontWeight: 700, color: plan.popular ? 'var(--text-muted)' : 'rgba(255,255,255,0.7)', marginBottom: 8, letterSpacing: '0.04em', textTransform: 'uppercase' }}>
@@ -808,7 +808,7 @@ export default function Home() {
             {/* What's included */}
             <div style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 20, padding: 32 }}>
               <div style={{ textAlign: 'center', fontWeight: 700, color: 'white', fontSize: 18, marginBottom: 24 }}>
-                ✅ {c('В цену включено:', 'Price includes:', 'Hind sisaldab:')}
+                {c('В цену включено:', 'Price includes:', 'Hind sisaldab:')}
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12 }}>
                 {[
@@ -859,7 +859,7 @@ export default function Home() {
                     {d.type}
                   </div>
                   <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-                    👤 {d.leaders}
+                    {d.leaders}
                   </div>
                   <a href={REGISTER_URL} target="_blank" rel="noopener noreferrer" style={{
                     display: 'block', marginTop: 14, textAlign: 'center', padding: '8px',
@@ -948,7 +948,7 @@ export default function Home() {
               <div>
                 <div style={{ borderRadius: 20, overflow: 'hidden', border: '2px solid var(--border)', boxShadow: '0 8px 40px rgba(0,119,190,0.1)' }}>
                   <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1000!2d24.6718!3d59.4438!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4692eba9f8c28d1d%3A0xa1b9de6e7bbf6a69!2sTime%20to%20Surf!5e0!3m2!1sru!2see!4v1700000000000!5m2!1sru!2see"
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1000!2d24.6440!3d59.4575!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4692eba9f8c28d1d%3A0xa1b9de6e7bbf6a69!2sTime%20to%20Surf!5e0!3m2!1sru!2see!4v1700000000000!5m2!1sru!2see"
                     width="100%"
                     height="350"
                     style={{ border: 0, display: 'block' }}
@@ -965,18 +965,18 @@ export default function Home() {
                   className="btn-secondary"
                   style={{ marginTop: 16, display: 'inline-flex' }}
                 >
-                  📍 {c('Открыть в Google Maps', 'Open in Google Maps', 'Ava Google Mapsis')}
+                  {c('Открыть в Google Maps', 'Open in Google Maps', 'Ava Google Mapsis')}
                 </a>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                 {[
-                  { icon: '📍', title: c('Адрес', 'Address', 'Aadress'), desc: c('Stroomi rand, конец пляжа, Таллин, Эстония', 'Stroomi beach, end of the beach, Tallinn, Estonia', 'Stroomi rand, ranna lõpp, Tallinn, Eesti') },
-                  { icon: '🚌', title: c('Как добраться', 'Getting there', 'Kuidas jõuda'), desc: c('Автобус № 40, 48 до остановки Stroomi rand. 20 минут из центра.', 'Bus No. 40, 48 to Stroomi rand stop. 20 minutes from the centre.', 'Buss nr 40, 48 peatuseni Stroomi rand. 20 minutit kesklinnast.') },
-                  { icon: '🏄', title: c('Серфинг-станция', 'Surf station', 'Surfi jaam'), desc: c('Ищите флаг Time to Surf на конце пляжа, рядом с Рокка-аль-Маре.', 'Look for the Time to Surf flag at the end of the beach near Rocca al Mare.', 'Otsige Time to Surf lippu ranna lõpus Rocca al Mare lähedal.') },
-                  { icon: '📞', title: c('По вопросам', 'Questions', 'Küsimused'), desc: '+372 55512872 (Андрей)' },
+                  { icon: null, title: c('Адрес', 'Address', 'Aadress'), desc: c('Stroomi rand, конец пляжа, Таллин, Эстония', 'Stroomi beach, end of the beach, Tallinn, Estonia', 'Stroomi rand, ranna lõpp, Tallinn, Eesti') },
+                  { icon: null, title: c('Как добраться', 'Getting there', 'Kuidas jõuda'), desc: c('Автобус № 40, 48 до остановки Stroomi rand. 20 минут из центра.', 'Bus No. 40, 48 to Stroomi rand stop. 20 minutes from the centre.', 'Buss nr 40, 48 peatuseni Stroomi rand. 20 minutit kesklinnast.') },
+                  { icon: null, title: c('Серфинг-станция', 'Surf station', 'Surfi jaam'), desc: c('Ищите флаг Time to Surf на конце пляжа, рядом с Рокка-аль-Маре.', 'Look for the Time to Surf flag at the end of the beach near Rocca al Mare.', 'Otsige Time to Surf lippu ranna lõpus Rocca al Mare lähedal.') },
+                  { icon: null, title: c('По вопросам', 'Questions', 'Küsimused'), desc: '+372 55512872 (Андрей)' },
                 ].map((item, i) => (
                   <div key={i} className="card" style={{ padding: '18px 20px', display: 'flex', gap: 14, alignItems: 'flex-start' }}>
-                    <div style={{ fontSize: 24, flexShrink: 0, marginTop: 2 }}>{item.icon}</div>
+                    {item.icon && <div style={{ fontSize: 24, flexShrink: 0, marginTop: 2 }}>{item.icon}</div>}
                     <div>
                       <div style={{ fontWeight: 700, fontSize: 14, color: 'var(--text)', marginBottom: 4 }}>{item.title}</div>
                       <div style={{ color: 'var(--text-muted)', fontSize: 13, lineHeight: 1.6 }}>{item.desc}</div>
@@ -997,7 +997,7 @@ export default function Home() {
             </svg>
           </div>
           <div style={{ maxWidth: 760, margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
-            <div style={{ fontSize: 56, marginBottom: 20 }}>🤙</div>
+            
             <h2 style={{ fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 900, color: 'white', marginBottom: 16, letterSpacing: '-0.03em' }}>
               {c('Количество мест ограничено!', 'Limited spots available!', 'Kohti on piiratud!')}
             </h2>
@@ -1013,10 +1013,10 @@ export default function Home() {
             </p>
             <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 28 }}>
               <a href={REGISTER_URL} target="_blank" rel="noopener noreferrer" className="btn-primary" style={{ padding: '16px 40px', fontSize: 17 }}>
-                {c('Записаться в лагерь', 'Register for Camp', 'Registreeru laagrisse')} 🏄
+                {c('Записаться в лагерь', 'Register for Camp', 'Registreeru laagrisse')}
               </a>
               <a href="tel:+37255512872" className="btn-white" style={{ padding: '16px 32px', fontSize: 17 }}>
-                📞 +372 55512872
+                +372 55512872
               </a>
             </div>
             <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.65)' }}>
@@ -1054,9 +1054,9 @@ export default function Home() {
                   )}
                 </p>
                 <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-                  <a href="https://www.instagram.com/timetosurf.ee" target="_blank" rel="noopener noreferrer" className="btn-secondary" style={{ padding: '10px 20px', fontSize: 13 }}>📸 Instagram</a>
-                  <a href="https://www.facebook.com/timetosurf.ee" target="_blank" rel="noopener noreferrer" className="btn-secondary" style={{ padding: '10px 20px', fontSize: 13 }}>👥 Facebook</a>
-                  <a href="https://timetosurf.ee" target="_blank" rel="noopener noreferrer" className="btn-secondary" style={{ padding: '10px 20px', fontSize: 13 }}>🌐 timetosurf.ee</a>
+                  <a href="https://www.instagram.com/timetosurf.ee" target="_blank" rel="noopener noreferrer" className="btn-secondary" style={{ padding: '10px 20px', fontSize: 13 }}>Instagram</a>
+                  <a href="https://www.facebook.com/timetosurf.ee" target="_blank" rel="noopener noreferrer" className="btn-secondary" style={{ padding: '10px 20px', fontSize: 13 }}>Facebook</a>
+                  <a href="https://timetosurf.ee" target="_blank" rel="noopener noreferrer" className="btn-secondary" style={{ padding: '10px 20px', fontSize: 13 }}>timetosurf.ee</a>
                 </div>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
@@ -1108,13 +1108,13 @@ export default function Home() {
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                     {[
-                      { icon: '📞', text: '+372 55512872', href: 'tel:+37255512872' },
-                      { icon: '✉️', text: 'info@timetosurf.ee', href: 'mailto:info@timetosurf.ee' },
-                      { icon: '💬', text: 'Telegram', href: 'https://t.me/Andrei_Time_to_Surf' },
-                      { icon: '📍', text: 'Stroomi rand, Tallinn', href: null },
+                      { icon: null, text: '+372 55512872', href: 'tel:+37255512872' },
+                      { icon: '', text: 'info@timetosurf.ee', href: 'mailto:info@timetosurf.ee' },
+                      { icon: '', text: 'Telegram', href: 'https://t.me/Andrei_Time_to_Surf' },
+                      { icon: null, text: 'Stroomi rand, Tallinn', href: null },
                     ].map((item, i) => (
                       <div key={i} style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                        <span style={{ fontSize: 14 }}>{item.icon}</span>
+                        {item.icon && <span style={{ fontSize: 14 }}>{item.icon}</span>}
                         {item.href
                           ? <a href={item.href} target={item.href.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer" style={{ color: 'rgba(255,255,255,0.7)', fontSize: 13, textDecoration: 'none' }}>{item.text}</a>
                           : <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: 13 }}>{item.text}</span>}
