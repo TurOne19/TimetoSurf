@@ -949,7 +949,7 @@ export default function Home() {
               <div>
                 <div style={{ borderRadius: 20, overflow: 'hidden', border: '2px solid var(--border)', boxShadow: '0 8px 40px rgba(0,119,190,0.1)' }}>
                   <iframe
-                    src="https://maps.google.com/maps?q=Paldiski%20mnt%2092%2C%20Tallinn%2C%20Estonia&z=16&output=embed"
+                    src="https://maps.google.com/maps?q=59.44762%2C24.68381&z=16&output=embed"
                     width="100%"
                     height="350"
                     style={{ border: 0, display: 'block' }}
@@ -960,7 +960,7 @@ export default function Home() {
                   />
                 </div>
                 <a
-                  href="https://www.google.com/maps/search/?api=1&query=Paldiski%20mnt%2092%2C%20Tallinn%2C%20Estonia"
+                  href="https://www.google.com/maps/search/?api=1&query=59.44762%2C24.68381"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn-secondary"
@@ -1151,7 +1151,6 @@ export default function Home() {
     </>
   )
 }
-
 
 
 
