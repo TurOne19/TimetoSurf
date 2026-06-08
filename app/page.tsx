@@ -801,7 +801,7 @@ export default function Home() {
           style={{
             position:'fixed',inset:0,zIndex:999,background:'#0B3D6B',
             display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',
-            animation:'introFade 0.8s ease 3.2s forwards',
+            animation:'introFade 0.8s ease 5.4s forwards',
             pointerEvents:'none',
           }}
           onAnimationEnd={() => setIntroVisible(false)}
