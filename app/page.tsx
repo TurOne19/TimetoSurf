@@ -33,6 +33,27 @@ function ScrollProgress() {
   )
 }
 
+function FloatingBubbles() {
+  return (
+    <div style={{position:'absolute',inset:0,overflow:'hidden',pointerEvents:'none',zIndex:0}}>
+      {[
+        {left:'8%',size:6,delay:0,dur:7},{left:'15%',size:4,delay:1.2,dur:9},
+        {left:'24%',size:8,delay:0.5,dur:8},{left:'35%',size:5,delay:2,dur:6},
+        {left:'48%',size:7,delay:0.8,dur:10},{left:'60%',size:4,delay:1.5,dur:7},
+        {left:'72%',size:9,delay:0.3,dur:9},{left:'83%',size:5,delay:2.2,dur:8},
+        {left:'91%',size:6,delay:1,dur:7},
+      ].map((b,i) => (
+        <div key={i} style={{
+          position:'absolute',bottom:'-20px',left:b.left,
+          width:b.size,height:b.size,borderRadius:'50%',
+          background:'rgba(10,172,172,0.35)',
+          animation:`floatBubble ${b.dur}s ease-in ${b.delay}s infinite`,
+        }}/>
+      ))}
+    </div>
+  )
+}
+
 export default function Home() {
   const [lang, setLang] = useState<Lang>('ru')
   const [menuOpen, setMenuOpen] = useState(false)
@@ -339,6 +360,11 @@ export default function Home() {
     @keyframes bgShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
     @keyframes dotBlink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
     @keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+    @keyframes wave1{0%,100%{d:path('M0,60 C200,20 400,80 600,50 C800,20 1000,70 1200,60 L1200,120 L0,120 Z')} 50%{d:path('M0,40 C200,80 400,30 600,60 C800,90 1000,40 1200,50 L1200,120 L0,120 Z')}}
+    @keyframes wave2{0%,100%{d:path('M0,70 C300,30 600,90 900,50 C1050,30 1150,70 1200,65 L1200,120 L0,120 Z')} 50%{d:path('M0,50 C300,90 600,40 900,70 C1050,90 1150,50 1200,55 L1200,120 L0,120 Z')}}
+    @keyframes floatBubble{0%{transform:translateY(0) scale(1);opacity:.6} 100%{transform:translateY(-120px) scale(1.2);opacity:0}}
+    .wave-divider{width:100%;overflow:hidden;line-height:0;display:block}
+    .wave-divider svg{display:block;width:100%}
     @keyframes introFade{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.04);pointer-events:none}}
     @keyframes introScale{from{opacity:0;transform:scale(0.7)}to{opacity:1;transform:scale(1)}}
     @keyframes introSlide{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
@@ -775,7 +801,7 @@ export default function Home() {
           style={{
             position:'fixed',inset:0,zIndex:999,background:'#0B3D6B',
             display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',
-            animation:'introFade 0.6s ease 1.8s forwards',
+            animation:'introFade 0.8s ease 3.2s forwards',
             pointerEvents:'none',
           }}
           onAnimationEnd={() => setIntroVisible(false)}
@@ -934,6 +960,7 @@ export default function Home() {
       <section className="hero">
         <div className="hero-glow"/>
         <div className="hero-glow2"/>
+        <FloatingBubbles />
         <div className="hero-in">
           <div className="wrap" style={{width:'100%'}}>
             <div className="hero-grid">
@@ -957,6 +984,18 @@ export default function Home() {
                 <div className="hero-acts rv" style={{transitionDelay:'190ms'}}>
                   <a href={REG} target="_blank" className="btn btn-sun" style={{padding:'15px 36px',fontSize:15}}>{c('Записать ребёнка','Register my child','Registreeri laps')}</a>
                   <button onClick={() => go('formats')} className="btn btn-ghost">{c('Узнать больше','Learn more','Loe lähemalt')}</button>
+                </div>
+                <div className="rv" style={{transitionDelay:'230ms',display:'flex',alignItems:'center',gap:10,marginTop:4}}>
+                  <div style={{display:'flex',gap:4}}>
+                    {[0,1,2,3,4,5,6,7,8,9,10,11,12].map(i => (
+                      <div key={i} style={{width:8,height:8,borderRadius:'50%',
+                        background: i < 4 ? 'var(--sun)' : i < 10 ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.1)',
+                        transition:`background 400ms ${i*40}ms`}}/>
+                    ))}
+                  </div>
+                  <span style={{fontSize:12,color:'rgba(255,255,255,.5)',fontWeight:600}}>
+                    {c('4 из 16 мест занято · Ближайшая смена 15.06','4 of 16 spots taken · Next session Jun 15','4/16 kohta võetud · Järgmine 15.06')}
+                  </span>
                 </div>
               </div>
               <div className="hcard rv" style={{transitionDelay:'170ms',animation:'floatY2 5s ease-in-out infinite'}}>
@@ -990,52 +1029,8 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <div className="hero-bar rv">
-          <div className="wrap">
-            <div className="hero-bar-g">
-              {[
-                {l:c('Ближайшая смена','Next session','Järgmine vahetus'), v:'15.06.2026'},
-                {l:c('Место','Location','Asukoht'), v:'Stroomi rand, Tallinn'},
-                {l:c('Контакт','Contact','Kontakt'), v:'+372 55512872'},
-                {l:'Telegram', v:'@Andrei_Time_to_Surf'},
-              ].map(b => (
-                <div key={b.l} className="hero-bar-item">
-                  <div className="hero-bar-l">{b.l}</div>
-                  <div className="hero-bar-v">{b.v}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
         <div className="hero-wave"/>
       </section>
-
-
-      {/* MARQUEE TICKER */}
-      <div style={{background:'var(--teal)',overflow:'hidden',padding:'10px 0',position:'relative',zIndex:1}}>
-        <div style={{display:'flex',gap:0,animation:'marquee 18s linear infinite',width:'max-content'}}>
-          {Array.from({length:2}).map((_,rep) => (
-            <div key={rep} style={{display:'flex',gap:0,flexShrink:0}}>
-              {[
-                c('🏄 Серфинг','🏄 Surfing','🏄 Surfamine'),
-                c('🎬 Кино','🎬 Cinema','🎬 Kino'),
-                c('🥾 Поход','🥾 Hiking','🥾 Matk'),
-                c('🌊 Таллин','🌊 Tallinn','🌊 Tallinn'),
-                c('⭐ Лето 2026','⭐ Summer 2026','⭐ Suvi 2026'),
-                c('🛟 Безопасность','🛟 Safety','🛟 Ohutus'),
-                c('👧 Возраст 7-14','👧 Ages 7-14','👧 Vanus 7-14'),
-                c('🌍 Эстония','🌍 Estonia','🌍 Eesti'),
-              ].map((item, i) => (
-                <span key={i} style={{
-                  fontSize:12,fontWeight:700,letterSpacing:'.08em',textTransform:'uppercase',
-                  color:'rgba(255,255,255,.9)',padding:'0 28px',whiteSpace:'nowrap',
-                  borderRight:'1px solid rgba(255,255,255,.25)',
-                }}>{item}</span>
-              ))}
-            </div>
-          ))}
-        </div>
-      </div>
 
       {/* TRUST */}
       <section className="trust">
@@ -1055,6 +1050,13 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* WAVE DIVIDER */}
+      <div className="wave-divider" style={{background:'var(--sand-lt)',marginBottom:-2}}>
+        <svg viewBox="0 0 1200 60" preserveAspectRatio="none" style={{height:60,fill:'var(--white)'}}>
+          <path d="M0,30 C200,60 400,0 600,30 C800,60 1000,10 1200,30 L1200,60 L0,60 Z" style={{animation:'waveAnim 6s ease-in-out infinite'}}/>
+        </svg>
+      </div>
 
       {/* FORMATS */}
       <section className="formats" id="formats">
@@ -1192,10 +1194,27 @@ export default function Home() {
               </div>
             </div>
             <div className="safety-photos sg">
-              <img src="/DSC02691-150x150.jpeg" alt="Safety" className="safety-photo"/>
-              <img src="/IMG_7773-150x150.jpeg" alt="Kids in water" className="safety-photo"/>
-              <img src="/IMG_7812-150x150.jpeg" alt="Group" className="safety-photo"/>
-              <img src="/DSC02699-150x150.jpeg" alt="Instructor" className="safety-photo"/>
+              {[
+                {src:'/DSC02691-150x150.jpeg', alt:'Safety'},
+                {src:'/IMG_7773-150x150.jpeg', alt:'Kids in water'},
+                {src:'/IMG_7812-150x150.jpeg', alt:'Group'},
+                {src:'/DSC02699-150x150.jpeg', alt:'Instructor'},
+              ].map((p,i) => {
+                const globalIdx = GALLERY_SECTIONS.flatMap(s=>s.imgs).indexOf(p.src)
+                return (
+                  <div key={i} style={{borderRadius:12,overflow:'hidden',aspectRatio:'4/3',cursor:'zoom-in',position:'relative'}}
+                    onClick={() => setGalleryLightbox({src:p.src,idx:globalIdx>=0?globalIdx:0,pool:'gallery'})}>
+                    <img src={p.src} alt={p.alt} className="safety-photo" style={{cursor:'zoom-in'}}/>
+                    <div style={{position:'absolute',inset:0,background:'rgba(0,0,0,0)',transition:'background 200ms',display:'flex',alignItems:'center',justifyContent:'center'}}
+                      onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background='rgba(0,0,0,.18)'}}
+                      onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background='rgba(0,0,0,0)'}}>
+                      <span style={{opacity:0,color:'white',fontSize:24,transition:'opacity 200ms'}}
+                        onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.opacity='1'}}
+                        onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.opacity='0'}}>⊕</span>
+                    </div>
+                  </div>
+                )
+              })}
             </div>
           </div>
         </div>
@@ -1291,9 +1310,9 @@ export default function Home() {
           </div>
           <div className="team-g sg">
             {[
-              {initials:'НК', name:'Наталья Карасёва', role:c('Ведущая - Серфинг + Кино','Cinema programme lead','Kino-programmi juht'), bio:c('Тележурналист с 20-летним стажем в двух странах, автор подкаста «Cozy with Tasha», создатель документальных проектов. Учит детей видеть историю в каждом кадре и не бояться камеры.','TV journalist with 20+ years in two countries, podcast "Cozy with Tasha". Teaches kids to see a story in every frame.','Teleajakirjanik 20+ aastat kahes riigis, taskuhäälingu «Cozy with Tasha» autor, dokumentaalfilmide looja. Õpetab lapsi nägema lugu igas kaadris ja mitte kartma kaamerat.')},
-              {initials:'ВХ', name:'Виталий Холстинин', role:c('Ведущий - Серфинг + Поход','Hiking programme lead','Matkaprogrammi juht'), bio:c('Предприниматель, хайкер, основатель Join The Hike. Прошёл Höga Kusten (140 км, UNESCO) и Land of Giants (120 км). Живёт тем, что преподаёт.','Entrepreneur, hiker, founder of Join The Hike. Completed Höga Kusten (140km, UNESCO) and Land of Giants (120km).','Ettevõtja, matkaja, Join The Hike asutaja. Läbinud Höga Kusten (140 km, UNESCO) ja Land of Giants (120 km). Elab seda, mida õpetab.')},
-              {initials:'НГ', name:'Надежда + Григорий', role:c('Инструктора по серфингу','Surf instructors','Surfiinstruktorid'), bio:c('Сертифицированные инструктора с многолетним опытом работы с детьми на Балтийском море. Умеют мотивировать и поддерживать - от первого шага на доске до уверенного катания.','Certified surf instructors with years of experience with children on the Baltic Sea. They know how to motivate and support at every stage.','Sertifitseeritud surfiinstruktorid, kes on aastaid töötanud lastega Läänemere ääres. Oskavad motiveerida ja toetada – esimesest sammust laual kuni enesekindla sõitmiseni.')},
+              {initials:'НК', name:c('Наталья Карасёва','Natalia Karaseva','Natalia Karaseva'), role:c('Ведущая - Серфинг + Кино','Cinema programme lead','Kino-programmi juht'), bio:c('Тележурналист с 20-летним стажем в двух странах, автор подкаста «Cozy with Tasha», создатель документальных проектов. Учит детей видеть историю в каждом кадре и не бояться камеры.','TV journalist with 20+ years in two countries, podcast "Cozy with Tasha". Teaches kids to see a story in every frame.','Teleajakirjanik 20+ aastat kahes riigis, taskuhäälingu «Cozy with Tasha» autor, dokumentaalfilmide looja. Õpetab lapsi nägema lugu igas kaadris ja mitte kartma kaamerat.')},
+              {initials:'ВХ', name:c('Виталий Холстинин','Vitaliy Kholstinin','Vitaliy Kholstinin'), role:c('Ведущий - Серфинг + Поход','Hiking programme lead','Matkaprogrammi juht'), bio:c('Предприниматель, хайкер, основатель Join The Hike. Прошёл Höga Kusten (140 км, UNESCO) и Land of Giants (120 км). Живёт тем, что преподаёт.','Entrepreneur, hiker, founder of Join The Hike. Completed Höga Kusten (140km, UNESCO) and Land of Giants (120km).','Ettevõtja, matkaja, Join The Hike asutaja. Läbinud Höga Kusten (140 km, UNESCO) ja Land of Giants (120 km). Elab seda, mida õpetab.')},
+              {initials:'НГ', name:c('Надежда + Григорий','Nadezhda + Grigory','Nadezhda + Grigory'), role:c('Инструктора по серфингу','Surf instructors','Surfiinstruktorid'), bio:c('Сертифицированные инструктора с многолетним опытом работы с детьми на Балтийском море. Умеют мотивировать и поддерживать - от первого шага на доске до уверенного катания.','Certified surf instructors with years of experience with children on the Baltic Sea. They know how to motivate and support at every stage.','Sertifitseeritud surfiinstruktorid, kes on aastaid töötanud lastega Läänemere ääres. Oskavad motiveerida ja toetada – esimesest sammust laual kuni enesekindla sõitmiseni.')},
             ].map((t,i) => (
               <div key={i} className="tc">
                 <div className="tc-av-p">{t.initials}</div>
@@ -1428,16 +1447,18 @@ export default function Home() {
             <h2 className="sec-h" style={{marginBottom:12}}>{c('Что говорят родители','What parents say','Mida vanemad ütlevad')}</h2>
             <p className="sec-sub" style={{margin:'0 auto'}}>{c('Настоящие отзывы родителей, чьи дети уже побывали в лагере.','Real reviews from parents whose children have attended camp.','Päris arvustused vanematelt, kelle lapsed on laagris käinud.')}</p>
           </div>
-          <div className="rev-g sg" style={{minHeight: reviews.length === 0 ? '0' : undefined}}>
-            {reviews.length === 0 ? null : reviews.map(r => (
-              <div key={r.id} className="rc">
-                <div className="rc-stars">{Array.from({length:r.rating}).map((_,i) => <span key={i} className="rc-star">★</span>)}</div>
-                <p className="rc-text">"{r.text}"</p>
-                <div className="rc-name">{r.name}</div>
-                {r.program && <div className="rc-prog">{r.program}</div>}
-              </div>
-            ))}
-          </div>
+          {reviews.length > 0 && (
+            <div className="rev-g sg">
+              {reviews.map(r => (
+                <div key={r.id} className="rc">
+                  <div className="rc-stars">{Array.from({length:r.rating}).map((_,i) => <span key={i} className="rc-star">★</span>)}</div>
+                  <p className="rc-text">"{r.text}"</p>
+                  <div className="rc-name">{r.name}</div>
+                  {r.program && <div className="rc-prog">{r.program}</div>}
+                </div>
+              ))}
+            </div>
+          )}
           <div style={{textAlign:'center'}}>
             {reviewSent ? (
               <div className="rev-form"><div className="rf-success">✓ {c('Спасибо! Отзыв отправлен на проверку.','Thank you! Your review is pending approval.','Aitäh! Arvustus ootab heakskiitu.')}</div></div>
