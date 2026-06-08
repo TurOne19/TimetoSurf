@@ -163,20 +163,16 @@ function ReviewsTab() {
       <div style={{display:'flex',flexDirection:'column',gap:10}}>
         {filtered.map(r=>(
           <div key={r.id} style={{...S.card,border:`2px solid ${r.approved?'#D4E6F1':'#F5A623'}`}}>
-            <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:12}}>
-              <div style={{flex:1}}>
-                <div style={{display:'flex',gap:8,alignItems:'center',marginBottom:6,flexWrap:'wrap'}}>
-                  <span style={{fontWeight:700,color:'#0B3D6B'}}>{r.name}</span>
-                  {r.program&&<span style={{fontSize:11,background:'#EEF6FF',color:'#0B3D6B',padding:'2px 8px',borderRadius:20,fontWeight:600}}>{r.program}</span>}
-                  <span style={{color:'#F5A623'}}>{'★'.repeat(r.rating)}</span>
-                  <span style={{fontSize:11,color:'#aaa'}}>{new Date(r.created_at).toLocaleDateString('ru-RU')}</span>
-                </div>
-                <p style={{fontSize:14,color:'#344E63',lineHeight:1.7,margin:0}}>"{r.text}"</p>
-              </div>
-              <div style={{display:'flex',gap:8,flexShrink:0}}>
-                {!r.approved&&<button onClick={()=>approve(r.id)} style={S.btn('#16A34A')}>✓ Опубликовать</button>}
-                <button onClick={()=>del(r.id)} style={S.btn('#fee2e2','#dc2626')}>✕ Удалить</button>
-              </div>
+            <div style={{display:'flex',gap:8,alignItems:'center',marginBottom:6,flexWrap:'wrap'}}>
+              <span style={{fontWeight:700,color:'#0B3D6B'}}>{r.name}</span>
+              {r.program&&<span style={{fontSize:11,background:'#EEF6FF',color:'#0B3D6B',padding:'2px 8px',borderRadius:20,fontWeight:600}}>{r.program}</span>}
+              <span style={{color:'#F5A623'}}>{'★'.repeat(r.rating)}</span>
+              <span style={{fontSize:11,color:'#aaa'}}>{new Date(r.created_at).toLocaleDateString('ru-RU')}</span>
+            </div>
+            <p style={{fontSize:14,color:'#344E63',lineHeight:1.7,margin:'0 0 12px'}}>"{r.text}"</p>
+            <div style={{display:'flex',gap:8,justifyContent:'flex-end'}}>
+              {!r.approved&&<button onClick={()=>approve(r.id)} style={S.btn('#16A34A')}>✓ Опубликовать</button>}
+              <button onClick={()=>del(r.id)} style={S.btn('#fee2e2','#dc2626')}>✕ Удалить</button>
             </div>
           </div>
         ))}
