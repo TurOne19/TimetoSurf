@@ -26,6 +26,7 @@ export default function Home() {
   const [reviewForm, setReviewForm] = useState({ name: '', text: '', program: '', rating: 5 })
   const [reviewSent, setReviewSent] = useState(false)
   const [reviewLoading, setReviewLoading] = useState(false)
+  const [showReviewForm, setShowReviewForm] = useState(false)
   const [galleryLightbox, setGalleryLightbox] = useState<string | null>(null)
   const [programModal, setProgramModal] = useState<string | null>(null)
 
@@ -73,12 +74,12 @@ export default function Home() {
   const DATES = [
     { dates: '15.06 – 19.06.2026', type: c('СЕРФИНГ + КИНО','SURF + CINEMA','SURF + KINO'), color: '#7C3AED', leaders: 'Наташа К. + Даша', hot: true, detail: 'kino' },
     { dates: '29.06 – 03.07.2026', type: c('СЕРФИНГ + КИНО','SURF + CINEMA','SURF + KINO'), color: '#7C3AED', leaders: 'Наташа К. + Даша', hot: false, detail: 'kino' },
-    { dates: '06.07 – 10.07.2026', type: c('СЕРФИНГ ЛАГЕРЬ','SURF CAMP','SURFI LAAGER'), color: '#1A6BAA', leaders: 'Надежда + Григорий', hot: false, detail: null },
+    { dates: '06.07 – 10.07.2026', type: c('СЕРФИНГ ЛАГЕРЬ','SURF CAMP','SURFI LAAGER'), color: '#1A6BAA', leaders: 'Надежда + Григорий', hot: false, detail: 'surf' },
     { dates: '13.07 – 17.07.2026', type: c('СЕРФИНГ + ПОХОД','SURF + HIKE','SURF + MATK'), color: '#16A34A', leaders: 'Виталий + Григорий', hot: false, detail: 'pohod' },
-    { dates: '20.07 – 24.07.2026', type: c('СЕРФИНГ ЛАГЕРЬ','SURF CAMP','SURFI LAAGER'), color: '#1A6BAA', leaders: 'Надежда + Ксения', hot: false, detail: null },
-    { dates: '27.07 – 30.07.2026', type: c('СЕРФИНГ (4 ДНЯ)','SURF (4 DAYS)','SURF (4 PÄEVA)'), color: '#1A6BAA', leaders: 'TBD', hot: false, detail: null },
-    { dates: '03.08 – 07.08.2026', type: c('СЕРФИНГ ЛАГЕРЬ','SURF CAMP','SURFI LAAGER'), color: '#1A6BAA', leaders: 'Даша + …', hot: false, detail: null },
-    { dates: '10.08 – 14.08.2026', type: c('СЕРФИНГ ЛАГЕРЬ','SURF CAMP','SURFI LAAGER'), color: '#1A6BAA', leaders: 'Надежда + …', hot: false, detail: null },
+    { dates: '20.07 – 24.07.2026', type: c('СЕРФИНГ ЛАГЕРЬ','SURF CAMP','SURFI LAAGER'), color: '#1A6BAA', leaders: 'Надежда + Ксения', hot: false, detail: 'surf' },
+    { dates: '27.07 – 30.07.2026', type: c('СЕРФИНГ (4 ДНЯ)','SURF (4 DAYS)','SURF (4 PÄEVA)'), color: '#1A6BAA', leaders: 'TBD', hot: false, detail: 'surf' },
+    { dates: '03.08 – 07.08.2026', type: c('СЕРФИНГ ЛАГЕРЬ','SURF CAMP','SURFI LAAGER'), color: '#1A6BAA', leaders: 'Даша + …', hot: false, detail: 'surf' },
+    { dates: '10.08 – 14.08.2026', type: c('СЕРФИНГ ЛАГЕРЬ','SURF CAMP','SURFI LAAGER'), color: '#1A6BAA', leaders: 'Надежда + …', hot: false, detail: 'surf' },
     { dates: '17.08 – 21.08.2026', type: c('СЕРФИНГ + ПОХОД','SURF + HIKE','SURF + MATK'), color: '#16A34A', leaders: 'Виталий + …', hot: false, detail: 'pohod' },
   ]
 
@@ -93,34 +94,48 @@ export default function Home() {
     { q: c('Как обеспечивается безопасность на воде?','How is water safety ensured?','Kuidas veeohutus tagatakse?'), a: c('Все дети в воде — только в жилете и гидрокостюме. Группы 12–16 человек, постоянный контроль, обязательная теория безопасности перед каждым заходом.','All children in the water only with life jacket and wetsuit. Groups 12–16, constant supervision, mandatory safety theory before every session.','Kõik lapsed vees ainult päästevesti ja märjaksüidiga. Grupid 12–16, pidev järelevalve.') },
   ]
 
-  const PROGRAM_KINO = {
-    title: 'Серфинг + Кино',
-    subtitle: 'Лагерь, где дети не просто отдыхают — а становятся героями своего фильма',
-    photo: '/IMG_7917-1024x768.jpeg',
-    leader: { name: 'Наталья Карасёва', initials: 'НК', role: 'Тележурналист, 20 лет на ТВ в двух странах, автор подкаста "Cozy with Tasha", создатель документальных проектов.' },
-    dates: ['15.06 – 19.06.2026', '29.06 – 03.07.2026'],
-    price: '265 евро',
-    age: '7–12 лет',
-    sections: [
-      { title: '🌊 Часть 1: Серфинг и активность', items: ['Сап-серфинг каждый день', 'Баланс, координация и ОФП', 'Игры на пляже', 'Безопасность на воде'] },
-      { title: '🎬 Часть 2: Создание фильма', items: ['🎤 Ведущие — снимают репортажи и берут интервью', '🎥 Операторы — учатся видеть детали и кадры', '💻 Монтажёры — собирают видео (простым и понятным способом)', '✨ Креативная команда — идеи, сцены, эмоции'] },
-      { title: '🎞 Результат', items: ['Короткий метр, который останется вам на память!', 'Опыт выступления перед камерой', 'Новые навыки и уверенность', 'Воспоминания, которые они реально проживут!'] },
-    ]
-  }
-
-  const PROGRAM_POHOD = {
-    title: 'Серфинг + Поход',
-    subtitle: 'Приключенческая программа, где ребёнок открывает мир серфинга и учится жить в природе',
-    photo: '/photo_2026-04-18-10_00_46-150x150.jpeg',
-    leader: { name: 'Виталий Холстинин', initials: 'ВХ', role: 'Предприниматель, хайкер, основатель Join The Hike. Höga Kusten 140 км (UNESCO), Land of Giants 120 км. Живёт тем, что преподаёт.' },
-    dates: ['13.07 – 17.07.2026', '17.08 – 21.08.2026'],
-    price: '265 евро',
-    age: '7–14 лет',
-    sections: [
-      { title: '🌊 Серфинг-часть', items: ['Виндсерфинг, SUP-серфинг, вингфоилинг', 'Бодиборд', 'Знакомство с гидрокостюмами', 'Безопасность и чтение ветра'] },
-      { title: '🏕 Походная часть', items: ['Ориентирование по карте и компасу', 'Навыки поведения в лесу', 'Сборка палатки и организация лагеря', 'Разведение костра и базовые навыки выживания', 'Финал — настоящий мини-поход с применением всех навыков'] },
-      { title: '🏆 Что получает ребёнок', items: ['Уверенность на воде и в природе', 'Умение ориентироваться и принимать решения', 'Самостоятельность и осознанность', 'Нашивку походника Time to Surf 🤙'] },
-    ]
+  const PROGRAM_DATA: Record<string, {title:string,sub:string,photo:string,price:string,age:string,dates:string[],sections:{title:string,items:string[]}[],leader:{initials:string,name:string,bio:string}}> = {
+    kino: {
+      title: 'Серфинг + Кино',
+      sub: 'Лагерь, где дети не просто отдыхают — а становятся героями своего фильма. 5 дней приключений.',
+      photo: '/IMG_7917-1024x768.jpeg',
+      price: '265€', age: '7–12 лет',
+      dates: ['15.06 – 19.06.2026', '29.06 – 03.07.2026'],
+      sections: [
+        { title: '🌊 Серфинг и активность', items: ['Сап-серфинг, баланс, координация и ОФП каждый день', 'Игры на пляже', 'Безопасность на воде — важный блок!', 'Учимся лучше чувствовать себя рядом со стихиями'] },
+        { title: '🎬 Создание фильма', items: ['🎤 Ведущие — снимают репортажи и берут интервью', '🎥 Операторы — учатся видеть детали и кадры', '💻 Монтажёры — собирают видео простым и понятным способом', '✨ Креативная команда — идеи, сцены, эмоции'] },
+        { title: '🎞 Что снимаем', items: ['"Новости лагеря" каждый день', 'Смешные и живые моменты', 'Сцены в воде — брызги, эмоции, движение', 'Дружба, команда, впечатления'] },
+        { title: '🏆 Результат', items: ['Короткий метр, который останется вам на память!', 'Опыт выступления перед камерой', 'Новые навыки и уверенность', '💛 Воспоминания, которые они реально проживут!'] },
+      ],
+      leader: { initials: 'НК', name: 'Наталья Карасёва', bio: 'Тележурналист, 20 лет на ТВ в двух странах, автор подкаста "Cozy with Tasha", создатель видеоконтента и документального короткого жанра.' }
+    },
+    pohod: {
+      title: 'Серфинг + Поход',
+      sub: 'Приключенческая программа, где ребёнок открывает мир серфинга и учится жить в природе.',
+      photo: '/photo_2026-04-18-10_00_46-150x150.jpeg',
+      price: '265€', age: '7–14 лет',
+      dates: ['13.07 – 17.07.2026', '17.08 – 21.08.2026'],
+      sections: [
+        { title: '🌊 Серфинг-часть', items: ['Виндсерфинг, SUP-серфинг, вингфоилинг', 'Бодиборд', 'Знакомство с гидрокостюмами и уход за ними', 'Безопасность, чтение ветра и природы'] },
+        { title: '🏕 Походная часть', items: ['Ориентирование по карте и компасу', 'Навыки поведения в лесу', 'Сборка палатки и организация лагеря', 'Разведение костра и базовые навыки выживания', '👉 Финал — настоящий мини-поход с применением всех навыков'] },
+        { title: '🏆 Что получает ребёнок', items: ['Уверенность на воде и в природе', 'Умение ориентироваться и принимать решения', 'Самостоятельность и осознанность', 'Нашивку походника Time to Surf 🤙'] },
+      ],
+      leader: { initials: 'ВХ', name: 'Виталий Холстинин', bio: 'Предприниматель, хайкер, основатель Join The Hike. Более 10 лет опыта. Höga Kusten 140 км (UNESCO), Land of Giants 120 км. Живёт тем, что преподаёт.' }
+    },
+    surf: {
+      title: 'Серфинг лагерь',
+      sub: 'Классическая программа для тех, кто впервые открывает мир серфинга. Разные виды водного спорта, безопасность и командные игры.',
+      photo: '/DSC02878-150x150.jpeg',
+      price: '265€', age: '7–12 лет',
+      dates: ['06.07', '20.07', '27.07', '03.08', '10.08'],
+      sections: [
+        { title: '🏄 Знакомство с миром серфинга', items: ['Кайтсерфинг', 'Виндсерфинг', 'САП-серфинг (SUP)', 'Вингфоилинг', 'Бодиборд'] },
+        { title: '🧥 Культура серфинга', items: ['Какие бывают гидрокостюмы', 'Как правильно их надевать', 'Как ухаживать, чтобы служили долго'] },
+        { title: '🤝 Командные игры и развитие', items: ['Работа в команде', 'Поддержка друг друга', 'Правила поведения и безопасности на воде', 'Понимание ветра, погоды и природы'] },
+        { title: '🏆 Результат', items: ['Реальный прогресс и уверенность на воде', 'Развитие командного мышления', 'Навыки безопасного поведения', 'Сертификат участника'] },
+      ],
+      leader: { initials: 'НГ', name: 'Надежда + Григорий', bio: 'Сертифицированные инструктора с многолетним опытом работы с детьми на Балтийском море. Умеют мотивировать и поддерживать на каждом этапе.' }
+    }
   }
 
   const CSS = `
@@ -174,40 +189,6 @@ export default function Home() {
     .btn-outline{background:transparent;color:var(--ocean);padding:11px 22px;border:1.5px solid var(--border)}
     .btn-outline:hover{background:var(--sand-lt);border-color:var(--teal)}
     .btn-sm{font-size:13px;padding:10px 22px}
-
-    /* LIGHTBOX */
-    .lightbox{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;cursor:zoom-out;animation:fadeIn 200ms ease}
-    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-    .lightbox img{max-width:90vw;max-height:90vh;object-fit:contain;border-radius:8px;box-shadow:0 40px 120px rgba(0,0,0,.6);cursor:default}
-    .lightbox-close{position:absolute;top:20px;right:24px;background:rgba(255,255,255,.1);border:none;color:white;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;transition:background 180ms}
-    .lightbox-close:hover{background:rgba(255,255,255,.22)}
-
-    /* PROGRAM MODAL */
-    .modal-overlay{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn 200ms ease;overflow-y:auto}
-    .modal{background:white;border-radius:20px;max-width:640px;width:100%;max-height:90vh;overflow-y:auto;position:relative}
-    .modal-hero{height:220px;position:relative;overflow:hidden;border-radius:20px 20px 0 0}
-    .modal-hero img{width:100%;height:100%;object-fit:cover}
-    .modal-hero::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.6) 0%,transparent 50%)}
-    .modal-hero-text{position:absolute;bottom:20px;left:24px;right:60px;z-index:1}
-    .modal-hero-label{font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:6px}
-    .modal-hero-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:28px;font-weight:800;color:white;line-height:1.1;letter-spacing:-.02em}
-    .modal-close{position:absolute;top:16px;right:16px;z-index:10;background:rgba(0,0,0,.4);border:none;color:white;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;transition:background 180ms}
-    .modal-close:hover{background:rgba(0,0,0,.7)}
-    .modal-body{padding:24px}
-    .modal-subtitle{font-size:15px;color:var(--mid);line-height:1.7;margin-bottom:20px;font-style:italic}
-    .modal-section{margin-bottom:20px}
-    .modal-section-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700;color:var(--ocean);margin-bottom:10px}
-    .modal-item{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--mid);line-height:1.6;margin-bottom:7px}
-    .modal-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);flex-shrink:0;margin-top:6px}
-    .modal-dates{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
-    .modal-date-chip{background:var(--sand-lt);border:1.5px solid var(--bwarm);border-radius:50px;padding:6px 16px;font-size:13px;font-weight:700;color:var(--ocean)}
-    .modal-leader{display:flex;align-items:center;gap:14px;background:var(--sand-lt);border-radius:14px;padding:16px;margin-top:16px;border:1.5px solid var(--bwarm)}
-    .modal-leader-av{width:52px;height:52px;border-radius:50%;background:var(--ocean);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:800;color:rgba(255,255,255,.8);letter-spacing:-.01em}
-    .modal-leader-name{font-size:15px;font-weight:700;color:var(--ocean);margin-bottom:3px}
-    .modal-leader-bio{font-size:12px;color:var(--mid);line-height:1.6}
-    .modal-footer{padding:0 24px 24px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-    .modal-price{font-family:'Plus Jakarta Sans',sans-serif;font-size:28px;font-weight:800;color:var(--ocean)}
-    .modal-price-note{font-size:11px;color:var(--muted);margin-top:2px}
 
     /* NAV */
     .nav{position:fixed;top:0;left:0;right:0;z-index:200;transition:background 280ms var(--ease),border-color 280ms}
@@ -285,10 +266,10 @@ export default function Home() {
     .fg{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
     .fcard{background:var(--white);border:2px solid var(--border);border-radius:16px;overflow:hidden;transition:transform 240ms var(--ease),box-shadow 240ms var(--ease),border-color 200ms}
     .fcard:hover{transform:translateY(-4px);box-shadow:0 20px 56px rgba(11,61,107,.1);border-color:var(--teal)}
-    .fcard-banner{height:180px;display:flex;flex-direction:column;justify-content:flex-end;padding:20px;position:relative;overflow:hidden}
-    .fcard-banner img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-    .fcard-banner::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.6) 0%,transparent 60%);pointer-events:none}
-    .fcard-blbl{font-size:9px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.7);margin-bottom:5px;position:relative;z-index:1}
+    .fcard-banner{height:180px;display:flex;flex-direction:column;justify-content:flex-end;padding:20px;position:relative;overflow:hidden;background:#0B3D6B}
+    .fcard-banner img.fb-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+    .fcard-banner::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.6) 0%,transparent 60%);pointer-events:none;z-index:1}
+    .fcard-blbl{font-size:9px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:5px;position:relative;z-index:1}
     .fcard-bt{font-family:'Plus Jakarta Sans',sans-serif;font-size:23px;font-weight:800;color:white;line-height:1.05;letter-spacing:-.015em;position:relative;z-index:1}
     .fcard-body{padding:20px 20px 14px}
     .fcard-desc{font-size:13px;color:var(--mid);line-height:1.75;margin-bottom:16px}
@@ -305,7 +286,7 @@ export default function Home() {
     .fcard-exp h4{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ocean);margin-bottom:8px;margin-top:14px}
     .fcard-exp h4:first-child{margin-top:0}
     .fcard-leader{display:flex;align-items:center;gap:12px;background:white;border-radius:10px;padding:12px;margin-top:10px;border:1px solid var(--border)}
-    .fcard-lav{width:44px;height:44px;border-radius:50%;background:var(--ocean);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:800;color:rgba(255,255,255,.8);letter-spacing:-.01em}
+    .fcard-lphoto{width:44px;height:44px;border-radius:50%;object-fit:cover;flex-shrink:0}
     .fcard-lname{font-size:13px;font-weight:700;color:var(--ocean)}
     .fcard-lrole{font-size:11px;color:var(--muted);line-height:1.5;margin-top:2px}
 
@@ -364,7 +345,8 @@ export default function Home() {
     .team-g{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
     .tc{background:var(--sand-lt);border:2px solid var(--bwarm);border-radius:16px;padding:24px;transition:transform 240ms var(--ease),box-shadow 240ms var(--ease)}
     .tc:hover{transform:translateY(-3px);box-shadow:0 16px 48px rgba(11,61,107,.1)}
-    .tc-av-p{width:54px;height:54px;border-radius:50%;background:var(--ocean);display:flex;align-items:center;justify-content:center;margin-bottom:14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:17px;font-weight:800;color:rgba(255,255,255,.8);letter-spacing:-.01em;flex-shrink:0}
+    .tc-av{width:54px;height:54px;border-radius:50%;object-fit:cover;margin-bottom:14px;border:3px solid white}
+    .tc-av-p{width:54px;height:54px;border-radius:50%;background:var(--ocean);display:flex;align-items:center;justify-content:center;margin-bottom:14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:20px;font-weight:800;color:rgba(255,255,255,.7)}
     .tc-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;font-weight:800;color:var(--ocean);margin-bottom:2px}
     .tc-role{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);margin-bottom:10px}
     .tc-bio{font-size:13px;color:var(--mid);line-height:1.75}
@@ -402,12 +384,49 @@ export default function Home() {
     .gallery{background:var(--ocean);padding:96px 0}
     .ghead{text-align:center;margin-bottom:48px}
     .gg{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-    .gi{aspect-ratio:4/3;border-radius:10px;overflow:hidden;transition:transform 240ms var(--ease);cursor:zoom-in;position:relative}
+    .gi{aspect-ratio:4/3;border-radius:10px;overflow:hidden;transition:transform 240ms var(--ease);cursor:zoom-in}
     .gi:hover{transform:scale(1.03)}
     .gi img{width:100%;height:100%;object-fit:cover;transition:filter 200ms}
     .gi:hover img{filter:brightness(1.08)}
     .gi-wide{grid-column:span 2}
     .gi-tall{grid-row:span 2}
+
+    /* LIGHTBOX */
+    .lb-overlay{position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.93);display:flex;align-items:center;justify-content:center;cursor:zoom-out;animation:lbIn 220ms ease}
+    @keyframes lbIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+    .lb-overlay img{max-width:92vw;max-height:88vh;object-fit:contain;border-radius:8px;cursor:default}
+    .lb-close{position:absolute;top:18px;right:22px;background:rgba(255,255,255,.12);border:none;color:white;width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;transition:background 160ms;z-index:1}
+    .lb-close:hover{background:rgba(255,255,255,.25)}
+
+    /* PROGRAM MODAL */
+    .pm-overlay{position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.72);display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;animation:lbIn 220ms ease}
+    .pm-box{background:white;border-radius:20px;max-width:620px;width:100%;position:relative;margin:auto}
+    .pm-hero{height:200px;position:relative;overflow:hidden;border-radius:20px 20px 0 0;flex-shrink:0}
+    .pm-hero img{width:100%;height:100%;object-fit:cover}
+    .pm-hero::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.65) 0%,transparent 55%)}
+    .pm-hero-txt{position:absolute;bottom:18px;left:22px;right:52px;z-index:1}
+    .pm-hero-lbl{font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:5px}
+    .pm-hero-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:26px;font-weight:800;color:white;line-height:1.1;letter-spacing:-.02em}
+    .pm-close{position:absolute;top:14px;right:14px;z-index:10;background:rgba(0,0,0,.45);border:none;color:white;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:17px;transition:background 160ms}
+    .pm-close:hover{background:rgba(0,0,0,.75)}
+    .pm-body{padding:22px 24px}
+    .pm-sub{font-size:14px;color:var(--mid);line-height:1.7;margin-bottom:18px;font-style:italic}
+    .pm-meta{display:flex;gap:20px;flex-wrap:wrap;margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+    .pm-meta-item span{font-size:11px;color:var(--muted);display:block;margin-bottom:2px}
+    .pm-meta-item strong{font-size:13px;color:var(--ocean)}
+    .pm-dates{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:18px}
+    .pm-date-chip{background:var(--sand-lt);border:1.5px solid var(--bwarm);border-radius:50px;padding:5px 14px;font-size:12px;font-weight:700;color:var(--ocean)}
+    .pm-sec-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;color:var(--ocean);margin-bottom:9px;margin-top:16px}
+    .pm-sec-title:first-of-type{margin-top:0}
+    .pm-item{display:flex;gap:9px;align-items:flex-start;font-size:13px;color:var(--mid);line-height:1.6;margin-bottom:6px}
+    .pm-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);flex-shrink:0;margin-top:6px}
+    .pm-leader{display:flex;align-items:center;gap:12px;background:var(--sand-lt);border-radius:12px;padding:14px;margin-top:18px;border:1.5px solid var(--bwarm)}
+    .pm-leader-av{width:48px;height:48px;border-radius:50%;background:var(--ocean);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:800;color:rgba(255,255,255,.8)}
+    .pm-leader-name{font-size:14px;font-weight:700;color:var(--ocean);margin-bottom:3px}
+    .pm-leader-bio{font-size:12px;color:var(--mid);line-height:1.55}
+    .pm-footer{padding:16px 24px 22px;display:flex;align-items:center;gap:12px;border-top:1px solid var(--border);flex-wrap:wrap}
+    .pm-price{font-family:'Plus Jakarta Sans',sans-serif;font-size:26px;font-weight:800;color:var(--ocean)}
+    .pm-price-note{font-size:11px;color:var(--muted)}
 
     /* REVIEWS */
     .reviews{background:var(--sand-lt);padding:96px 0}
@@ -527,63 +546,8 @@ export default function Home() {
       .rev-empty{grid-column:span 1}
       .cta-btns,.hero-acts{flex-direction:column;align-items:center}
       .hero-acts .btn{width:100%;justify-content:center}
-      .modal{max-height:100vh;border-radius:16px}
     }
   `
-
-  const renderProgramModal = (type: string) => {
-    const data = type === 'kino' ? PROGRAM_KINO : PROGRAM_POHOD
-    return (
-      <div className="modal-overlay" onClick={() => setProgramModal(null)}>
-        <div className="modal" onClick={e => e.stopPropagation()}>
-          <button className="modal-close" onClick={() => setProgramModal(null)}>✕</button>
-          <div className="modal-hero">
-            <img src={data.photo} alt={data.title} />
-            <div className="modal-hero-text">
-              <div className="modal-hero-label">{type === 'kino' ? 'Серфинг + Творчество' : 'Серфинг + Приключение'}</div>
-              <div className="modal-hero-title">{data.title}</div>
-            </div>
-          </div>
-          <div className="modal-body">
-            <p className="modal-subtitle">{data.subtitle}</p>
-            <div style={{fontSize:12,fontWeight:700,letterSpacing:'.12em',textTransform:'uppercase',color:'var(--muted)',marginBottom:8}}>Даты проведения</div>
-            <div className="modal-dates">
-              {data.dates.map(d => <div key={d} className="modal-date-chip">{d}</div>)}
-            </div>
-            <div style={{display:'flex',gap:16,marginBottom:20,flexWrap:'wrap'}}>
-              <div><span style={{fontSize:11,color:'var(--muted)'}}>Возраст </span><strong style={{color:'var(--ocean)'}}>{data.age}</strong></div>
-              <div><span style={{fontSize:11,color:'var(--muted)'}}>Стоимость </span><strong style={{color:'var(--ocean)'}}>{data.price} · всё включено</strong></div>
-            </div>
-            {data.sections.map((sec, i) => (
-              <div key={i} className="modal-section">
-                <div className="modal-section-title">{sec.title}</div>
-                {sec.items.map((item, j) => (
-                  <div key={j} className="modal-item">
-                    <div className="modal-dot"/>
-                    <span>{item}</span>
-                  </div>
-                ))}
-              </div>
-            ))}
-            <div className="modal-leader">
-              <div className="modal-leader-av">{data.leader.initials}</div>
-              <div>
-                <div className="modal-leader-name">{data.leader.name}</div>
-                <div className="modal-leader-bio">{data.leader.role}</div>
-              </div>
-            </div>
-          </div>
-          <div className="modal-footer">
-            <div>
-              <div className="modal-price">{data.price}</div>
-              <div className="modal-price-note">5 дней · всё включено</div>
-            </div>
-            <a href={REG} target="_blank" className="btn btn-teal" style={{marginLeft:'auto'}} onClick={() => setProgramModal(null)}>Записаться →</a>
-          </div>
-        </div>
-      </div>
-    )
-  }
 
   return (
     <>
@@ -591,14 +555,62 @@ export default function Home() {
 
       {/* GALLERY LIGHTBOX */}
       {galleryLightbox && (
-        <div className="lightbox" onClick={() => setGalleryLightbox(null)}>
-          <button className="lightbox-close" onClick={() => setGalleryLightbox(null)}>✕</button>
+        <div className="lb-overlay" onClick={() => setGalleryLightbox(null)}>
+          <button className="lb-close" onClick={() => setGalleryLightbox(null)}>✕</button>
           <img src={galleryLightbox} alt="" onClick={e => e.stopPropagation()} />
         </div>
       )}
 
       {/* PROGRAM MODAL */}
-      {programModal && renderProgramModal(programModal)}
+      {programModal && PROGRAM_DATA[programModal] && (() => {
+        const d = PROGRAM_DATA[programModal]
+        return (
+          <div className="pm-overlay" onClick={() => setProgramModal(null)}>
+            <div className="pm-box" onClick={e => e.stopPropagation()}>
+              <div className="pm-hero">
+                <img src={d.photo} alt={d.title} />
+                <div className="pm-hero-txt">
+                  <div className="pm-hero-lbl">Time to Surf · Программа</div>
+                  <div className="pm-hero-title">{d.title}</div>
+                </div>
+              </div>
+              <button className="pm-close" onClick={() => setProgramModal(null)}>✕</button>
+              <div className="pm-body">
+                <p className="pm-sub">{d.sub}</p>
+                <div className="pm-meta">
+                  <div className="pm-meta-item"><span>Возраст</span><strong>{d.age}</strong></div>
+                  <div className="pm-meta-item"><span>Стоимость</span><strong>{d.price} · всё включено</strong></div>
+                </div>
+                <div className="pm-dates">
+                  {d.dates.map((dt: string) => <div key={dt} className="pm-date-chip">{dt}</div>)}
+                </div>
+                {d.sections.map((sec: {title:string,items:string[]}, i: number) => (
+                  <div key={i}>
+                    <div className="pm-sec-title">{sec.title}</div>
+                    {sec.items.map((item: string, j: number) => (
+                      <div key={j} className="pm-item"><div className="pm-dot"/><span>{item}</span></div>
+                    ))}
+                  </div>
+                ))}
+                <div className="pm-leader">
+                  <div className="pm-leader-av">{d.leader.initials}</div>
+                  <div>
+                    <div className="pm-leader-name">{d.leader.name}</div>
+                    <div className="pm-leader-bio">{d.leader.bio}</div>
+                  </div>
+                </div>
+              </div>
+              <div className="pm-footer">
+                <div>
+                  <div className="pm-price">{d.price}</div>
+                  <div className="pm-price-note">5 дней · всё включено</div>
+                </div>
+                <a href={REG} target="_blank" className="btn btn-teal" style={{marginLeft:'auto'}} onClick={() => setProgramModal(null)}>Записаться →</a>
+              </div>
+            </div>
+          </div>
+        )
+      })()}
 
       {/* NAV */}
       <header className={`nav${scrolled ? ' on' : ''}`}>
@@ -768,7 +780,7 @@ export default function Home() {
           <div className="fg sg">
             {[
               {
-                photo:'/IMG_7917-1024x768.jpeg',
+                bg:null, photo:'/IMG_7917-1024x768.jpeg',
                 lbl:c('Серфинг + Творчество','Surfing + Creativity','Surfamine + Loovus'),
                 title:c('Серфинг + Кино','Surf + Cinema','Surf + Kino'),
                 desc:c('Утром — серфинг и вода. После обеда — настоящая киностудия. Дети берут интервью, снимают репортажи и монтируют короткий фильм, который останется на память.','Morning: surfing and water. Afternoon: a real film studio. Kids interview, shoot reports and edit a short film.','Hommikul surfamine. Pärastlõunal päris filmistuudio. Lapsed monteerivad lühifilmi.'),
@@ -780,12 +792,11 @@ export default function Home() {
                 ],
                 leaderInitials:'НК',
                 leaderName:'Наталья Карасёва',
-                leaderRole:c('Тележурналист с 20-летним стажем в двух странах, автор подкаста «Cozy with Tasha», создатель документальных проектов. Учит детей видеть историю и не бояться камеры.','TV journalist 20+ years in two countries, podcast host "Cozy with Tasha". Teaches kids to see a story in every frame.','Teleajakirjanik 20+ aastat, taskuhäälingu autor, dokumentaalfilmide looja.'),
+                leaderRole:c('Тележурналист с 20-летним стажем в двух странах, автор подкаста «Cozy with Tasha», создатель документальных проектов. Учит детей видеть историю и не бояться камеры.','TV journalist 20+ years in two countries, podcast host "Cozy with Tasha". Teaches kids to see a story and not fear the camera.','Teleajakirjanik 20+ aastat, taskuhäälingu autor.'),
                 dates:c('15.06 и 29.06.2026','June 15 and June 29, 2026','15.06 ja 29.06.2026'),
-                detail:'kino',
               },
               {
-                photo:'/photo_2026-04-18-10_00_46-150x150.jpeg',
+                bg:null, photo:'/photo_2026-04-18-10_00_46-150x150.jpeg',
                 lbl:c('Серфинг + Приключение','Surfing + Adventure','Surfamine + Seiklus'),
                 title:c('Серфинг + Поход','Surf + Hike','Surf + Matk'),
                 desc:c('Серфинг на воде и настоящие приключения в природе: ориентирование, разведение костра, палатка. Финал — мини-поход с применением всех навыков.','Surfing on water and real nature adventures: navigation, fire, tent. The finale is a mini-hike using all skills.','Surfamine vees ja päris loodusseiklused. Finaal — minimatk kõigi oskustega.'),
@@ -799,10 +810,9 @@ export default function Home() {
                 leaderName:'Виталий Холстинин',
                 leaderRole:c('Предприниматель, хайкер, основатель Join The Hike. Höga Kusten 140 км (UNESCO) и Land of Giants 120 км. Живёт тем, что преподаёт.','Entrepreneur, hiker, founder of Join The Hike. Höga Kusten 140km (UNESCO) and Land of Giants 120km.','Ettevõtja, matkaja, Join The Hike asutaja.'),
                 dates:c('13.07 и 17.08.2026','July 13 and Aug 17, 2026','13.07 ja 17.08.2026'),
-                detail:'pohod',
               },
               {
-                photo:'/IMG_8779-1-768x1024.jpeg',
+                bg:null, photo:'/DSC02878-150x150.jpeg',
                 lbl:c('Классика · Лучший старт','Classic · Best start','Klassika · Parim algus'),
                 title:c('Серфинг лагерь','Surf Camp','Surfilaager'),
                 desc:c('Классическая программа для тех, кто впервые открывает мир серфинга. Разные виды водного спорта, безопасность и командные игры — идеально для старта.','Classic programme for first-timers. Different water sports, safety training and team games — perfect for a first experience.','Klassikaline programm esmakordseks tutvumiseks surfimaailmaga.'),
@@ -816,12 +826,11 @@ export default function Home() {
                 leaderName:'Надежда + Григорий',
                 leaderRole:c('Сертифицированные инструктора с многолетним опытом работы с детьми на Балтийском море. Умеют мотивировать и поддерживать на каждом этапе.','Certified surf instructors with years of experience working with children on the Baltic Sea.','Sertifitseeritud instruktorid Läänemere lastega töötamisel.'),
                 dates:c('6 смен: июнь – август 2026','6 sessions: June – August 2026','6 vahetust: juuni – august 2026'),
-                detail:null,
               },
             ].map((f, i) => (
               <div key={i} className="fcard">
                 <div className="fcard-banner">
-                  <img src={f.photo} alt={f.title} />
+                  {f.photo && <img src={f.photo} alt={f.title as string} className="fb-img" />}
                   <div className="fcard-blbl">{f.lbl}</div>
                   <div className="fcard-bt">{f.title}</div>
                 </div>
@@ -842,7 +851,7 @@ export default function Home() {
                   <div className="fcard-exp">
                     <h4>{c('Ведущий программы','Programme lead','Programmi juht')}</h4>
                     <div className="fcard-leader">
-                      <div className="fcard-lav">{f.leaderInitials}</div>
+                      <div style={{width:44,height:44,borderRadius:'50%',background:'var(--ocean)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,color:'rgba(255,255,255,.8)',fontWeight:800,fontSize:14,fontFamily:"'Plus Jakarta Sans',sans-serif",letterSpacing:'-.01em'}}>{f.leaderInitials}</div>
                       <div>
                         <div className="fcard-lname">{f.leaderName}</div>
                         <div className="fcard-lrole">{f.leaderRole}</div>
@@ -962,18 +971,18 @@ export default function Home() {
             </div>
             <div className="rv" style={{transitionDelay:'80ms'}}>
               <p className="sec-sub" style={{color:'rgba(255,255,255,.42)'}}>
-                {c('Потому что это намного больше, чем просто спорт. Это здоровье, умение быть в моменте, чувство потока, внутренняя уравновешенность. Серфинг — это стиль мышления, который остаётся с ребёнком на всю жизнь.','Because it\'s so much more than sport. Health, being in the moment, flow state, inner balance. Surfing is a mindset that stays with the child forever.','Sest see on palju rohkem kui sport. Tervis, kohalolu, vooluseisund, sisemine tasakaal. Surfamine on mõtteviis, mis jääb kogu eluks.')}
+                {c('На волне невозможно думать о лишнем — только здесь и сейчас. Серфинг — это стиль мышления, который остаётся с ребёнком навсегда.','On a wave, your mind can only be here and now. Surfing is a mindset that stays with the child forever.','Lainel saab mõelda ainult praegusele hetkele. Surfamine on mõtteviis, mis jääb kogu eluks.')}
               </p>
             </div>
           </div>
           <div className="why-g sg">
             {[
-              {n:'01', t:c('Здоровье и сильный дух','Health & Strength','Tervis ja tugevus'), d:c('Активность, свежий воздух и энергия природы укрепляют тело и формируют выносливость.','Sea air, movement, sun — a complete reset of body and mind without screens.','Mereõhk, liikumine, päike — keha ja pea täielik taastumine ekraanideta.')},
-              {n:'02', t:c('Умение быть в моменте','Present moment','Praegune hetk'), d:c('На волне невозможно думать о лишнем — только здесь и сейчас. Вода учит концентрации лучше любого тренинга.','Water teaches focus and mindfulness better than any training. Distracting thoughts just don\'t fit.','Vesi õpetab keskendumisvõimet paremini kui ükski treening.')},
-              {n:'03', t:c('Чувство потока и понимание','Flow & awareness','Vooluseisund'), d:c('Ребёнок учится чувствовать среду, анализировать ситуацию и действовать осознанно.','Children learn to read wind, water and weather — a lifelong skill.','Lapsed õpivad lugema tuult, vett ja ilma — eluaegne oskus.')},
-              {n:'04', t:c('Внутренняя уравновешенность','Inner balance','Sisemine tasakaal'), d:c('Вода учит спокойствию, концентрации и контролю эмоций. Ребёнок возвращается домой спокойнее и увереннее.','Water teaches calm and emotional control. The child comes home calmer and more confident.','Vesi õpetab rahulikkust. Laps tuleb koju rahulikuma ja enesekindlamana.')},
-              {n:'05', t:c('Командный дух','Team spirit','Meeskonnavaim'), d:c('Навык "быть на волне" в жизни — гибкость, адаптация и уверенность не только в спорте, но и в любых ситуациях.','Kids support each other in the water and on shore. Real friendship is one of the main outcomes.','Lapsed toetavad üksteist. Päris sõprus on üks peamisi tulemusi.')},
-              {n:'06', t:c('Стиль мышления','Mindset','Mõtteviis'), d:c('Серфинг — это стиль мышления, который остаётся с ребёнком на всю жизнь. 💙','Surfing is a mindset that stays with the child for life. 💙','Surfamine on mõtteviis, mis jääb kogu eluks. 💙')},
+              {n:'01', t:c('Здоровье и сила','Health & Strength','Tervis ja tugevus'), d:c('Морской воздух, движение, солнце — полная перезагрузка тела и головы без гаджетов.','Sea air, movement, sun — a complete reset of body and mind without screens.','Mereõhk, liikumine, päike — keha ja pea täielik taastumine ekraanideta.')},
+              {n:'02', t:c('Здесь и сейчас','Present moment','Praegune hetk'), d:c('Вода учит концентрации и осознанности лучше любого тренинга. Лишние мысли просто не помещаются.','Water teaches focus and mindfulness better than any training. Distracting thoughts just don\'t fit.','Vesi õpetab keskendumisvõimet paremini kui ükski treening.')},
+              {n:'03', t:c('Чтение природы','Reading nature','Looduse lugemine'), d:c('Дети учатся читать ветер, воду и погоду — навык, который остаётся с ними на всю жизнь.','Children learn to read wind, water and weather — a lifelong skill.','Lapsed õpivad lugema tuult, vett ja ilma — eluaegne oskus.')},
+              {n:'04', t:c('Уверенность в себе','Self-confidence','Enesekindlus'), d:c('Встать на доску и поймать волну — маленькая, но настоящая победа. Ребёнок видит свой прогресс каждый день.','Standing on a board and catching a wave is a small but real victory. The child sees their progress every day.','Lapse iga päev nähtav areng annab tõelise enesekindluse.')},
+              {n:'05', t:c('Командный дух','Team spirit','Meeskonnavaim'), d:c('Дети поддерживают друг друга в воде и на берегу. Настоящая дружба — один из главных результатов лагеря.','Kids support each other in the water and on shore. Real friendship is one of the main outcomes.','Lapsed toetavad üksteist. Päris sõprus on üks peamisi tulemusi.')},
+              {n:'06', t:c('Внутренний баланс','Inner balance','Sisemine tasakaal'), d:c('Вода учит спокойствию и контролю эмоций. Ребёнок возвращается домой спокойнее и увереннее.','Water teaches calm and emotional control. The child comes home calmer and more confident.','Vesi õpetab rahulikkust. Laps tuleb koju rahulikuma ja enesekindlamana.')},
             ].map(w => (
               <div key={w.n} className="why-it">
                 <div className="why-n">{w.n}</div>
@@ -1031,11 +1040,7 @@ export default function Home() {
                 <div className="dc-leaders">{d.leaders}</div>
                 <div className="dc-acts">
                   <a href={REG} target="_blank" className="dc-cta">{c('Записаться →','Register →','Registreeru →')}</a>
-                  {d.detail && (
-                    <button className="dc-more" onClick={() => setProgramModal(d.detail!)}>
-                      {c('Подробнее','Details','Loe lähemalt')}
-                    </button>
-                  )}
+                  <button className="dc-more" onClick={() => setProgramModal(d.detail)}>{c('Подробнее','Details','Loe lähemalt')}</button>
                 </div>
               </div>
             ))}
@@ -1052,14 +1057,15 @@ export default function Home() {
           </div>
           <div className="sched-g sg">
             {[
-              {time:'09:00 – 09:30', name:c('Сбор детей','Arrival','Kogunemine'), desc:c('Встреча, знакомство, лёгкое общение и настрой на день','Meeting, introductions, setting the mood','Vastuvõtt, tutvumine, päevale häälestamine')},
-              {time:'09:30 – 10:00', name:c('Утренняя разминка','Warm-up','Soojendus'), desc:c('Активные тренировки и командные игры для бодрого старта дня 💪','Active training and team games on shore','Aktiivsed treeningud ja meeskonnmängud')},
-              {time:'10:00 – 12:00', name:c('Водный блок','Water block','Vesiplokk'), desc:c('Основы безопасности, гидрокостюмы, SUP-серфинг, виндсерфинг, прогулка на досках','Safety theory, wetsuits, SUP and windsurfing','Ohutusteooroia, märjaksüidid, SUP, purjelaud')},
-              {time:'12:00 – 13:00', name:c('Обед','Lunch','Lõuna'), desc:c('Индивидуальные порции с учётом аллергий от Tark Catering 🍽','Individual portions, allergies noted — Tark Catering','Individuaalsed portsjonid — Tark Catering')},
-              {time:'13:00 – 13:30', name:c('Отдых','Rest','Puhkus'), desc:c('Спокойные и настольные игры, свободное общение после обеда','Quiet games, free conversation after lunch','Vaiksed mängud, vaba suhtlemine pärast lõunat')},
-              {time:'13:30 – 15:30', name:c('Активная программа','Active programme','Aktiivne programm'), desc:c('Виндсёрфинг, кайт, SUP, поход, хайкинг, наблюдение за птицами или пляжные игры — по погоде','Windsurfing, kite, SUP, hiking or beach games — depends on weather','Purjelaud, kait, SUP, matk või rannamängud')},
+              {time:'09:00 – 09:30', name:c('Сбор детей','Arrival','Kogunemine'), desc:c('Встреча детей, знакомство, настрой на день','Meeting kids, introductions, setting the mood','Laste vastuvõtt, tutvumine')},
+              {time:'09:30 – 10:00', name:c('Разминка','Warm-up','Soojendus'), desc:c('Активные тренировки и командные игры на берегу','Active training and team games on shore','Aktiivsed treeningud ja meeskonnmängud')},
+              {time:'10:00 – 12:00', name:c('Водный блок','Water block','Vesiplokk'), desc:c('Теория безопасности, гидрокостюмы, SUP и виндсерфинг','Safety theory, wetsuits, SUP and windsurfing','Ohutusteooroia, märjaksüidid, SUP')},
+              {time:'12:00 – 13:00', name:c('Обед','Lunch','Lõuna'), desc:c('Индивидуальные порции с учётом аллергий. Питание от Tark Catering 🍽','Individual portions, allergies noted — Tark Catering','Individuaalsed portsjonid — Tark Catering')},
+              {time:'13:00 – 13:30', name:c('Отдых после обеда','After-lunch rest','Puhkus pärast lõunat'), desc:c('Спокойные и настольные игры, свободное общение','Quiet games, free time, conversations','Vaiksed mängud, vaba suhtlemine')},
+              {time:'13:30 – 15:30', name:c('Активная программа','Active programme','Aktiivne programm'), desc:c('Виндсёрфинг, кайт, SUP, поход, хайкинг или пляжные игры — зависит от погоды','Windsurfing, kite, SUP, hiking or beach games — depends on weather','Purjelaud, kait, SUP, matk või rannamängud')},
               {time:'15:30 – 15:45', name:c('Чаепитие ☕','Tea time ☕','Tee aeg ☕'), desc:c('Перерыв, отдых, свободное общение','Break, rest, free conversation','Paus, puhkus, vaba suhtlemine')},
-              {time:'15:45 – 16:30', name:c('Спокойный блок','Calm block','Rahulik plokk'), desc:c('Интеллектуальные игры, развивающие мастер-классы, творчество и мышление','Games, creativity, intellectual tasks','Mängud, loovus, intellektuaalsed ülesanded')},
+              {time:'15:45 – 16:30', name:c('Спокойный блок','Calm block','Rahulik plokk'), desc:c('Игры, творчество, интеллектуальные задания','Games, creativity, intellectual tasks','Mängud, loovus, intellektuaalsed ülesanded')},
+              {time:'16:30', name:c('До завтра! 👋','See you tomorrow! 👋','Homseni! 👋'), desc:c('Конец программы, ожидание родителей','Programme ends, parents pick up','Programm lõpeb, vanemad tulevad järele')},
             ].map(s => (
               <div key={s.time} className="sched-it">
                 <div className="sched-time">{s.time}</div>
@@ -1115,7 +1121,7 @@ export default function Home() {
           </div>
           <div className="rev-g sg">
             {reviews.length === 0 ? (
-              <div className="rev-empty">{c('Отзывы появятся здесь совсем скоро!','Reviews will appear here soon!','Arvustused ilmuvad siia peagi!')}</div>
+              <div className="rev-empty">{c('Отзывы появятся здесь. Будьте первым!','Reviews will appear here. Be the first!','Arvustused ilmuvad siia. Olge esimene!')}</div>
             ) : reviews.map(r => (
               <div key={r.id} className="rc">
                 <div className="rc-stars">{Array.from({length:r.rating}).map((_,i) => <span key={i} className="rc-star">★</span>)}</div>
@@ -1125,40 +1131,40 @@ export default function Home() {
               </div>
             ))}
           </div>
-          {reviewSent ? (
-            <div className="rev-form" style={{maxWidth:580,margin:'0 auto'}}>
-              <div className="rf-success">✓ {c('Спасибо! Отзыв отправлен на проверку.','Thank you! Your review is pending approval.','Aitäh! Arvustus ootab heakskiitu.')}</div>
-            </div>
-          ) : (
-            <div className="rev-form">
-              <div className="rf-title">{c('Оставить отзыв','Leave a review','Jäta arvustus')}</div>
-              <div className="rf-field">
-                <label className="rf-label">{c('Ваше имя','Your name','Teie nimi')} *</label>
-                <input className="rf-input" value={reviewForm.name} onChange={e => setReviewForm(f => ({...f,name:e.target.value}))} placeholder={c('Мария К.','Maria K.','Maria K.')}/>
-              </div>
-              <div className="rf-field">
-                <label className="rf-label">{c('Программа','Programme','Programm')}</label>
-                <input className="rf-input" value={reviewForm.program} onChange={e => setReviewForm(f => ({...f,program:e.target.value}))} placeholder={c('Серфинг + Кино','Surf + Cinema','Surf + Kino')}/>
-              </div>
-              <div className="rf-field">
-                <label className="rf-label">{c('Оценка','Rating','Hinnang')}</label>
-                <div className="rf-stars">
-                  {[1,2,3,4,5].map(n => (
-                    <span key={n} className="rf-star" onClick={() => setReviewForm(f => ({...f,rating:n}))} style={{cursor:'pointer',opacity:n<=reviewForm.rating?1:0.3}}>★</span>
-                  ))}
+          <div style={{textAlign:'center'}}>
+            {reviewSent ? (
+              <div className="rev-form"><div className="rf-success">✓ {c('Спасибо! Отзыв отправлен на проверку.','Thank you! Your review is pending approval.','Aitäh! Arvustus ootab heakskiitu.')}</div></div>
+            ) : (
+              <div className="rev-form">
+                <div className="rf-title">{c('Оставить отзыв','Leave a review','Jäta arvustus')}</div>
+                <div className="rf-field">
+                  <label className="rf-label">{c('Ваше имя','Your name','Teie nimi')} *</label>
+                  <input className="rf-input" value={reviewForm.name} onChange={e => setReviewForm(f => ({...f,name:e.target.value}))} placeholder={c('Мария К.','Maria K.','Maria K.')}/>
+                </div>
+                <div className="rf-field">
+                  <label className="rf-label">{c('Программа','Programme','Programm')}</label>
+                  <input className="rf-input" value={reviewForm.program} onChange={e => setReviewForm(f => ({...f,program:e.target.value}))} placeholder={c('Серфинг + Кино','Surf + Cinema','Surf + Kino')}/>
+                </div>
+                <div className="rf-field">
+                  <label className="rf-label">{c('Оценка','Rating','Hinnang')}</label>
+                  <div className="rf-stars">
+                    {[1,2,3,4,5].map(n => (
+                      <span key={n} className="rf-star" onClick={() => setReviewForm(f => ({...f,rating:n}))} style={{cursor:'pointer',opacity:n<=reviewForm.rating?1:0.3}}>★</span>
+                    ))}
+                  </div>
+                </div>
+                <div className="rf-field">
+                  <label className="rf-label">{c('Ваш отзыв','Your review','Teie arvustus')} *</label>
+                  <textarea className="rf-input" rows={4} value={reviewForm.text} onChange={e => setReviewForm(f => ({...f,text:e.target.value}))} placeholder={c('Расскажите о вашем опыте...','Tell us about your experience...','Rääkige oma kogemusest...')} style={{resize:'vertical'}}/>
+                </div>
+                <div style={{display:'flex',gap:10,justifyContent:'flex-end'}}>
+                  <button className="btn btn-teal btn-sm" onClick={submitReview} disabled={reviewLoading}>
+                    {reviewLoading ? c('Отправка...','Sending...','Saadan...') : c('Отправить отзыв','Submit review','Saada arvustus')}
+                  </button>
                 </div>
               </div>
-              <div className="rf-field">
-                <label className="rf-label">{c('Ваш отзыв','Your review','Teie arvustus')} *</label>
-                <textarea className="rf-input" rows={4} value={reviewForm.text} onChange={e => setReviewForm(f => ({...f,text:e.target.value}))} placeholder={c('Расскажите о вашем опыте...','Tell us about your experience...','Rääkige oma kogemusest...')} style={{resize:'vertical'}}/>
-              </div>
-              <div style={{display:'flex',gap:10,justifyContent:'flex-end'}}>
-                <button className="btn btn-teal btn-sm" onClick={submitReview} disabled={reviewLoading}>
-                  {reviewLoading ? c('Отправка...','Sending...','Saadan...') : c('Отправить отзыв','Submit review','Saada arvustus')}
-                </button>
-              </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </section>
 
