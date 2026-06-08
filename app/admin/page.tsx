@@ -14,7 +14,7 @@ interface GalleryPhoto {
 }
 interface Settings {
   spots_taken?: string; spots_total?: string; next_session_date?: string
-  price_3day?: string; price_5day?: string; schedule_year_label?: string
+  price_3day?: string; price_4day?: string; price_5day?: string; schedule_year_label?: string
 }
 
 const ADMIN_PASSWORD = 'surf2026admin'
@@ -346,7 +346,7 @@ function PricingTab() {
 
   const save=async()=>{
     setSaving(true)
-    try{await fetch('/api/settings',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({settings:{price_3day:s.price_3day||'190€',price_5day:s.price_5day||'265€'}})});setMsg('Цены обновлены ✓')}
+    try{await fetch('/api/settings',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({settings:{price_3day:s.price_3day||'190€',price_4day:s.price_4day||'235€',price_5day:s.price_5day||'265€'}})});setMsg('Цены обновлены ✓')}
     catch{setMsg('Ошибка')}
     setSaving(false);setTimeout(()=>setMsg(''),3000)
   }
@@ -356,13 +356,20 @@ function PricingTab() {
     {msg&&<Toast text={msg}/>}
     {loading?<Spinner/>:(
       <div style={S.card}>
-        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20,marginBottom:20}}>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:20,marginBottom:20}}>
           <div style={{background:'#F0F8FF',borderRadius:12,padding:20}}>
             <div style={{fontSize:28,marginBottom:6}}>📅</div>
             <div style={{fontSize:13,fontWeight:700,color:'#344E63',marginBottom:4}}>3 дня — Пробная смена</div>
             <div style={{fontSize:11,color:'#888',marginBottom:12}}>«Идеально для первого знакомства»</div>
             <input value={s.price_3day||''} onChange={e=>setS({...s,price_3day:e.target.value})}
               style={{...S.input,fontWeight:800,fontSize:28,textAlign:'center',color:'#0B3D6B',border:'2px solid #D4E6F1'}} placeholder="190€"/>
+          </div>
+          <div style={{background:'#F0FFF4',borderRadius:12,padding:20}}>
+            <div style={{fontSize:28,marginBottom:6}}>📆</div>
+            <div style={{fontSize:13,fontWeight:700,color:'#344E63',marginBottom:4}}>4 дня</div>
+            <div style={{fontSize:11,color:'#888',marginBottom:12}}>«Расширенная программа»</div>
+            <input value={s.price_4day||''} onChange={e=>setS({...s,price_4day:e.target.value})}
+              style={{...S.input,fontWeight:800,fontSize:28,textAlign:'center',color:'#16A34A',border:'2px solid #bbf7d0'}} placeholder="235€"/>
           </div>
           <div style={{background:'#0B3D6B',borderRadius:12,padding:20}}>
             <div style={{fontSize:28,marginBottom:6}}>🏄</div>
