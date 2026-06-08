@@ -40,11 +40,12 @@ export default function Home() {
   const [openFaq, setOpenFaq] = useState<number | null>(null)
   const [expandedFormat, setExpandedFormat] = useState<number | null>(null)
   const [reviews, setReviews] = useState<Review[]>([])
-  const [reviewForm, setReviewForm] = useState({ name: '', text: '', program: '', rating: 5 })
+  const [reviewHover, setReviewHover] = useState(0)
+  const [reviewForm, setReviewForm] = useState({ name: '', text: '', program: '', rating: 0 })
   const [reviewSent, setReviewSent] = useState(false)
   const [reviewLoading, setReviewLoading] = useState(false)
   const [showReviewForm, setShowReviewForm] = useState(false)
-  const [galleryLightbox, setGalleryLightbox] = useState<string | null>(null)
+  const [galleryLightbox, setGalleryLightbox] = useState<{src:string,idx:number} | null>(null)
   const [programModal, setProgramModal] = useState<string | null>(null)
 
   const c = (ru: string, en: string, et: string) => lang === 'ru' ? ru : lang === 'en' ? en : et
@@ -73,13 +74,51 @@ export default function Home() {
     fetch('/api/reviews').then(r => r.json()).then(d => { if (Array.isArray(d)) setReviews(d) }).catch(() => {})
   }, [])
 
+  const GALLERY_IMGS = [
+    '/photo-output-2-1024x1024__1_.jpeg',
+    '/IMG_7917-1024x768.jpeg',
+    '/IMG_6615-821x1024.jpeg',
+    '/IMG_8779-1-768x1024.jpeg',
+    '/217650841_4107074432694657_6267790752617918985_n.jpg',
+    '/DSC02878-150x150.jpeg',
+    '/DSC02899-150x150.jpeg',
+    '/IMG_9585-150x150.jpeg',
+    '/IMG_9302-150x150.jpeg',
+    '/IMG_9294-150x150.jpeg',
+    '/IMG_7773-150x150.jpeg',
+    '/IMG_7809-150x150.jpeg',
+    '/IMG_0843-150x150.jpeg',
+    '/IMG_0806-150x150.jpeg',
+    '/IMG_0857-150x150.jpeg',
+    '/IMG_7752-150x150.jpeg',
+  ]
+
+  useEffect(() => {
+    if (!galleryLightbox) return
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setGalleryLightbox(null)
+      if (e.key === 'ArrowRight') setGalleryLightbox(prev => {
+        if (!prev) return null
+        const next = (prev.idx + 1) % GALLERY_IMGS.length
+        return { src: GALLERY_IMGS[next], idx: next }
+      })
+      if (e.key === 'ArrowLeft') setGalleryLightbox(prev => {
+        if (!prev) return null
+        const next = (prev.idx - 1 + GALLERY_IMGS.length) % GALLERY_IMGS.length
+        return { src: GALLERY_IMGS[next], idx: next }
+      })
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [galleryLightbox])
+
   const go = (id: string) => {
     setMenuOpen(false)
     setTimeout(() => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80)
   }
 
   const submitReview = async () => {
-    if (!reviewForm.name || !reviewForm.text) return
+    if (!reviewForm.name || !reviewForm.text || reviewForm.rating === 0) return
     setReviewLoading(true)
     try {
       await fetch('/api/reviews', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(reviewForm) })
@@ -89,69 +128,137 @@ export default function Home() {
   }
 
   const DATES = [
-    { dates: '15.06 – 19.06.2026', type: c('СЕРФИНГ + КИНО','SURF + CINEMA','SURF + KINO'), color: '#7C3AED', leaders: 'Наташа К. + Даша', hot: true, detail: 'kino' },
-    { dates: '29.06 – 03.07.2026', type: c('СЕРФИНГ + КИНО','SURF + CINEMA','SURF + KINO'), color: '#7C3AED', leaders: 'Наташа К. + Даша', hot: false, detail: 'kino' },
-    { dates: '06.07 – 10.07.2026', type: c('СЕРФИНГ ЛАГЕРЬ','SURF CAMP','SURFI LAAGER'), color: '#1A6BAA', leaders: 'Надежда + Григорий', hot: false, detail: 'surf' },
-    { dates: '13.07 – 17.07.2026', type: c('СЕРФИНГ + ПОХОД','SURF + HIKE','SURF + MATK'), color: '#16A34A', leaders: 'Виталий + Григорий', hot: false, detail: 'pohod' },
-    { dates: '20.07 – 24.07.2026', type: c('СЕРФИНГ ЛАГЕРЬ','SURF CAMP','SURFI LAAGER'), color: '#1A6BAA', leaders: 'Надежда + Ксения', hot: false, detail: 'surf' },
-    { dates: '27.07 – 30.07.2026', type: c('СЕРФИНГ (4 ДНЯ)','SURF (4 DAYS)','SURF (4 PÄEVA)'), color: '#1A6BAA', leaders: 'TBD', hot: false, detail: 'surf' },
-    { dates: '03.08 – 07.08.2026', type: c('СЕРФИНГ ЛАГЕРЬ','SURF CAMP','SURFI LAAGER'), color: '#1A6BAA', leaders: 'Даша + …', hot: false, detail: 'surf' },
-    { dates: '10.08 – 14.08.2026', type: c('СЕРФИНГ ЛАГЕРЬ','SURF CAMP','SURFI LAAGER'), color: '#1A6BAA', leaders: 'Надежда + …', hot: false, detail: 'surf' },
-    { dates: '17.08 – 21.08.2026', type: c('СЕРФИНГ + ПОХОД','SURF + HIKE','SURF + MATK'), color: '#16A34A', leaders: 'Виталий + …', hot: false, detail: 'pohod' },
+    { dates: '15.06 - 19.06.2026', type: c('СЕРФИНГ + КИНО','SURF + CINEMA','SURF + KINO'), color: '#7C3AED', leaders: c('Наташа К. + Даша','Natasha K. + Dasha','Natasha K. + Dasha'), hot: true, detail: 'kino' },
+    { dates: '29.06 - 03.07.2026', type: c('СЕРФИНГ + КИНО','SURF + CINEMA','SURF + KINO'), color: '#7C3AED', leaders: c('Наташа К. + Даша','Natasha K. + Dasha','Natasha K. + Dasha'), hot: false, detail: 'kino' },
+    { dates: '06.07 - 10.07.2026', type: c('СЕРФИНГ ЛАГЕРЬ','SURF CAMP','SURFI LAAGER'), color: '#1A6BAA', leaders: c('Надежда + Григорий','Nadezhda + Grigory','Nadezhda + Grigory'), hot: false, detail: 'surf' },
+    { dates: '13.07 - 17.07.2026', type: c('СЕРФИНГ + ПОХОД','SURF + HIKE','SURF + MATK'), color: '#16A34A', leaders: c('Виталий + Григорий','Vitaliy + Grigory','Vitaliy + Grigory'), hot: false, detail: 'pohod' },
+    { dates: '20.07 - 24.07.2026', type: c('СЕРФИНГ ЛАГЕРЬ','SURF CAMP','SURFI LAAGER'), color: '#1A6BAA', leaders: c('Надежда + Ксения','Nadezhda + Kseniya','Nadezhda + Kseniya'), hot: false, detail: 'surf' },
+    { dates: '27.07 - 30.07.2026', type: c('СЕРФИНГ (4 ДНЯ)','SURF (4 DAYS)','SURF (4 PAEVA)'), color: '#1A6BAA', leaders: 'TBD', hot: false, detail: 'surf' },
+    { dates: '03.08 - 07.08.2026', type: c('СЕРФИНГ ЛАГЕРЬ','SURF CAMP','SURFI LAAGER'), color: '#1A6BAA', leaders: c('Даша + ...','Dasha + ...','Dasha + ...'), hot: false, detail: 'surf' },
+    { dates: '10.08 - 14.08.2026', type: c('СЕРФИНГ ЛАГЕРЬ','SURF CAMP','SURFI LAAGER'), color: '#1A6BAA', leaders: c('Надежда + ...','Nadezhda + ...','Nadezhda + ...'), hot: false, detail: 'surf' },
+    { dates: '17.08 - 21.08.2026', type: c('СЕРФИНГ + ПОХОД','SURF + HIKE','SURF + MATK'), color: '#16A34A', leaders: c('Виталий + ...','Vitaliy + ...','Vitaliy + ...'), hot: false, detail: 'pohod' },
   ]
 
   const FAQS = [
-    { q: c('Нужен ли опыт серфинга?','Is surfing experience required?','Kas surfikogemus on vajalik?'), a: c('Нет, лагерь подходит полным новичкам — учим с нуля. Дети с опытом тоже найдут задачу по уровню.','No. The camp suits complete beginners — we teach from scratch. Experienced kids find their challenge too.','Ei. Laager sobib algajatele — õpetame nullist.') },
-    { q: c('Какой возраст подходит?','What age is suitable?','Mis vanus sobib?'), a: c('Основная программа для детей 7–12 лет. Возможно участие помладше, если справляется с программой. Максимум — 14 лет.','Main programme for ages 7–12. Younger children may attend if capable. Maximum age 14.','Põhiprogramm on 7–12-aastastele. Maksimaalne vanus 14.') },
+    { q: c('Нужен ли опыт серфинга?','Is surfing experience required?','Kas surfikogemus on vajalik?'), a: c('Нет, лагерь подходит полным новичкам - учим с нуля. Дети с опытом тоже найдут задачу по уровню.','No. The camp suits complete beginners - we teach from scratch. Experienced kids find their challenge too.','Ei. Laager sobib algajatele - õpetame nullist.') },
+    { q: c('Какой возраст подходит?','What age is suitable?','Mis vanus sobib?'), a: c('Основная программа для детей 7-12 лет. Возможно участие помладше, если справляется с программой. Максимум - 14 лет.','Main programme for ages 7-12. Younger children may attend if capable. Maximum age 14.','Põhiprogramm on 7-12-aastastele. Maksimaalne vanus 14.') },
     { q: c('Что входит в стоимость?','What is included?','Mis on hinnas sees?'), a: c('Вся программа, питание от Tark Catering (обед + полдник), гидрокостюмы, спасательные жилеты, всё оборудование, работа инструкторов и сертификат участника.','Full programme, meals (lunch + snack, Tark Catering), wetsuits, life jackets, all equipment, instructors, certificate.','Kogu programm, toitlustus (Tark Catering), märjaksüidid, päästevested, varustus, sertifikaat.') },
-    { q: c('Что взять с собой?','What to bring?','Mida kaasa võtta?'), a: c('Сменную одежду, полотенце, солнцезащитный крем и бутылку воды. Гидрокостюм и оборудование — от нас.','Change of clothes, towel, sunscreen, water bottle. Wetsuit and equipment provided.','Vahetusriided, rätik, päikesekaitsevahend, veepudel. Märjaksüit ja varustus meie käest.') },
-    { q: c('Что если плохая погода?','What if the weather is bad?','Mis saab halva ilmaga?'), a: c('Работаем в любую погоду — для этого и нужны гидрокостюмы! При реальной угрозе безопасности программа переходит на берег.','We work in any weather — that\'s what wetsuits are for! Real safety risk → shore programme.','Töötame igasuguse ilmaga! Reaalse ohu korral programm kaldale.') },
+    { q: c('Что взять с собой?','What to bring?','Mida kaasa võtta?'), a: c('Сменную одежду, полотенце, солнцезащитный крем и бутылку воды. Гидрокостюм и оборудование - от нас.','Change of clothes, towel, sunscreen, water bottle. Wetsuit and equipment provided.','Vahetusriided, rätik, päikesekaitsevahend, veepudel. Märjaksüit ja varustus meie käest.') },
+    { q: c('Что если плохая погода?','What if the weather is bad?','Mis saab halva ilmaga?'), a: c('Работаем в любую погоду - для этого и нужны гидрокостюмы! При реальной угрозе безопасности программа переходит на берег.','We work in any weather - that\'s what wetsuits are for! Real safety risk → shore programme.','Töötame igasuguse ilmaga! Reaalse ohu korral programm kaldale.') },
     { q: c('Учитываются ли аллергии?','Are allergies accommodated?','Kas allergiad arvestatakse?'), a: c('Да, каждый ребёнок получает порцию с учётом питания. Укажите аллергии при регистрации.','Yes. Individual portions, noting dietary needs. Note allergies at registration.','Jah. Individuaalsed portsjonid. Märkige allergiad registreerimisel.') },
-    { q: c('Можно на 3–4 дня?','Can we attend 3–4 days?','Kas saab 3–4 päevaks?'), a: c('Да! 3 дня — 190€, 4 дня — 235€. Укажите при регистрации.','Yes! 3 days €190, 4 days €235. Specify at registration.','Jah! 3 päeva 190€, 4 päeva 235€.') },
-    { q: c('Как обеспечивается безопасность на воде?','How is water safety ensured?','Kuidas veeohutus tagatakse?'), a: c('Все дети в воде — только в жилете и гидрокостюме. Группы 12–16 человек, постоянный контроль, обязательная теория безопасности перед каждым заходом.','All children in the water only with life jacket and wetsuit. Groups 12–16, constant supervision, mandatory safety theory before every session.','Kõik lapsed vees ainult päästevesti ja märjaksüidiga. Grupid 12–16, pidev järelevalve.') },
+    { q: c('Можно на 3-4 дня?','Can we attend 3-4 days?','Kas saab 3-4 päevaks?'), a: c('Да! 3 дня - 190€, 4 дня - 235€. Укажите при регистрации.','Yes! 3 days €190, 4 days €235. Specify at registration.','Jah! 3 päeva 190€, 4 päeva 235€.') },
+    { q: c('Как обеспечивается безопасность на воде?','How is water safety ensured?','Kuidas veeohutus tagatakse?'), a: c('Все дети в воде - только в жилете и гидрокостюме. Группы 12-16 человек, постоянный контроль, обязательная теория безопасности перед каждым заходом.','All children in the water only with life jacket and wetsuit. Groups 12-16, constant supervision, mandatory safety theory before every session.','Kõik lapsed vees ainult päästevesti ja märjaksüidiga. Grupid 12-16, pidev järelevalve.') },
   ]
 
   const PROGRAM_DATA: Record<string, {title:string,sub:string,photo:string,price:string,age:string,dates:string[],sections:{title:string,items:string[]}[],leader:{initials:string,name:string,bio:string}}> = {
     kino: {
-      title: 'Серфинг + Кино',
-      sub: 'Лагерь, где дети не просто отдыхают — а становятся героями своего фильма. 5 дней приключений.',
+      title: c('Серфинг + Кино','Surf + Cinema','Surf + Kino'),
+      sub: c('Лагерь, где дети не просто отдыхают - а становятся героями своего фильма. 5 дней приключений.','A camp where kids don\'t just rest - they become heroes of their own film. 5 days of adventure.','Laager, kus lapsed ei puhka lihtsalt - nad saavad oma filmi kangelasteks. 5 paeva seiklusi.'),
       photo: '/IMG_7917-1024x768.jpeg',
-      price: '265€', age: '7–12 лет',
-      dates: ['15.06 – 19.06.2026', '29.06 – 03.07.2026'],
+      price: '265€', age: c('7-12 лет','7-12 years','7-12 aastat'),
+      dates: ['15.06 - 19.06.2026', '29.06 - 03.07.2026'],
       sections: [
-        { title: '🌊 Серфинг и активность', items: ['Сап-серфинг, баланс, координация и ОФП каждый день', 'Игры на пляже', 'Безопасность на воде — важный блок!', 'Учимся лучше чувствовать себя рядом со стихиями'] },
-        { title: '🎬 Создание фильма', items: ['🎤 Ведущие — снимают репортажи и берут интервью', '🎥 Операторы — учатся видеть детали и кадры', '💻 Монтажёры — собирают видео простым и понятным способом', '✨ Креативная команда — идеи, сцены, эмоции'] },
-        { title: '🎞 Что снимаем', items: ['"Новости лагеря" каждый день', 'Смешные и живые моменты', 'Сцены в воде — брызги, эмоции, движение', 'Дружба, команда, впечатления'] },
-        { title: '🏆 Результат', items: ['Короткий метр, который останется вам на память!', 'Опыт выступления перед камерой', 'Новые навыки и уверенность', '💛 Воспоминания, которые они реально проживут!'] },
+        { title: c('Серфинг и активность','Surfing & Activity','Surfamine ja aktiivsus'), items: [
+          c('SUP-серфинг, баланс, координация и ОФП каждый день','SUP surfing, balance, coordination and fitness every day','SUP surfamine, tasakaal, koordinatsioon ja kehaline ettevalmistus iga paev'),
+          c('Игры на пляже','Beach games','Rannamangud'),
+          c('Безопасность на воде - важный блок','Water safety - a key module','Veeohutus - oluline osa'),
+          c('Учимся лучше чувствовать себя рядом со стихиями','Learning to feel at ease with nature','Opime end looduse juures paremini tundma'),
+        ]},
+        { title: c('Создание фильма','Film Making','Filmi loomine'), items: [
+          c('Ведущие - снимают репортажи и берут интервью','Hosts - shoot reports and conduct interviews','Saatejuhid - teevad reportaaeze ja intervjuusid'),
+          c('Операторы - учатся видеть детали и кадры','Cameramen - learn to see details and frames','Operaatorid - opivad naegema detaile ja kaadrit'),
+          c('Монтажёры - собирают видео простым и понятным способом','Editors - assemble video simply and clearly','Monteerijad - koostavad video lihtsalt ja selgelt'),
+          c('Креативная команда - идеи, сцены, эмоции','Creative team - ideas, scenes, emotions','Loominguline meeskond - ideed, stseenid, emotsioonid'),
+        ]},
+        { title: c('Что снимаем','What we film','Mida filmime'), items: [
+          c('"Новости лагеря" каждый день','"Camp News" every day','"Laagri uudised" iga paev'),
+          c('Смешные и живые моменты','Funny and lively moments','Naljakad ja elavad hetked'),
+          c('Сцены в воде - брызги, эмоции, движение','Water scenes - splashes, emotions, movement','Veestseenid - pritsmeid, emotsioone, liikumist'),
+          c('Дружба, команда, впечатления','Friendship, teamwork, impressions','Soprus, meeskond, muljed'),
+        ]},
+        { title: c('Результат','Result','Tulemus'), items: [
+          c('Короткий фильм, который останется вам на память','A short film to keep as a memory','Luhifilm, mis jaab teile malestuseks'),
+          c('Опыт выступления перед камерой','Experience performing in front of a camera','Kogemus kaamera ees esinemisest'),
+          c('Новые навыки и уверенность','New skills and confidence','Uued oskused ja enesekindlus'),
+          c('Воспоминания, которые они реально проживут','Memories they will truly live','Malestused, mida nad pariston elavad'),
+        ]},
       ],
-      leader: { initials: 'НК', name: 'Наталья Карасёва', bio: 'Тележурналист, 20 лет на ТВ в двух странах, автор подкаста "Cozy with Tasha", создатель видеоконтента и документального короткого жанра.' }
+      leader: {
+        initials: 'НК',
+        name: c('Наталья Карасёва','Natalia Karaseva','Natalia Karaseva'),
+        bio: c('Тележурналист, 20 лет на ТВ в двух странах, автор подкаста "Cozy with Tasha", создатель видеоконтента и документального короткого жанра.','TV journalist, 20 years on TV in two countries, podcast "Cozy with Tasha", creator of video content and documentary short films.','Teleajakirjanik, 20 aastat televisioonis kahes riigis, taskuhaalingu "Cozy with Tasha" autor, videofilmide looja.'),
+      }
     },
     pohod: {
-      title: 'Серфинг + Поход',
-      sub: 'Приключенческая программа, где ребёнок открывает мир серфинга и учится жить в природе.',
+      title: c('Серфинг + Поход','Surf + Hike','Surf + Matk'),
+      sub: c('Приключенческая программа, где ребёнок открывает мир серфинга и учится жить в природе.','An adventure programme where the child discovers surfing and learns to live in nature.','Seiklusprogramm, kus laps avastab surfimaailma ja opib looduses elama.'),
       photo: '/photo_2026-04-18-10_00_46-150x150.jpeg',
-      price: '265€', age: '7–14 лет',
-      dates: ['13.07 – 17.07.2026', '17.08 – 21.08.2026'],
+      price: '265€', age: c('7-14 лет','7-14 years','7-14 aastat'),
+      dates: ['13.07 - 17.07.2026', '17.08 - 21.08.2026'],
       sections: [
-        { title: '🌊 Серфинг-часть', items: ['Виндсерфинг, SUP-серфинг, вингфоилинг', 'Бодиборд', 'Знакомство с гидрокостюмами и уход за ними', 'Безопасность, чтение ветра и природы'] },
-        { title: '🏕 Походная часть', items: ['Ориентирование по карте и компасу', 'Навыки поведения в лесу', 'Сборка палатки и организация лагеря', 'Разведение костра и базовые навыки выживания', '👉 Финал — настоящий мини-поход с применением всех навыков'] },
-        { title: '🏆 Что получает ребёнок', items: ['Уверенность на воде и в природе', 'Умение ориентироваться и принимать решения', 'Самостоятельность и осознанность', 'Нашивку походника Time to Surf 🤙'] },
+        { title: c('Серфинг-часть','Surf part','Surfiosa'), items: [
+          c('Виндсерфинг, SUP-серфинг, вингфоилинг','Windsurfing, SUP surfing, wingfoiling','Purjelaud, SUP surfamine, wingfoiling'),
+          c('Бодиборд','Bodyboard','Bodybord'),
+          c('Знакомство с гидрокостюмами и уход за ними','Introduction to wetsuits and their care','Marjaksuitide tutvustus ja hooldamine'),
+          c('Безопасность, чтение ветра и природы','Safety, reading wind and nature','Ohutus, tuule ja looduse lugemine'),
+        ]},
+        { title: c('Походная часть','Hiking part','Matkaosa'), items: [
+          c('Ориентирование по карте и компасу','Map and compass navigation','Kaardi ja kompassiga orienteerumine'),
+          c('Навыки поведения в лесу','Forest survival skills','Metsas kaitumise oskused'),
+          c('Сборка палатки и организация лагеря','Setting up a tent and organising camp','Telgi punjstitamine ja laagri korraldamine'),
+          c('Разведение костра и базовые навыки выживания','Making a fire and basic survival skills','Loke tegemine ja ellujaamise pohioskused'),
+          c('Финал - настоящий мини-поход с применением всех навыков','Finale - a real mini-hike applying all skills','Finaal - paris minimatk koigi oskustega'),
+        ]},
+        { title: c('Что получает ребёнок','What the child gains','Mida laps saab'), items: [
+          c('Уверенность на воде и в природе','Confidence in water and in nature','Enesekindlus vees ja looduses'),
+          c('Умение ориентироваться и принимать решения','Ability to navigate and make decisions','Oskus orienteeruda ja otsuseid teha'),
+          c('Самостоятельность и осознанность','Independence and mindfulness','Iseseisvus ja teadlikkus'),
+          c('Нашивку походника Time to Surf','Time to Surf hiker patch','Time to Surf matkaja embleem'),
+        ]},
       ],
-      leader: { initials: 'ВХ', name: 'Виталий Холстинин', bio: 'Предприниматель, хайкер, основатель Join The Hike. Более 10 лет опыта. Höga Kusten 140 км (UNESCO), Land of Giants 120 км. Живёт тем, что преподаёт.' }
+      leader: {
+        initials: 'ВХ',
+        name: c('Виталий Холстинин','Vitaliy Kholstinin','Vitaliy Kholstinin'),
+        bio: c('Предприниматель, хайкер, основатель Join The Hike. Более 10 лет опыта. Höga Kusten 140 км (UNESCO), Land of Giants 120 км. Живёт тем, что преподаёт.','Entrepreneur, hiker, founder of Join The Hike. 10+ years experience. Höga Kusten 140km (UNESCO), Land of Giants 120km. Lives what he teaches.','Ettevotja, matkaja, Join The Hike asutaja. 10+ aastat kogemust. Höga Kusten 140km (UNESCO), Land of Giants 120km. Elab seda, mida opetab.'),
+      }
     },
     surf: {
-      title: 'Серфинг лагерь',
-      sub: 'Классическая программа для тех, кто впервые открывает мир серфинга. Разные виды водного спорта, безопасность и командные игры.',
+      title: c('Серфинг лагерь','Surf Camp','Surfilaager'),
+      sub: c('Классическая программа для тех, кто впервые открывает мир серфинга. Разные виды водного спорта, безопасность и командные игры.','The classic programme for those discovering surfing for the first time. Different water sports, safety and team games.','Klassikaline programm neile, kes avastab surfimaailma esimest korda. Erinevad veespordialad, ohutus ja meeskonnamangud.'),
       photo: '/DSC02878-150x150.jpeg',
-      price: '265€', age: '7–12 лет',
+      price: '265€', age: c('7-12 лет','7-12 years','7-12 aastat'),
       dates: ['06.07', '20.07', '27.07', '03.08', '10.08'],
       sections: [
-        { title: '🏄 Знакомство с миром серфинга', items: ['Кайтсерфинг', 'Виндсерфинг', 'САП-серфинг (SUP)', 'Вингфоилинг', 'Бодиборд'] },
-        { title: '🧥 Культура серфинга', items: ['Какие бывают гидрокостюмы', 'Как правильно их надевать', 'Как ухаживать, чтобы служили долго'] },
-        { title: '🤝 Командные игры и развитие', items: ['Работа в команде', 'Поддержка друг друга', 'Правила поведения и безопасности на воде', 'Понимание ветра, погоды и природы'] },
-        { title: '🏆 Результат', items: ['Реальный прогресс и уверенность на воде', 'Развитие командного мышления', 'Навыки безопасного поведения', 'Сертификат участника'] },
+        { title: c('Знакомство с миром серфинга','Discovering surfing','Surfimaailma avastamine'), items: [
+          c('Кайтсерфинг','Kitesurfing','Kaidisurfamine'),
+          c('Виндсерфинг','Windsurfing','Purjelaud'),
+          c('SUP-серфинг','SUP surfing','SUP surfamine'),
+          c('Вингфоилинг','Wingfoiling','Wingfoiling'),
+          c('Бодиборд','Bodyboard','Bodybord'),
+        ]},
+        { title: c('Культура серфинга','Surf culture','Surfikultuur'), items: [
+          c('Какие бывают гидрокостюмы','Types of wetsuits','Marjaksuitide tuubid'),
+          c('Как правильно их надевать','How to put them on correctly','Kuidas neid oigesti selga panna'),
+          c('Как ухаживать, чтобы служили долго','How to care for them to last longer','Kuidas hooldada, et kestaksid kaua'),
+        ]},
+        { title: c('Командные игры и развитие','Team games & development','Meeskonnamangud ja areng'), items: [
+          c('Работа в команде','Teamwork','Meeskonnatok'),
+          c('Поддержка друг друга','Supporting each other','Uksteise toetamine'),
+          c('Правила безопасности на воде','Water safety rules','Veeohutuse reeglid'),
+          c('Понимание ветра, погоды и природы','Understanding wind, weather and nature','Tuule, ilma ja looduse moistmine'),
+        ]},
+        { title: c('Результат','Result','Tulemus'), items: [
+          c('Реальный прогресс и уверенность на воде','Real progress and confidence in water','Tegelik areng ja enesekindlus vees'),
+          c('Развитие командного мышления','Team thinking development','Meeskonnamotlemise arendamine'),
+          c('Навыки безопасного поведения','Safe behaviour skills','Ohutu kaitumise oskused'),
+          c('Сертификат участника','Participation certificate','Osalussertifikaat'),
+        ]},
       ],
-      leader: { initials: 'НГ', name: 'Надежда + Григорий', bio: 'Сертифицированные инструктора с многолетним опытом работы с детьми на Балтийском море. Умеют мотивировать и поддерживать на каждом этапе.' }
+      leader: {
+        initials: 'НГ',
+        name: c('Надежда + Григорий','Nadezhda + Grigory','Nadezhda + Grigory'),
+        bio: c('Сертифицированные инструктора с многолетним опытом работы с детьми на Балтийском море. Умеют мотивировать и поддерживать на каждом этапе.','Certified instructors with years of experience working with children on the Baltic Sea. They know how to motivate and support at every stage.','Sertifitseeritud juhendajad mitmeaastase kogemusega laste juhendamisel Lameresel. Oskavad motiveerida ja toetada igas etapis.'),
+      }
     }
   }
 
@@ -250,7 +357,7 @@ export default function Home() {
     .hero::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
     .hero-glow{position:absolute;width:900px;height:900px;background:radial-gradient(ellipse,rgba(10,172,172,.15) 0%,rgba(10,172,172,.04) 40%,transparent 65%);top:-200px;right:-200px;pointer-events:none;animation:floatY 8s ease-in-out infinite}
     .hero-glow2{position:absolute;width:600px;height:600px;background:radial-gradient(ellipse,rgba(245,166,35,.08) 0%,transparent 60%);bottom:0;left:-100px;pointer-events:none;animation:floatY2 10s ease-in-out infinite}
-    .hero-wave{position:absolute;bottom:0;left:0;right:0;height:100px;background:var(--sand-lt);clip-path:ellipse(55% 100% at 50% 100%);animation:waveAnim 6s ease-in-out infinite}
+    .hero-wave{position:absolute;bottom:0;left:0;right:0;height:100px;background:var(--sand-lt);clip-path:ellipse(55% 100% at 50% 100%)}
     .hero-in{flex:1;display:flex;align-items:center;position:relative;z-index:1}
     .hero-grid{display:grid;grid-template-columns:1fr 400px;gap:56px;align-items:center;padding:72px 0 110px;width:100%}
     .hero-ey{display:flex;align-items:center;gap:12px;margin-bottom:18px}
@@ -425,20 +532,27 @@ export default function Home() {
     /* GALLERY */
     .gallery{background:linear-gradient(150deg,#082847,#0B3D6B,#0E4060);background-size:200% 200%;padding:96px 0;animation:bgShift 18s ease infinite reverse}
     .ghead{text-align:center;margin-bottom:48px}
-    .gg{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-    .gi{aspect-ratio:4/3;border-radius:10px;overflow:hidden;transition:transform 240ms var(--ease);cursor:zoom-in}
-    .gi:hover{transform:scale(1.05);z-index:2}
-    .gi img{width:100%;height:100%;object-fit:cover;transition:filter 200ms}
-    .gi:hover img{filter:brightness(1.08)}
-    .gi-wide{grid-column:span 2}
-    .gi-tall{grid-row:span 2}
+    .gg{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+    .gi{aspect-ratio:1/1;border-radius:8px;overflow:hidden;cursor:zoom-in;position:relative}
+    .gi img{width:100%;height:100%;object-fit:cover;transition:transform 300ms var(--ease),filter 200ms;display:block}
+    .gi:hover img{transform:scale(1.06);filter:brightness(1.1)}
+    .gi-wide{grid-column:span 2;aspect-ratio:2/1}
+    .gi-overlay{position:absolute;inset:0;background:rgba(0,0,0,0);transition:background 200ms;display:flex;align-items:center;justify-content:center}
+    .gi:hover .gi-overlay{background:rgba(0,0,0,.18)}
+    .gi-zoom{opacity:0;color:white;font-size:28px;transition:opacity 200ms}
+    .gi:hover .gi-zoom{opacity:1}
 
     /* LIGHTBOX */
-    .lb-overlay{position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.93);display:flex;align-items:center;justify-content:center;cursor:zoom-out;animation:lbIn 220ms ease}
     @keyframes lbIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
-    .lb-overlay img{max-width:92vw;max-height:88vh;object-fit:contain;border-radius:8px;cursor:default}
-    .lb-close{position:absolute;top:18px;right:22px;background:rgba(255,255,255,.12);border:none;color:white;width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;transition:background 160ms;z-index:1}
-    .lb-close:hover{background:rgba(255,255,255,.25)}
+    .lb-overlay{position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.95);display:flex;align-items:center;justify-content:center;animation:lbIn 220ms ease}
+    .lb-overlay img{max-width:88vw;max-height:86vh;object-fit:contain;border-radius:8px;cursor:default;user-select:none}
+    .lb-close{position:absolute;top:18px;right:22px;background:rgba(255,255,255,.12);border:none;color:white;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;transition:background 160ms;z-index:1}
+    .lb-close:hover{background:rgba(255,255,255,.28)}
+    .lb-prev,.lb-next{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.12);border:none;color:white;width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;transition:background 160ms;z-index:1;user-select:none}
+    .lb-prev{left:18px}
+    .lb-next{right:18px}
+    .lb-prev:hover,.lb-next:hover{background:rgba(255,255,255,.28)}
+    .lb-counter{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.5);font-size:12px;font-weight:600;letter-spacing:.08em}
 
     /* PROGRAM MODAL */
     .pm-overlay{position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.72);display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;animation:lbIn 220ms ease}
@@ -497,14 +611,15 @@ export default function Home() {
     .faq{background:white;padding:96px 0}
     .faqh{text-align:center;margin-bottom:48px}
     .faq-list{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:8px}
-    .faq-it{background:var(--sand-lt);border:2px solid var(--bwarm);border-radius:12px;overflow:hidden;transition:border-color 200ms,transform 200ms var(--ease),box-shadow 200ms var(--ease)}
-    .faq-it:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(11,61,107,.08)}
+    .faq-it{background:var(--sand-lt);border:2px solid var(--bwarm);border-radius:12px;overflow:hidden;transition:border-color 200ms,box-shadow 200ms var(--ease)}
+    .faq-it:hover{box-shadow:0 6px 24px rgba(11,61,107,.08)}
     .faq-it.open{border-color:var(--teal)}
     .faq-q{width:100%;background:none;border:none;padding:17px 20px;display:flex;justify-content:space-between;align-items:center;gap:16px;text-align:left}
     .faq-qt{font-size:14px;font-weight:600;color:var(--text);line-height:1.45}
     .faq-ic{width:18px;height:18px;flex-shrink:0;color:var(--teal);transition:transform 280ms var(--ease)}
     .faq-it.open .faq-ic{transform:rotate(180deg)}
-    .faq-a{max-height:0;overflow:hidden;transition:max-height 320ms var(--ease-io)}
+    .faq-a{max-height:0;overflow:hidden;transition:max-height 400ms var(--ease-io)}
+    .faq-it.open .faq-a{max-height:400px}
     .faq-ai{padding:0 20px 17px;font-size:13px;color:var(--mid);line-height:1.85}
 
     /* LOCATION */
@@ -604,7 +719,10 @@ export default function Home() {
       {galleryLightbox && (
         <div className="lb-overlay" onClick={() => setGalleryLightbox(null)}>
           <button className="lb-close" onClick={() => setGalleryLightbox(null)}>✕</button>
-          <img src={galleryLightbox} alt="" onClick={e => e.stopPropagation()} />
+          <button className="lb-prev" onClick={e => { e.stopPropagation(); const ni = (galleryLightbox.idx - 1 + GALLERY_IMGS.length) % GALLERY_IMGS.length; setGalleryLightbox({src:GALLERY_IMGS[ni],idx:ni}) }}>‹</button>
+          <img src={galleryLightbox.src} alt="" onClick={e => e.stopPropagation()} />
+          <button className="lb-next" onClick={e => { e.stopPropagation(); const ni = (galleryLightbox.idx + 1) % GALLERY_IMGS.length; setGalleryLightbox({src:GALLERY_IMGS[ni],idx:ni}) }}>›</button>
+          <div className="lb-counter">{galleryLightbox.idx + 1} / {GALLERY_IMGS.length}</div>
         </div>
       )}
 
@@ -617,7 +735,7 @@ export default function Home() {
               <div className="pm-hero">
                 <img src={d.photo} alt={d.title} />
                 <div className="pm-hero-txt">
-                  <div className="pm-hero-lbl">Time to Surf · Программа</div>
+                  <div className="pm-hero-lbl">Time to Surf · {c('Программа','Programme','Programm')}</div>
                   <div className="pm-hero-title">{d.title}</div>
                 </div>
               </div>
@@ -625,8 +743,8 @@ export default function Home() {
               <div className="pm-body">
                 <p className="pm-sub">{d.sub}</p>
                 <div className="pm-meta">
-                  <div className="pm-meta-item"><span>Возраст</span><strong>{d.age}</strong></div>
-                  <div className="pm-meta-item"><span>Стоимость</span><strong>{d.price} · всё включено</strong></div>
+                  <div className="pm-meta-item"><span>{c('Возраст','Age','Vanus')}</span><strong>{d.age}</strong></div>
+                  <div className="pm-meta-item"><span>{c('Стоимость','Price','Hind')}</span><strong>{d.price} - {c('всё включено','all included','kõik sees')}</strong></div>
                 </div>
                 <div className="pm-dates">
                   {d.dates.map((dt: string) => <div key={dt} className="pm-date-chip">{dt}</div>)}
@@ -650,9 +768,9 @@ export default function Home() {
               <div className="pm-footer">
                 <div>
                   <div className="pm-price">{d.price}</div>
-                  <div className="pm-price-note">5 дней · всё включено</div>
+                  <div className="pm-price-note">{c('5 дней - всё включено','5 days - all included','5 paeva - koik sees')}</div>
                 </div>
-                <a href={REG} target="_blank" className="btn btn-teal" style={{marginLeft:'auto'}} onClick={() => setProgramModal(null)}>Записаться →</a>
+                <a href={REG} target="_blank" className="btn btn-teal" style={{marginLeft:'auto'}} onClick={() => setProgramModal(null)}>{c('Записаться','Register','Registreeru')} →</a>
               </div>
             </div>
           </div>
@@ -734,13 +852,13 @@ export default function Home() {
                   {c('Детский','Kids','Laste')}<br/><em>{c('серфинг-лагерь','Surf Camp','surfilaager')}</em><br/>{c('на море','by the Sea','mere ääres')}
                 </h1>
                 <p className="hero-desc rv" style={{transitionDelay:'110ms'}}>
-                  {c('Серфинг, природа, настоящая команда — 5 дней, которые ребёнок запомнит навсегда. Море, ветер, новые друзья.','Surfing, nature and real teamwork — 5 days your child will never forget. Sea, wind, new friends.','Surfamine, loodus ja meeskonnatöö — 5 päeva, mida laps igavesti mäletab.')}
+                  {c('Серфинг, природа, настоящая команда - 5 дней, которые ребёнок запомнит навсегда. Море, ветер, новые друзья.','Surfing, nature and real teamwork - 5 days your child will never forget. Sea, wind, new friends.','Surfamine, loodus ja meeskonnatöö - 5 päeva, mida laps igavesti mäletab.')}
                 </p>
                 <div className="hero-pills rv" style={{transitionDelay:'150ms'}}>
-                  <span className="pill">{c('Возраст 7–14 лет','Age 7–14','Vanus 7–14')}</span>
+                  <span className="pill">{c('Возраст 7-14 лет','Age 7-14','Vanus 7-14')}</span>
                   <span className="pill">{c('от 190€','from €190','alates 190€')}</span>
                   <span className="pill">{c('Питание включено','Meals included','Toitlustus sees')}</span>
-                  <span className="pill">{c('12–16 детей в группе','Groups of 12–16','12–16 last rühmas')}</span>
+                  <span className="pill">{c('12-16 детей в группе','Groups of 12-16','12-16 last rühmas')}</span>
                 </div>
                 <div className="hero-acts rv" style={{transitionDelay:'190ms'}}>
                   <a href={REG} target="_blank" className="btn btn-sun" style={{padding:'15px 36px',fontSize:15}}>{c('Записать ребёнка','Register my child','Registreeri laps')}</a>
@@ -751,9 +869,9 @@ export default function Home() {
                 <div className="hcard-head">
                   <div className="hcard-lbl">{c('Форматы лагерей 2026','Camp Formats 2026','Laagri formaadid 2026')}</div>
                   {[
-                    {color:'#7C3AED', name:c('Серфинг + Кино','Surf + Cinema','Surf + Kino'), date:'Jun–Jul'},
-                    {color:'#16A34A', name:c('Серфинг + Поход','Surf + Hike','Surf + Matk'), date:'Jul–Aug'},
-                    {color:'#1A6BAA', name:c('Серфинг лагерь','Surf Camp','Surfilaager'), date:'Jun–Aug'},
+                    {color:'#7C3AED', name:c('Серфинг + Кино','Surf + Cinema','Surf + Kino'), date:'Jun-Jul'},
+                    {color:'#16A34A', name:c('Серфинг + Поход','Surf + Hike','Surf + Matk'), date:'Jul-Aug'},
+                    {color:'#1A6BAA', name:c('Серфинг лагерь','Surf Camp','Surfilaager'), date:'Jun-Aug'},
                   ].map(r => (
                     <div key={r.name} className="hcard-row">
                       <div className="hcard-dot" style={{background:r.color}}/>
@@ -798,14 +916,6 @@ export default function Home() {
         <div className="hero-wave"/>
       </section>
 
-      {/* TICKER */}
-      <div style={{background:'var(--ocean)',borderTop:'1px solid rgba(255,255,255,.08)',borderBottom:'1px solid rgba(255,255,255,.08)',padding:'10px 0',overflow:'hidden',position:'relative'}}>
-        <div style={{display:'flex',gap:0,animation:'marquee 22s linear infinite',width:'max-content'}}>
-          {['🌊 Серфинг на Балтийском море','⚡ Лето 2026','🏄 9 смен','🎬 Серфинг + Кино','🏕 Серфинг + Поход','👶 Возраст 7–14 лет','🛟 Безопасность прежде всего','📍 Штромка, Таллин','🌊 Серфинг на Балтийском море','⚡ Лето 2026','🏄 9 смен','🎬 Серфинг + Кино','🏕 Серфинг + Поход','👶 Возраст 7–14 лет','🛟 Безопасность прежде всего','📍 Штромка, Таллин'].map((t,i)=>(
-            <span key={i} style={{fontSize:11,fontWeight:700,letterSpacing:'.12em',textTransform:'uppercase',color:'rgba(255,255,255,.45)',padding:'0 32px',whiteSpace:'nowrap'}}>{t}</span>
-          ))}
-        </div>
-      </div>
 
       {/* TRUST */}
       <section className="trust">
@@ -832,7 +942,7 @@ export default function Home() {
           <div className="fhead rv">
             <div className="tag tag-teal" style={{background:'var(--teal-pale)',padding:'6px 16px',borderRadius:50}}>{c('Наши программы','Our programmes','Meie programmid')}</div>
             <h2 className="sec-h" style={{marginBottom:12}}>{c('Три уникальные программы','Three unique programmes','Kolm ainulaadset programmi')}</h2>
-            <p className="sec-sub" style={{margin:'0 auto'}}>{c('Серфинг — основа каждой программы. Всё остальное — особенный опыт, который не повторить.','Surfing is the core of every programme. The rest is a unique experience that can\'t be repeated.','Surfamine on iga programmi alus. Ülejäänud on ainulaadne kogemus.')}</p>
+            <p className="sec-sub" style={{margin:'0 auto'}}>{c('Серфинг - основа каждой программы. Всё остальное - особенный опыт, который не повторить.','Surfing is the core of every programme. The rest is a unique experience that can\'t be repeated.','Surfamine on iga programmi alus. Ülejäänud on ainulaadne kogemus.')}</p>
           </div>
           <div className="fg sg">
             {[
@@ -840,49 +950,49 @@ export default function Home() {
                 bg:null, photo:'/IMG_7917-1024x768.jpeg',
                 lbl:c('Серфинг + Творчество','Surfing + Creativity','Surfamine + Loovus'),
                 title:c('Серфинг + Кино','Surf + Cinema','Surf + Kino'),
-                desc:c('Утром — серфинг и вода. После обеда — настоящая киностудия. Дети берут интервью, снимают репортажи и монтируют короткий фильм, который останется на память.','Morning: surfing and water. Afternoon: a real film studio. Kids interview, shoot reports and edit a short film.','Hommikul surfamine. Pärastlõunal päris filmistuudio. Lapsed monteerivad lühifilmi.'),
+                desc:c('Утром - серфинг и вода. После обеда - настоящая киностудия. Дети берут интервью, снимают репортажи и монтируют короткий фильм, который останется на память.','Morning: surfing and water. Afternoon: a real film studio. Kids interview, shoot reports and edit a short film.','Hommikul surfamine. Pärastlõunal päris filmistuudio. Lapsed monteerivad lühifilmi.'),
                 items:[
                   c('SUP-серфинг, бодиборд, ОФП каждый день','SUP surfing, bodyboard, fitness every day','SUP surfamine, bodybord iga päev'),
                   c('Роли: ведущий, оператор, монтажёр, сценарист','Roles: host, cameraman, editor, writer','Rollid: saatejuht, operaator, monteerija'),
                   c('Финальный показ фильма для родителей','Final film screening for parents','Lõpulinastus vanematele'),
-                  c('Ведущая: Наталья Карасёва — ТВ-журналист, 20+ лет','Lead: Natalia Karaseva — TV journalist 20+ years','Juht: Natalia Karaseva — teleajakirjanik 20+ aastat'),
+                  c('Ведущая: Наталья Карасёва - ТВ-журналист, 20+ лет','Lead: Natalia Karaseva - TV journalist 20+ years','Juht: Natalia Karaseva - teleajakirjanik 20+ aastat'),
                 ],
                 leaderInitials:'НК',
-                leaderName:'Наталья Карасёва',
-                leaderRole:c('Тележурналист с 20-летним стажем в двух странах, автор подкаста «Cozy with Tasha», создатель документальных проектов. Учит детей видеть историю и не бояться камеры.','TV journalist 20+ years in two countries, podcast host "Cozy with Tasha". Teaches kids to see a story and not fear the camera.','Teleajakirjanik 20+ aastat, taskuhäälingu autor.'),
+                leaderName:c('Наталья Карасёва','Natalia Karaseva','Natalia Karaseva'),
+                leaderRole:c('Тележурналист с 20-летним стажем в двух странах, автор подкаста «Cozy with Tasha», создатель документальных проектов. Учит детей видеть историю и не бояться камеры.','TV journalist 20+ years in two countries, podcast host "Cozy with Tasha". Teaches kids to see a story and not fear the camera.','Teleajakirjanik 20+ aastat kahes riigis, taskuhäälingu autor "Cozy with Tasha". Õpetab lapsi nägema lugu ja mitte kartma kaamerat.'),
                 dates:c('15.06 и 29.06.2026','June 15 and June 29, 2026','15.06 ja 29.06.2026'),
               },
               {
                 bg:null, photo:'/photo_2026-04-18-10_00_46-150x150.jpeg',
                 lbl:c('Серфинг + Приключение','Surfing + Adventure','Surfamine + Seiklus'),
                 title:c('Серфинг + Поход','Surf + Hike','Surf + Matk'),
-                desc:c('Серфинг на воде и настоящие приключения в природе: ориентирование, разведение костра, палатка. Финал — мини-поход с применением всех навыков.','Surfing on water and real nature adventures: navigation, fire, tent. The finale is a mini-hike using all skills.','Surfamine vees ja päris loodusseiklused. Finaal — minimatk kõigi oskustega.'),
+                desc:c('Серфинг на воде и настоящие приключения в природе: ориентирование, разведение костра, палатка. Финал - мини-поход с применением всех навыков.','Surfing on water and real nature adventures: navigation, fire, tent. The finale is a mini-hike using all skills.','Surfamine vees ja päris loodusseiklused. Finaal - minimatk kõigi oskustega.'),
                 items:[
                   c('Виндсерфинг, SUP, кайт каждый день','Windsurfing, SUP, kite every day','Purjelaud, SUP, kait iga päev'),
                   c('Ориентирование по карте и компасу','Map and compass navigation','Kaardi ja kompassi navigeerimine'),
                   c('Костёр, палатка, навыки выживания','Fire, tent, survival skills','Lõke, telk, ellujäämisoskused'),
-                  c('Ведущий: Виталий — хайкер, Höga Kusten 140 км (UNESCO)','Lead: Vitaliy — hiker, Höga Kusten 140km (UNESCO)','Juht: Vitaliy — matkaja, Höga Kusten 140km'),
+                  c('Ведущий: Виталий - хайкер, Höga Kusten 140 км (UNESCO)','Lead: Vitaliy - hiker, Höga Kusten 140km (UNESCO)','Juht: Vitaliy - matkaja, Höga Kusten 140km'),
                 ],
                 leaderInitials:'ВХ',
-                leaderName:'Виталий Холстинин',
-                leaderRole:c('Предприниматель, хайкер, основатель Join The Hike. Höga Kusten 140 км (UNESCO) и Land of Giants 120 км. Живёт тем, что преподаёт.','Entrepreneur, hiker, founder of Join The Hike. Höga Kusten 140km (UNESCO) and Land of Giants 120km.','Ettevõtja, matkaja, Join The Hike asutaja.'),
+                leaderName:c('Виталий Холстинин','Vitaliy Kholstinin','Vitaliy Kholstinin'),
+                leaderRole:c('Предприниматель, хайкер, основатель Join The Hike. Höga Kusten 140 км (UNESCO) и Land of Giants 120 км. Живёт тем, что преподаёт.','Entrepreneur, hiker, founder of Join The Hike. Höga Kusten 140km (UNESCO) and Land of Giants 120km.','Ettevõtja, matkaja, Join The Hike asutaja. Höga Kusten 140km (UNESCO) ja Land of Giants 120km. Elab seda, mida õpetab.'),
                 dates:c('13.07 и 17.08.2026','July 13 and Aug 17, 2026','13.07 ja 17.08.2026'),
               },
               {
                 bg:null, photo:'/DSC02878-150x150.jpeg',
                 lbl:c('Классика · Лучший старт','Classic · Best start','Klassika · Parim algus'),
                 title:c('Серфинг лагерь','Surf Camp','Surfilaager'),
-                desc:c('Классическая программа для тех, кто впервые открывает мир серфинга. Разные виды водного спорта, безопасность и командные игры — идеально для старта.','Classic programme for first-timers. Different water sports, safety training and team games — perfect for a first experience.','Klassikaline programm esmakordseks tutvumiseks surfimaailmaga.'),
+                desc:c('Классическая программа для тех, кто впервые открывает мир серфинга. Разные виды водного спорта, безопасность и командные игры - идеально для старта.','Classic programme for first-timers. Different water sports, safety training and team games - perfect for a first experience.','Klassikaline programm esmakordseks tutvumiseks surfimaailmaga.'),
                 items:[
                   c('SUP, виндсерфинг, кайт, бодиборд, вингфоилинг','SUP, windsurfing, kite, bodyboard, wingfoiling','SUP, purjelaud, kait, bodybord, wingfoiling'),
-                  c('Гидрокостюмы и жилеты — всё включено','Wetsuits and life jackets — all included','Märjaksüidid ja päästevested — kõik sees'),
+                  c('Гидрокостюмы и жилеты - всё включено','Wetsuits and life jackets - all included','Märjaksüidid ja päästevested - kõik sees'),
                   c('Культура серфинга: виды костюмов и уход','Surf culture: wetsuit types and care','Surfikultuur: märjaksüidi tüübid ja hooldus'),
                   c('Подходит для новичков и с опытом','Suits beginners and experienced kids','Sobib algajatele ja kogenud lastele'),
                 ],
                 leaderInitials:'НГ',
-                leaderName:'Надежда + Григорий',
-                leaderRole:c('Сертифицированные инструктора с многолетним опытом работы с детьми на Балтийском море. Умеют мотивировать и поддерживать на каждом этапе.','Certified surf instructors with years of experience working with children on the Baltic Sea.','Sertifitseeritud instruktorid Läänemere lastega töötamisel.'),
-                dates:c('6 смен: июнь – август 2026','6 sessions: June – August 2026','6 vahetust: juuni – august 2026'),
+                leaderName:c('Надежда + Григорий','Nadezhda + Grigory','Nadezhda + Grigory'),
+                leaderRole:c('Сертифицированные инструктора с многолетним опытом работы с детьми на Балтийском море. Умеют мотивировать и поддерживать на каждом этапе.','Certified surf instructors with years of experience working with children on the Baltic Sea.','Sertifitseeritud instruktorid Läänemere lastega töötamisel mitmeaastase kogemusega.'),
+                dates:c('6 смен: июнь - август 2026','6 sessions: June - August 2026','6 vahetust: juuni - august 2026'),
               },
             ].map((f, i) => (
               <div key={i} className="fcard">
@@ -919,10 +1029,6 @@ export default function Home() {
                   </div>
                 )}
                 <div className="fcard-foot">
-                  <div>
-                    <div className="fcard-price">265€</div>
-                    <div className="fcard-ps">{c('5 дней · всё включено','5 days · all included','5 päeva · kõik sees')}</div>
-                  </div>
                   <div className="fcard-btns">
                     <button className="fcard-more" onClick={() => setExpandedFormat(expandedFormat===i?null:i)}>
                       {expandedFormat===i ? c('Свернуть','Close','Sulge') : c('Подробнее','Details','Loe lähemalt')}
@@ -946,13 +1052,13 @@ export default function Home() {
                 {c('Родителям','Parents','Vanematele')}<br/><em>{c('спокойно','can relax','on rahulik')}</em>
               </h2>
               <p className="sec-sub" style={{color:'rgba(255,255,255,.42)',marginBottom:8}}>
-                {c('Безопасность — это не пункт в программе. Это основа всего, что мы делаем. Дети учатся не бояться воды, а понимать её.','Safety is not a programme item. It\'s the foundation of everything we do. Kids learn to understand water, not fear it.','Ohutus ei ole lihtsalt programmipunkt. See on alus kõigele, mida teeme.')}
+                {c('Безопасность - это не пункт в программе. Это основа всего, что мы делаем. Дети учатся не бояться воды, а понимать её.','Safety is not a programme item. It\'s the foundation of everything we do. Kids learn to understand water, not fear it.','Ohutus ei ole lihtsalt programmipunkt. See on alus kõigele, mida teeme.')}
               </p>
               <div className="safety-items">
                 {[
                   {icon:'🛟', t:c('Жилеты и гидрокостюмы всегда','Life jackets and wetsuits always','Päästevested alati'), d:c('Каждый ребёнок в воде только в жилете и гидрокостюме. Без исключений.','Every child in the water only with a life jacket and wetsuit. No exceptions.','Iga laps vees ainult päästevesti ja märjaksüidiga.')},
-                  {icon:'👥', t:c('Группы 12–16 детей','Groups of 12–16 kids','Grupid 12–16 last'), d:c('Каждый инструктор видит каждого ребёнка. Никто не остаётся без внимания.','Every instructor sees every child. No one goes unnoticed.','Iga instruktor näeb iga last.')},
-                  {icon:'📚', t:c('Теория безопасности перед водой','Safety theory before water','Ohutusteooroia enne vett'), d:c('Перед каждым заходом — правила, разбор ситуаций и объяснение опасностей.','Before every session — rules, scenario analysis and hazard explanation.','Enne iga sessiooni — reeglid, stsenaariumid ja ohuanalüüs.')},
+                  {icon:'👥', t:c('Группы 12-16 детей','Groups of 12-16 kids','Grupid 12-16 last'), d:c('Каждый инструктор видит каждого ребёнка. Никто не остаётся без внимания.','Every instructor sees every child. No one goes unnoticed.','Iga instruktor näeb iga last.')},
+                  {icon:'📚', t:c('Теория безопасности перед водой','Safety theory before water','Ohutusteooroia enne vett'), d:c('Перед каждым заходом - правила, разбор ситуаций и объяснение опасностей.','Before every session - rules, scenario analysis and hazard explanation.','Enne iga sessiooni - reeglid, stsenaariumid ja ohuanalüüs.')},
                   {icon:'🌊', t:c('Учим читать воду и ветер','We teach reading water and wind','Õpetame lugema vett ja tuult'), d:c('Дети понимают ветер, погоду и как это влияет на безопасность на воде.','Kids learn wind, weather and how it affects water safety.','Lapsed mõistavad tuult ja ilma ning nende mõju ohutusele.')},
                 ].map((s,i) => (
                   <div key={i} className="safety-it">
@@ -980,7 +1086,7 @@ export default function Home() {
         <div className="wrap">
           <div className="phead rv">
             <div className="tag tag-muted">{c('Стоимость','Pricing','Hinnad')}</div>
-            <h2 className="sec-h" style={{marginBottom:12}}>{c('Прозрачные цены —','Transparent pricing —','Läbipaistvad hinnad —')}<br/><em>{c('всё включено','all included','kõik sees')}</em></h2>
+            <h2 className="sec-h" style={{marginBottom:12}}>{c('Прозрачные цены -','Transparent pricing -','Läbipaistvad hinnad -')}<br/><em>{c('всё включено','all included','kõik sees')}</em></h2>
           </div>
           <div className="pg sg">
             {[
@@ -1003,7 +1109,7 @@ export default function Home() {
             <div className="inc-g">
               {[
                 c('Вся программа серфинга','Full surf programme','Kogu surfi programm'),
-                c('Питание от Tark Catering','Meals — Tark Catering','Toitlustus — Tark Catering'),
+                c('Питание от Tark Catering','Meals - Tark Catering','Toitlustus - Tark Catering'),
                 c('Гидрокостюмы и жилеты','Wetsuits and life jackets','Märjaksüidid ja päästevested'),
                 c('Всё оборудование','All equipment','Kogu varustus'),
                 c('Работа инструкторов','Instructor work','Instruktorite töö'),
@@ -1024,21 +1130,21 @@ export default function Home() {
           <div className="why-h">
             <div className="rv">
               <div className="tag tag-teal">{c('Почему серфинг','Why surfing','Miks surfamine')}</div>
-              <h2 className="sec-h sec-h-lt">{c('Серфинг — это больше,','Surfing is more','Surfamine on rohkem')}<br/><em>{c('чем спорт','than a sport','kui sport')}</em></h2>
+              <h2 className="sec-h sec-h-lt">{c('Серфинг - это больше,','Surfing is more','Surfamine on rohkem')}<br/><em>{c('чем спорт','than a sport','kui sport')}</em></h2>
             </div>
             <div className="rv" style={{transitionDelay:'80ms'}}>
               <p className="sec-sub" style={{color:'rgba(255,255,255,.42)'}}>
-                {c('На волне невозможно думать о лишнем — только здесь и сейчас. Серфинг — это стиль мышления, который остаётся с ребёнком навсегда.','On a wave, your mind can only be here and now. Surfing is a mindset that stays with the child forever.','Lainel saab mõelda ainult praegusele hetkele. Surfamine on mõtteviis, mis jääb kogu eluks.')}
+                {c('На волне невозможно думать о лишнем - только здесь и сейчас. Серфинг - это стиль мышления, который остаётся с ребёнком навсегда.','On a wave, your mind can only be here and now. Surfing is a mindset that stays with the child forever.','Lainel saab mõelda ainult praegusele hetkele. Surfamine on mõtteviis, mis jääb kogu eluks.')}
               </p>
             </div>
           </div>
           <div className="why-g sg">
             {[
-              {n:'01', t:c('Здоровье и сила','Health & Strength','Tervis ja tugevus'), d:c('Морской воздух, движение, солнце — полная перезагрузка тела и головы без гаджетов.','Sea air, movement, sun — a complete reset of body and mind without screens.','Mereõhk, liikumine, päike — keha ja pea täielik taastumine ekraanideta.')},
+              {n:'01', t:c('Здоровье и сила','Health & Strength','Tervis ja tugevus'), d:c('Морской воздух, движение, солнце - полная перезагрузка тела и головы без гаджетов.','Sea air, movement, sun - a complete reset of body and mind without screens.','Mereõhk, liikumine, päike - keha ja pea täielik taastumine ekraanideta.')},
               {n:'02', t:c('Здесь и сейчас','Present moment','Praegune hetk'), d:c('Вода учит концентрации и осознанности лучше любого тренинга. Лишние мысли просто не помещаются.','Water teaches focus and mindfulness better than any training. Distracting thoughts just don\'t fit.','Vesi õpetab keskendumisvõimet paremini kui ükski treening.')},
-              {n:'03', t:c('Чтение природы','Reading nature','Looduse lugemine'), d:c('Дети учатся читать ветер, воду и погоду — навык, который остаётся с ними на всю жизнь.','Children learn to read wind, water and weather — a lifelong skill.','Lapsed õpivad lugema tuult, vett ja ilma — eluaegne oskus.')},
-              {n:'04', t:c('Уверенность в себе','Self-confidence','Enesekindlus'), d:c('Встать на доску и поймать волну — маленькая, но настоящая победа. Ребёнок видит свой прогресс каждый день.','Standing on a board and catching a wave is a small but real victory. The child sees their progress every day.','Lapse iga päev nähtav areng annab tõelise enesekindluse.')},
-              {n:'05', t:c('Командный дух','Team spirit','Meeskonnavaim'), d:c('Дети поддерживают друг друга в воде и на берегу. Настоящая дружба — один из главных результатов лагеря.','Kids support each other in the water and on shore. Real friendship is one of the main outcomes.','Lapsed toetavad üksteist. Päris sõprus on üks peamisi tulemusi.')},
+              {n:'03', t:c('Чтение природы','Reading nature','Looduse lugemine'), d:c('Дети учатся читать ветер, воду и погоду - навык, который остаётся с ними на всю жизнь.','Children learn to read wind, water and weather - a lifelong skill.','Lapsed õpivad lugema tuult, vett ja ilma - eluaegne oskus.')},
+              {n:'04', t:c('Уверенность в себе','Self-confidence','Enesekindlus'), d:c('Встать на доску и поймать волну - маленькая, но настоящая победа. Ребёнок видит свой прогресс каждый день.','Standing on a board and catching a wave is a small but real victory. The child sees their progress every day.','Lapse iga päev nähtav areng annab tõelise enesekindluse.')},
+              {n:'05', t:c('Командный дух','Team spirit','Meeskonnavaim'), d:c('Дети поддерживают друг друга в воде и на берегу. Настоящая дружба - один из главных результатов лагеря.','Kids support each other in the water and on shore. Real friendship is one of the main outcomes.','Lapsed toetavad üksteist. Päris sõprus on üks peamisi tulemusi.')},
               {n:'06', t:c('Внутренний баланс','Inner balance','Sisemine tasakaal'), d:c('Вода учит спокойствию и контролю эмоций. Ребёнок возвращается домой спокойнее и увереннее.','Water teaches calm and emotional control. The child comes home calmer and more confident.','Vesi õpetab rahulikkust. Laps tuleb koju rahulikuma ja enesekindlamana.')},
             ].map(w => (
               <div key={w.n} className="why-it">
@@ -1060,14 +1166,14 @@ export default function Home() {
               <h2 className="sec-h">{c('Люди, которым','People you','Inimesed, kellele')}<br/><em>{c('вы доверяете','can trust','usaldate')}</em></h2>
             </div>
             <div className="rv" style={{transitionDelay:'80ms'}}>
-              <p className="sec-sub">{c('Каждый инструктор — живой человек со своей историей. Ваш ребёнок в надёжных руках.','Every instructor is a real person with their own story. Your child is in safe hands.','Iga instruktor on ehtne inimene oma looga. Teie laps on heades kätes.')}</p>
+              <p className="sec-sub">{c('Каждый инструктор - живой человек со своей историей. Ваш ребёнок в надёжных руках.','Every instructor is a real person with their own story. Your child is in safe hands.','Iga instruktor on ehtne inimene oma looga. Teie laps on heades kätes.')}</p>
             </div>
           </div>
           <div className="team-g sg">
             {[
-              {initials:'НК', name:'Наталья Карасёва', role:c('Ведущая — Серфинг + Кино','Cinema programme lead','Kino-programmi juht'), bio:c('Тележурналист с 20-летним стажем в двух странах, автор подкаста «Cozy with Tasha», создатель документальных проектов. Учит детей видеть историю в каждом кадре и не бояться камеры.','TV journalist with 20+ years in two countries, podcast "Cozy with Tasha". Teaches kids to see a story in every frame.','Teleajakirjanik 20+ aastat, taskuhäälingu autor, dokumentaalfilmide looja.')},
-              {initials:'ВХ', name:'Виталий Холстинин', role:c('Ведущий — Серфинг + Поход','Hiking programme lead','Matkaprogrammi juht'), bio:c('Предприниматель, хайкер, основатель Join The Hike. Прошёл Höga Kusten (140 км, UNESCO) и Land of Giants (120 км). Живёт тем, что преподаёт.','Entrepreneur, hiker, founder of Join The Hike. Completed Höga Kusten (140km, UNESCO) and Land of Giants (120km).','Ettevõtja, matkaja, Join The Hike asutaja.')},
-              {initials:'НГ', name:'Надежда + Григорий', role:c('Инструктора по серфингу','Surf instructors','Surfiinstruktorid'), bio:c('Сертифицированные инструктора с многолетним опытом работы с детьми на Балтийском море. Умеют мотивировать и поддерживать — от первого шага на доске до уверенного катания.','Certified surf instructors with years of experience with children on the Baltic Sea. They know how to motivate and support at every stage.','Sertifitseeritud instruktorid mitmeaastase Läänemere kogemusega.')},
+              {initials:'НК', name:'Наталья Карасёва', role:c('Ведущая - Серфинг + Кино','Cinema programme lead','Kino-programmi juht'), bio:c('Тележурналист с 20-летним стажем в двух странах, автор подкаста «Cozy with Tasha», создатель документальных проектов. Учит детей видеть историю в каждом кадре и не бояться камеры.','TV journalist with 20+ years in two countries, podcast "Cozy with Tasha". Teaches kids to see a story in every frame.','Teleajakirjanik 20+ aastat, taskuhäälingu autor, dokumentaalfilmide looja.')},
+              {initials:'ВХ', name:'Виталий Холстинин', role:c('Ведущий - Серфинг + Поход','Hiking programme lead','Matkaprogrammi juht'), bio:c('Предприниматель, хайкер, основатель Join The Hike. Прошёл Höga Kusten (140 км, UNESCO) и Land of Giants (120 км). Живёт тем, что преподаёт.','Entrepreneur, hiker, founder of Join The Hike. Completed Höga Kusten (140km, UNESCO) and Land of Giants (120km).','Ettevõtja, matkaja, Join The Hike asutaja.')},
+              {initials:'НГ', name:'Надежда + Григорий', role:c('Инструктора по серфингу','Surf instructors','Surfiinstruktorid'), bio:c('Сертифицированные инструктора с многолетним опытом работы с детьми на Балтийском море. Умеют мотивировать и поддерживать - от первого шага на доске до уверенного катания.','Certified surf instructors with years of experience with children on the Baltic Sea. They know how to motivate and support at every stage.','Sertifitseeritud instruktorid mitmeaastase Läänemere kogemusega.')},
             ].map((t,i) => (
               <div key={i} className="tc">
                 <div className="tc-av-p">{t.initials}</div>
@@ -1086,7 +1192,7 @@ export default function Home() {
           <div className="dhead rv">
             <div className="tag tag-muted">{c('Все смены','All sessions','Kõik vahetused')}</div>
             <h2 className="sec-h" style={{marginBottom:12}}>{c('Расписание лета 2026','Summer 2026 schedule','Suve 2026 ajakava')}</h2>
-            <p className="sec-sub" style={{margin:'0 auto'}}>{c('Выберите смену и записывайтесь — места ограничены, группы маленькие.','Choose your session and register — spots are limited, groups are small.','Valige vahetus ja registreeruge — kohti on piiratud.')}</p>
+            <p className="sec-sub" style={{margin:'0 auto'}}>{c('Выберите смену и записывайтесь - места ограничены, группы маленькие.','Choose your session and register - spots are limited, groups are small.','Valige vahetus ja registreeruge - kohti on piiratud.')}</p>
           </div>
           <div className="dg sg">
             {DATES.map((d,i) => (
@@ -1114,14 +1220,14 @@ export default function Home() {
           </div>
           <div className="sched-g sg">
             {[
-              {time:'09:00 – 09:30', name:c('Сбор детей','Arrival','Kogunemine'), desc:c('Встреча детей, знакомство, настрой на день','Meeting kids, introductions, setting the mood','Laste vastuvõtt, tutvumine')},
-              {time:'09:30 – 10:00', name:c('Разминка','Warm-up','Soojendus'), desc:c('Активные тренировки и командные игры на берегу','Active training and team games on shore','Aktiivsed treeningud ja meeskonnmängud')},
-              {time:'10:00 – 12:00', name:c('Водный блок','Water block','Vesiplokk'), desc:c('Теория безопасности, гидрокостюмы, SUP и виндсерфинг','Safety theory, wetsuits, SUP and windsurfing','Ohutusteooroia, märjaksüidid, SUP')},
-              {time:'12:00 – 13:00', name:c('Обед','Lunch','Lõuna'), desc:c('Индивидуальные порции с учётом аллергий. Питание от Tark Catering 🍽','Individual portions, allergies noted — Tark Catering','Individuaalsed portsjonid — Tark Catering')},
-              {time:'13:00 – 13:30', name:c('Отдых после обеда','After-lunch rest','Puhkus pärast lõunat'), desc:c('Спокойные и настольные игры, свободное общение','Quiet games, free time, conversations','Vaiksed mängud, vaba suhtlemine')},
-              {time:'13:30 – 15:30', name:c('Активная программа','Active programme','Aktiivne programm'), desc:c('Виндсёрфинг, кайт, SUP, поход, хайкинг или пляжные игры — зависит от погоды','Windsurfing, kite, SUP, hiking or beach games — depends on weather','Purjelaud, kait, SUP, matk või rannamängud')},
-              {time:'15:30 – 15:45', name:c('Чаепитие ☕','Tea time ☕','Tee aeg ☕'), desc:c('Перерыв, отдых, свободное общение','Break, rest, free conversation','Paus, puhkus, vaba suhtlemine')},
-              {time:'15:45 – 16:30', name:c('Спокойный блок','Calm block','Rahulik plokk'), desc:c('Игры, творчество, интеллектуальные задания','Games, creativity, intellectual tasks','Mängud, loovus, intellektuaalsed ülesanded')},
+              {time:'09:00 - 09:30', name:c('Сбор детей','Arrival','Kogunemine'), desc:c('Встреча детей, знакомство, настрой на день','Meeting kids, introductions, setting the mood','Laste vastuvõtt, tutvumine')},
+              {time:'09:30 - 10:00', name:c('Разминка','Warm-up','Soojendus'), desc:c('Активные тренировки и командные игры на берегу','Active training and team games on shore','Aktiivsed treeningud ja meeskonnmängud')},
+              {time:'10:00 - 12:00', name:c('Водный блок','Water block','Vesiplokk'), desc:c('Теория безопасности, гидрокостюмы, SUP и виндсерфинг','Safety theory, wetsuits, SUP and windsurfing','Ohutusteooroia, märjaksüidid, SUP')},
+              {time:'12:00 - 13:00', name:c('Обед','Lunch','Lõuna'), desc:c('Индивидуальные порции с учётом аллергий. Питание от Tark Catering 🍽','Individual portions, allergies noted - Tark Catering','Individuaalsed portsjonid - Tark Catering')},
+              {time:'13:00 - 13:30', name:c('Отдых после обеда','After-lunch rest','Puhkus pärast lõunat'), desc:c('Спокойные и настольные игры, свободное общение','Quiet games, free time, conversations','Vaiksed mängud, vaba suhtlemine')},
+              {time:'13:30 - 15:30', name:c('Активная программа','Active programme','Aktiivne programm'), desc:c('Виндсёрфинг, кайт, SUP, поход, хайкинг или пляжные игры - зависит от погоды','Windsurfing, kite, SUP, hiking or beach games - depends on weather','Purjelaud, kait, SUP, matk või rannamängud')},
+              {time:'15:30 - 15:45', name:c('Чаепитие ☕','Tea time ☕','Tee aeg ☕'), desc:c('Перерыв, отдых, свободное общение','Break, rest, free conversation','Paus, puhkus, vaba suhtlemine')},
+              {time:'15:45 - 16:30', name:c('Спокойный блок','Calm block','Rahulik plokk'), desc:c('Игры, творчество, интеллектуальные задания','Games, creativity, intellectual tasks','Mängud, loovus, intellektuaalsed ülesanded')},
               {time:'16:30', name:c('До завтра! 👋','See you tomorrow! 👋','Homseni! 👋'), desc:c('Конец программы, ожидание родителей','Programme ends, parents pick up','Programm lõpeb, vanemad tulevad järele')},
             ].map(s => (
               <div key={s.time} className="sched-it">
@@ -1142,26 +1248,10 @@ export default function Home() {
             <h2 className="sec-h sec-h-lt">{c('Жизнь в лагере','Life at camp','Elu laagris')}</h2>
           </div>
           <div className="gg sg">
-            {[
-              {src:'/photo-output-2-1024x1024__1_.jpeg', wide:true},
-              {src:'/DSC02878-150x150.jpeg'},
-              {src:'/IMG_7917-1024x768.jpeg'},
-              {src:'/IMG_6615-821x1024.jpeg'},
-              {src:'/DSC02899-150x150.jpeg'},
-              {src:'/IMG_8779-1-768x1024.jpeg'},
-              {src:'/IMG_9585-150x150.jpeg'},
-              {src:'/IMG_9302-150x150.jpeg'},
-              {src:'/IMG_9294-150x150.jpeg'},
-              {src:'/IMG_7773-150x150.jpeg'},
-              {src:'/IMG_7809-150x150.jpeg'},
-              {src:'/IMG_0843-150x150.jpeg'},
-              {src:'/IMG_0806-150x150.jpeg'},
-              {src:'/IMG_0857-150x150.jpeg'},
-              {src:'/IMG_7752-150x150.jpeg'},
-              {src:'/217650841_4107074432694657_6267790752617918985_n.jpg', wide:true},
-            ].map((g, i) => (
-              <div key={i} className={`gi${g.wide?' gi-wide':''}`} onClick={() => setGalleryLightbox(g.src)}>
-                <img src={g.src} alt="" loading="lazy" />
+            {GALLERY_IMGS.map((src, i) => (
+              <div key={i} className={`gi${i===0||i===4?' gi-wide':''}`} onClick={() => setGalleryLightbox({src,idx:i})}>
+                <img src={src} alt="" loading="lazy" />
+                <div className="gi-overlay"><span className="gi-zoom">⊕</span></div>
               </div>
             ))}
           </div>
@@ -1206,7 +1296,13 @@ export default function Home() {
                   <label className="rf-label">{c('Оценка','Rating','Hinnang')}</label>
                   <div className="rf-stars">
                     {[1,2,3,4,5].map(n => (
-                      <span key={n} className="rf-star" onClick={() => setReviewForm(f => ({...f,rating:n}))} style={{cursor:'pointer',color:n<=reviewForm.rating?'var(--sun)':'#CBD5E0',transition:'color 150ms,transform 150ms'}}>★</span>
+                      <span
+                        key={n}
+                        style={{fontSize:28,cursor:'pointer',color:n<=(reviewHover||reviewForm.rating)?'var(--sun)':'#CBD5E0',transition:'color 150ms,transform 150ms',display:'inline-block'}}
+                        onClick={() => setReviewForm(f => ({...f,rating:n}))}
+                        onMouseEnter={() => setReviewHover(n)}
+                        onMouseLeave={() => setReviewHover(0)}
+                      >★</span>
                     ))}
                   </div>
                 </div>
@@ -1234,15 +1330,8 @@ export default function Home() {
           </div>
           <div className="faq-list">
             {FAQS.map((f,i) => (
-              <div key={i} className={`faq-it rv${openFaq===i?' open':''}`} style={{transitionDelay:`${i*40}ms`}}>
-                <button className="faq-q" onClick={() => {
-                  const el = document.querySelectorAll('.faq-a')[i] as HTMLElement
-                  if (openFaq===i) { setOpenFaq(null); el.style.maxHeight='0' }
-                  else {
-                    if (openFaq!==null) { const prev = document.querySelectorAll('.faq-a')[openFaq] as HTMLElement; if(prev) prev.style.maxHeight='0' }
-                    setOpenFaq(i); el.style.maxHeight=el.scrollHeight+'px'
-                  }
-                }}>
+              <div key={i} className={`faq-it${openFaq===i?' open':''}`}>
+                <button className="faq-q" onClick={() => setOpenFaq(openFaq===i ? null : i)}>
                   <span className="faq-qt">{f.q}</span>
                   <svg className="faq-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg>
                 </button>
@@ -1269,9 +1358,9 @@ export default function Home() {
             </div>
             <div className="loc-info sg">
               {[
-                {icon:'📍', t:c('Адрес','Address','Aadress'), d:c('Stroomi rand — конец пляжа, ближе к Рокка-аль-Маре. Серфинг-станция Time to Surf.','Stroomi beach, end of the beach, near Rocca al Mare. Time to Surf surf station.','Stroomi rand, ranna lõpp, Rocca al Mare lähedal.')},
-                {icon:'🚌', t:c('Как добраться','Getting there','Kuidas jõuda'), d:c('Автобусы №40, 48 до остановки Stroomi rand — около 20 минут от центра.','Buses 40, 48 to Stroomi rand stop — about 20 minutes from the city centre.','Bussid nr 40, 48 peatuseni Stroomi rand — ~20 min kesklinnast.')},
-                {icon:'🚗', t:c('Парковка','Parking','Parkimine'), d:c('Бесплатная парковка у пляжа. В выходные может быть занята — приезжайте заранее.','Free parking at the beach. Can be busy on weekends — arrive early.','Tasuta parkimine ranna juures. Nädalavahetustel võib täis olla.')},
+                {icon:'📍', t:c('Адрес','Address','Aadress'), d:c('Stroomi rand - конец пляжа, ближе к Рокка-аль-Маре. Серфинг-станция Time to Surf.','Stroomi beach, end of the beach, near Rocca al Mare. Time to Surf surf station.','Stroomi rand, ranna lõpp, Rocca al Mare lähedal.')},
+                {icon:'🚌', t:c('Как добраться','Getting there','Kuidas jõuda'), d:c('Автобусы №40, 48 до остановки Stroomi rand - около 20 минут от центра.','Buses 40, 48 to Stroomi rand stop - about 20 minutes from the city centre.','Bussid nr 40, 48 peatuseni Stroomi rand - ~20 min kesklinnast.')},
+                {icon:'🚗', t:c('Парковка','Parking','Parkimine'), d:c('Бесплатная парковка у пляжа. В выходные может быть занята - приезжайте заранее.','Free parking at the beach. Can be busy on weekends - arrive early.','Tasuta parkimine ranna juures. Nädalavahetustel võib täis olla.')},
                 {icon:'📞', t:c('Контакт','Contact','Kontakt'), d:'+372 55512872 (Андрей)\nTelegram: @Andrei_Time_to_Surf\ninfo@timetosurf.ee'},
               ].map((lc,i) => (
                 <div key={i} className="loc-card">
@@ -1296,7 +1385,7 @@ export default function Home() {
             <h2 className="cta-h">
               {c('Места','Spots are','Kohti on')} <em>{c('ограничены.','limited.','piiratud.')}</em><br/>{c('Записывайтесь сейчас.','Register now.','Registreeruge kohe.')}
             </h2>
-            <p className="cta-p">{c('Мы работаем в малых группах — 12–16 детей — чтобы каждый ребёнок получил внимание инструктора. Ближайшая смена: 15 июня 2026.','Small groups of 12–16 children — every child gets personal instructor attention. Next session: June 15, 2026.','Väikesed rühmad 12–16 last — iga laps saab instruktori tähelepanu. Järgmine vahetus: 15. juuni 2026.')}</p>
+            <p className="cta-p">{c('Мы работаем в малых группах - 12-16 детей - чтобы каждый ребёнок получил внимание инструктора. Ближайшая смена: 15 июня 2026.','Small groups of 12-16 children - every child gets personal instructor attention. Next session: June 15, 2026.','Väikesed rühmad 12-16 last - iga laps saab instruktori tähelepanu. Järgmine vahetus: 15. juuni 2026.')}</p>
             <div className="cta-btns">
               <a href={REG} target="_blank" className="btn btn-sun" style={{padding:'16px 40px',fontSize:16}}>{c('Записать ребёнка','Register my child','Registreeri laps')}</a>
               <a href="tel:+37255512872" className="btn btn-ghost" style={{padding:'16px 28px',fontSize:15}}>+372 55512872</a>
