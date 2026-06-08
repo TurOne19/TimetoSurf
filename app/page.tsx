@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 type Lang = 'ru' | 'en' | 'et'
 const REG = 'https://docs.google.com/forms/d/e/1FAIpQLSf-HIXlcSpWy0v0MfJ7HpFNcn_fGDd2Hns2JeHe4kZkNVtqDA/viewform'
@@ -45,8 +45,9 @@ export default function Home() {
   const [reviewSent, setReviewSent] = useState(false)
   const [reviewLoading, setReviewLoading] = useState(false)
   const [showReviewForm, setShowReviewForm] = useState(false)
-  const [galleryLightbox, setGalleryLightbox] = useState<{src:string,idx:number} | null>(null)
+  const [galleryLightbox, setGalleryLightbox] = useState<{src:string,idx:number,pool:'gallery'|'hero'} | null>(null)
   const [programModal, setProgramModal] = useState<string | null>(null)
+  const [introVisible, setIntroVisible] = useState(true)
 
   const c = (ru: string, en: string, et: string) => lang === 'ru' ? ru : lang === 'en' ? en : et
 
@@ -74,38 +75,89 @@ export default function Home() {
     fetch('/api/reviews').then(r => r.json()).then(d => { if (Array.isArray(d)) setReviews(d) }).catch(() => {})
   }, [])
 
-  const GALLERY_IMGS = [
+  // 4 hero showcase photos (top grid, separate lightbox)
+  const HERO_PHOTOS = [
     '/photo-output-2-1024x1024__1_.jpeg',
     '/IMG_7917-1024x768.jpeg',
     '/IMG_6615-821x1024.jpeg',
     '/IMG_8779-1-768x1024.jpeg',
-    '/217650841_4107074432694657_6267790752617918985_n.jpg',
-    '/DSC02878-150x150.jpeg',
-    '/DSC02899-150x150.jpeg',
-    '/IMG_9585-150x150.jpeg',
-    '/IMG_9302-150x150.jpeg',
-    '/IMG_9294-150x150.jpeg',
-    '/IMG_7773-150x150.jpeg',
-    '/IMG_7809-150x150.jpeg',
-    '/IMG_0843-150x150.jpeg',
-    '/IMG_0806-150x150.jpeg',
-    '/IMG_0857-150x150.jpeg',
-    '/IMG_7752-150x150.jpeg',
   ]
+
+  // All gallery photos organized in sections
+  const GALLERY_SECTIONS = [
+    {
+      label: c('На воде', 'On the Water', 'Vees'),
+      imgs: [
+        '/DSC02601-150x150.jpeg',
+        '/DSC02691-150x150.jpeg',
+        '/DSC02699-150x150.jpeg',
+        '/DSC02878-150x150.jpeg',
+        '/DSC02883-150x150.jpeg',
+        '/DSC02899-150x150.jpeg',
+        '/IMG_7757-150x150.jpeg',
+        '/IMG_7758-150x150.jpeg',
+        '/IMG_7773-150x150.jpeg',
+        '/IMG_7752-150x150.jpeg',
+        '/IMG_7796-150x150.jpeg',
+        '/IMG_7787-150x150.jpeg',
+      ]
+    },
+    {
+      label: c('Команда и атмосфера', 'Team & Vibes', 'Meeskond ja atmosfäär'),
+      imgs: [
+        '/217650841_4107074432694657_6267790752617918985_n.jpg',
+        '/IMG_0806-150x150.jpeg',
+        '/IMG_0843-150x150.jpeg',
+        '/IMG_0850-150x150.jpeg',
+        '/IMG_0857-150x150.jpeg',
+        '/IMG_7805-150x150.jpeg',
+        '/IMG_7807-150x150.jpeg',
+        '/IMG_7809-150x150.jpeg',
+        '/IMG_7812-150x150.jpeg',
+        '/IMG_7659-150x150.jpeg',
+        '/IMG_7046-150x150.jpg',
+      ]
+    },
+    {
+      label: c('Моменты', 'Moments', 'Hetked'),
+      imgs: [
+        '/IMG_9281-150x150.jpeg',
+        '/IMG_9284-150x150.jpeg',
+        '/IMG_9294-150x150.jpeg',
+        '/IMG_9302-150x150.jpeg',
+        '/IMG_9532-150x150.jpeg',
+        '/IMG_9585-150x150.jpeg',
+        '/IMG_6342-150x150.jpg',
+        '/IMG_6351-150x150.jpg',
+        '/IMG_6359-2-150x150.jpg',
+        '/IMG_6613-150x150.jpeg',
+        '/IMG_6614-150x150.jpeg',
+        '/photo_2026-04-18-10_00_40-150x150.jpeg',
+        '/photo_2026-04-18-10_00_44-150x150.jpeg',
+        '/photo_2026-04-18-10_00_46-150x150.jpeg',
+        '/IMG_8779-1-768x1024.jpeg',
+        '/photo-output-2-1024x1024__1_.jpeg',
+      ]
+    },
+  ]
+
+  // Flat list for lightbox navigation
+  const GALLERY_IMGS = GALLERY_SECTIONS.flatMap(s => s.imgs)
 
   useEffect(() => {
     if (!galleryLightbox) return
     const handler = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setGalleryLightbox(null)
+      const pool = galleryLightbox.pool === 'hero' ? HERO_PHOTOS : GALLERY_IMGS
       if (e.key === 'ArrowRight') setGalleryLightbox(prev => {
         if (!prev) return null
-        const next = (prev.idx + 1) % GALLERY_IMGS.length
-        return { src: GALLERY_IMGS[next], idx: next }
+        const next = (prev.idx + 1) % pool.length
+        return { src: pool[next], idx: next, pool: prev.pool }
       })
       if (e.key === 'ArrowLeft') setGalleryLightbox(prev => {
         if (!prev) return null
-        const next = (prev.idx - 1 + GALLERY_IMGS.length) % GALLERY_IMGS.length
-        return { src: GALLERY_IMGS[next], idx: next }
+        const next = (prev.idx - 1 + pool.length) % pool.length
+        return { src: pool[next], idx: next, pool: prev.pool }
       })
     }
     window.addEventListener('keydown', handler)
@@ -287,6 +339,10 @@ export default function Home() {
     @keyframes bgShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
     @keyframes dotBlink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
     @keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+    @keyframes introFade{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.04);pointer-events:none}}
+    @keyframes introScale{from{opacity:0;transform:scale(0.7)}to{opacity:1;transform:scale(1)}}
+    @keyframes introSlide{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes introBar{from{width:0;opacity:0}to{width:40px;opacity:1}}
 
     *{box-sizing:border-box;margin:0;padding:0}
     html{scroll-behavior:smooth}
@@ -397,12 +453,13 @@ export default function Home() {
     .hero-bar-l{font-size:9px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:3px}
     .hero-bar-v{font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:700;color:rgba(255,255,255,.82);line-height:1.2}
 
-    /* TRUST */
     .trust{background:var(--sand-lt);border-bottom:1px solid var(--bwarm)}
     .trust-g{display:grid;grid-template-columns:repeat(4,1fr)}
     .trust-it{padding:44px 28px;text-align:center;border-right:1px solid var(--bwarm);transition:background 240ms var(--ease),transform 240ms var(--ease);cursor:default}
+    .trust-it:hover{background:var(--sand2);transform:translateY(-3px)}
     .trust-it:last-child{border-right:none}
     .trust-n{font-family:'Plus Jakarta Sans',sans-serif;font-size:52px;font-weight:800;color:var(--ocean);line-height:1;letter-spacing:-.04em;margin-bottom:6px;transition:transform 300ms var(--ease),color 200ms}
+    .trust-it:hover .trust-n{transform:scale(1.08);color:var(--teal)}
     .trust-l{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.07em;text-transform:uppercase}
 
     /* FORMATS */
@@ -534,7 +591,7 @@ export default function Home() {
     .ghead{text-align:center;margin-bottom:48px}
     .gg{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
     .gi{aspect-ratio:1/1;border-radius:8px;overflow:hidden;cursor:zoom-in;position:relative}
-    .gi img{width:100%;height:100%;object-fit:cover;transition:transform 300ms var(--ease),filter 200ms;display:block}
+    .gi img{width:100%;height:100%;object-fit:cover;object-position:center top;transition:transform 300ms var(--ease),filter 200ms;display:block}
     .gi:hover img{transform:scale(1.06);filter:brightness(1.1)}
     .gi-wide{grid-column:span 2;aspect-ratio:2/1}
     .gi-overlay{position:absolute;inset:0;background:rgba(0,0,0,0);transition:background 200ms;display:flex;align-items:center;justify-content:center}
@@ -712,19 +769,56 @@ export default function Home() {
     <>
       <style>{CSS}</style>
 
-      {/* SCROLL PROGRESS */}
+      {/* INTRO ANIMATION */}
+      {introVisible && (
+        <div
+          style={{
+            position:'fixed',inset:0,zIndex:999,background:'#0B3D6B',
+            display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',
+            animation:'introFade 0.6s ease 1.8s forwards',
+            pointerEvents:'none',
+          }}
+          onAnimationEnd={() => setIntroVisible(false)}
+        >
+          <div style={{animation:'introScale 0.7s cubic-bezier(0.23,1,0.32,1) 0.2s both'}}>
+            <img
+              src="/logo.jpeg"
+              alt="Time to Surf"
+              style={{width:100,height:100,borderRadius:'50%',objectFit:'cover',
+                border:'3px solid rgba(10,172,172,0.6)',
+                boxShadow:'0 0 60px rgba(10,172,172,0.4), 0 0 120px rgba(10,172,172,0.15)',
+              }}
+            />
+          </div>
+          <div style={{
+            fontFamily:"'Plus Jakarta Sans',sans-serif",fontSize:28,fontWeight:800,color:'white',
+            letterSpacing:'-.03em',marginTop:20,animation:'introSlide 0.6s ease 0.5s both'
+          }}>Time to Surf</div>
+          <div style={{
+            fontSize:11,fontWeight:700,letterSpacing:'.18em',textTransform:'uppercase',
+            color:'rgba(255,255,255,.4)',marginTop:6,animation:'introSlide 0.6s ease 0.65s both'
+          }}>{c('Детские лагеря · Таллин','Kids Camps · Tallinn','Laste laagrid · Tallinn')}</div>
+          <div style={{
+            width:40,height:2,background:'var(--teal)',borderRadius:1,marginTop:24,
+            animation:'introBar 0.8s ease 0.8s both'
+          }}/>
+        </div>
+      )}
       <ScrollProgress />
 
       {/* GALLERY LIGHTBOX */}
-      {galleryLightbox && (
-        <div className="lb-overlay" onClick={() => setGalleryLightbox(null)}>
-          <button className="lb-close" onClick={() => setGalleryLightbox(null)}>✕</button>
-          <button className="lb-prev" onClick={e => { e.stopPropagation(); const ni = (galleryLightbox.idx - 1 + GALLERY_IMGS.length) % GALLERY_IMGS.length; setGalleryLightbox({src:GALLERY_IMGS[ni],idx:ni}) }}>‹</button>
-          <img src={galleryLightbox.src} alt="" onClick={e => e.stopPropagation()} />
-          <button className="lb-next" onClick={e => { e.stopPropagation(); const ni = (galleryLightbox.idx + 1) % GALLERY_IMGS.length; setGalleryLightbox({src:GALLERY_IMGS[ni],idx:ni}) }}>›</button>
-          <div className="lb-counter">{galleryLightbox.idx + 1} / {GALLERY_IMGS.length}</div>
-        </div>
-      )}
+      {galleryLightbox && (() => {
+        const pool = galleryLightbox.pool === 'hero' ? HERO_PHOTOS : GALLERY_IMGS
+        return (
+          <div className="lb-overlay" onClick={() => setGalleryLightbox(null)}>
+            <button className="lb-close" onClick={() => setGalleryLightbox(null)}>✕</button>
+            <button className="lb-prev" onClick={e => { e.stopPropagation(); const ni = (galleryLightbox.idx - 1 + pool.length) % pool.length; setGalleryLightbox({src:pool[ni],idx:ni,pool:galleryLightbox.pool}) }}>‹</button>
+            <img src={galleryLightbox.src} alt="" onClick={e => e.stopPropagation()} />
+            <button className="lb-next" onClick={e => { e.stopPropagation(); const ni = (galleryLightbox.idx + 1) % pool.length; setGalleryLightbox({src:pool[ni],idx:ni,pool:galleryLightbox.pool}) }}>›</button>
+            <div className="lb-counter">{galleryLightbox.idx + 1} / {pool.length}</div>
+          </div>
+        )
+      })()}
 
       {/* PROGRAM MODAL */}
       {programModal && PROGRAM_DATA[programModal] && (() => {
@@ -916,6 +1010,32 @@ export default function Home() {
         <div className="hero-wave"/>
       </section>
 
+
+      {/* MARQUEE TICKER */}
+      <div style={{background:'var(--teal)',overflow:'hidden',padding:'10px 0',position:'relative',zIndex:1}}>
+        <div style={{display:'flex',gap:0,animation:'marquee 18s linear infinite',width:'max-content'}}>
+          {Array.from({length:2}).map((_,rep) => (
+            <div key={rep} style={{display:'flex',gap:0,flexShrink:0}}>
+              {[
+                c('🏄 Серфинг','🏄 Surfing','🏄 Surfamine'),
+                c('🎬 Кино','🎬 Cinema','🎬 Kino'),
+                c('🥾 Поход','🥾 Hiking','🥾 Matk'),
+                c('🌊 Таллин','🌊 Tallinn','🌊 Tallinn'),
+                c('⭐ Лето 2026','⭐ Summer 2026','⭐ Suvi 2026'),
+                c('🛟 Безопасность','🛟 Safety','🛟 Ohutus'),
+                c('👧 Возраст 7-14','👧 Ages 7-14','👧 Vanus 7-14'),
+                c('🌍 Эстония','🌍 Estonia','🌍 Eesti'),
+              ].map((item, i) => (
+                <span key={i} style={{
+                  fontSize:12,fontWeight:700,letterSpacing:'.08em',textTransform:'uppercase',
+                  color:'rgba(255,255,255,.9)',padding:'0 28px',whiteSpace:'nowrap',
+                  borderRight:'1px solid rgba(255,255,255,.25)',
+                }}>{item}</span>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
 
       {/* TRUST */}
       <section className="trust">
@@ -1171,9 +1291,9 @@ export default function Home() {
           </div>
           <div className="team-g sg">
             {[
-              {initials:'НК', name:'Наталья Карасёва', role:c('Ведущая - Серфинг + Кино','Cinema programme lead','Kino-programmi juht'), bio:c('Тележурналист с 20-летним стажем в двух странах, автор подкаста «Cozy with Tasha», создатель документальных проектов. Учит детей видеть историю в каждом кадре и не бояться камеры.','TV journalist with 20+ years in two countries, podcast "Cozy with Tasha". Teaches kids to see a story in every frame.','Teleajakirjanik 20+ aastat, taskuhäälingu autor, dokumentaalfilmide looja.')},
-              {initials:'ВХ', name:'Виталий Холстинин', role:c('Ведущий - Серфинг + Поход','Hiking programme lead','Matkaprogrammi juht'), bio:c('Предприниматель, хайкер, основатель Join The Hike. Прошёл Höga Kusten (140 км, UNESCO) и Land of Giants (120 км). Живёт тем, что преподаёт.','Entrepreneur, hiker, founder of Join The Hike. Completed Höga Kusten (140km, UNESCO) and Land of Giants (120km).','Ettevõtja, matkaja, Join The Hike asutaja.')},
-              {initials:'НГ', name:'Надежда + Григорий', role:c('Инструктора по серфингу','Surf instructors','Surfiinstruktorid'), bio:c('Сертифицированные инструктора с многолетним опытом работы с детьми на Балтийском море. Умеют мотивировать и поддерживать - от первого шага на доске до уверенного катания.','Certified surf instructors with years of experience with children on the Baltic Sea. They know how to motivate and support at every stage.','Sertifitseeritud instruktorid mitmeaastase Läänemere kogemusega.')},
+              {initials:'НК', name:'Наталья Карасёва', role:c('Ведущая - Серфинг + Кино','Cinema programme lead','Kino-programmi juht'), bio:c('Тележурналист с 20-летним стажем в двух странах, автор подкаста «Cozy with Tasha», создатель документальных проектов. Учит детей видеть историю в каждом кадре и не бояться камеры.','TV journalist with 20+ years in two countries, podcast "Cozy with Tasha". Teaches kids to see a story in every frame.','Teleajakirjanik 20+ aastat kahes riigis, taskuhäälingu «Cozy with Tasha» autor, dokumentaalfilmide looja. Õpetab lapsi nägema lugu igas kaadris ja mitte kartma kaamerat.')},
+              {initials:'ВХ', name:'Виталий Холстинин', role:c('Ведущий - Серфинг + Поход','Hiking programme lead','Matkaprogrammi juht'), bio:c('Предприниматель, хайкер, основатель Join The Hike. Прошёл Höga Kusten (140 км, UNESCO) и Land of Giants (120 км). Живёт тем, что преподаёт.','Entrepreneur, hiker, founder of Join The Hike. Completed Höga Kusten (140km, UNESCO) and Land of Giants (120km).','Ettevõtja, matkaja, Join The Hike asutaja. Läbinud Höga Kusten (140 km, UNESCO) ja Land of Giants (120 km). Elab seda, mida õpetab.')},
+              {initials:'НГ', name:'Надежда + Григорий', role:c('Инструктора по серфингу','Surf instructors','Surfiinstruktorid'), bio:c('Сертифицированные инструктора с многолетним опытом работы с детьми на Балтийском море. Умеют мотивировать и поддерживать - от первого шага на доске до уверенного катания.','Certified surf instructors with years of experience with children on the Baltic Sea. They know how to motivate and support at every stage.','Sertifitseeritud surfiinstruktorid, kes on aastaid töötanud lastega Läänemere ääres. Oskavad motiveerida ja toetada – esimesest sammust laual kuni enesekindla sõitmiseni.')},
             ].map((t,i) => (
               <div key={i} className="tc">
                 <div className="tc-av-p">{t.initials}</div>
@@ -1246,15 +1366,57 @@ export default function Home() {
           <div className="ghead rv">
             <div className="tag tag-pale">{c('Атмосфера','Atmosphere','Atmosfäär')}</div>
             <h2 className="sec-h sec-h-lt">{c('Жизнь в лагере','Life at camp','Elu laagris')}</h2>
+            <p style={{color:'rgba(255,255,255,.4)',fontSize:14,marginTop:8,maxWidth:480,margin:'8px auto 0'}}>
+              {c(`${GALLERY_IMGS.length + HERO_PHOTOS.length} фотографий`,`${GALLERY_IMGS.length + HERO_PHOTOS.length} photos`,`${GALLERY_IMGS.length + HERO_PHOTOS.length} fotot`)}
+            </p>
           </div>
-          <div className="gg sg">
-            {GALLERY_IMGS.map((src, i) => (
-              <div key={i} className={`gi${i===0||i===4?' gi-wide':''}`} onClick={() => setGalleryLightbox({src,idx:i})}>
-                <img src={src} alt="" loading="lazy" />
-                <div className="gi-overlay"><span className="gi-zoom">⊕</span></div>
+
+          {/* HERO SHOWCASE - 4 big photos with separate lightbox */}
+          <div style={{marginBottom:48}}>
+            <div style={{
+              fontSize:10,fontWeight:700,letterSpacing:'.16em',textTransform:'uppercase',
+              color:'rgba(255,255,255,.35)',marginBottom:14,
+            }}>{c('Лучшие моменты','Best moments','Parimad hetked')}</div>
+            <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:6}}>
+              {HERO_PHOTOS.map((src, i) => (
+                <div key={i} style={{aspectRatio:'3/4',borderRadius:10,overflow:'hidden',cursor:'zoom-in',position:'relative'}}
+                  onClick={() => setGalleryLightbox({src,idx:i,pool:'hero'})}>
+                  <img src={src} alt="" style={{width:'100%',height:'100%',objectFit:'cover',transition:'transform 300ms',display:'block'}}
+                    onMouseEnter={e=>(e.currentTarget.style.transform='scale(1.06)')}
+                    onMouseLeave={e=>(e.currentTarget.style.transform='scale(1)')} />
+                  <div style={{position:'absolute',inset:0,background:'linear-gradient(to top,rgba(0,0,0,.2) 0%,transparent 50%)',pointerEvents:'none'}}/>
+                  <div style={{position:'absolute',bottom:8,right:8,background:'rgba(0,0,0,.4)',color:'white',borderRadius:'50%',width:28,height:28,display:'flex',alignItems:'center',justifyContent:'center',fontSize:14,opacity:0.7}}>⊕</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* SECTIONED GALLERY */}
+          {GALLERY_SECTIONS.map((section, si) => (
+            <div key={si} className="rv" style={{marginBottom:40}}>
+              <div style={{
+                display:'flex',alignItems:'center',gap:14,marginBottom:16,
+              }}>
+                <div style={{
+                  fontSize:10,fontWeight:700,letterSpacing:'.16em',textTransform:'uppercase',
+                  color:'rgba(255,255,255,.35)',
+                }}>{section.label}</div>
+                <div style={{flex:1,height:1,background:'rgba(255,255,255,.1)'}}/>
+                <div style={{fontSize:11,color:'rgba(255,255,255,.25)'}}>{section.imgs.length}</div>
               </div>
-            ))}
-          </div>
+              <div className="gg sg" style={{marginBottom:0}}>
+                {section.imgs.map((src, i) => {
+                  const globalIdx = GALLERY_SECTIONS.slice(0,si).reduce((a,s)=>a+s.imgs.length,0) + i
+                  return (
+                    <div key={i} className="gi" onClick={() => setGalleryLightbox({src,idx:globalIdx,pool:'gallery'})}>
+                      <img src={src} alt="" loading="lazy" />
+                      <div className="gi-overlay"><span className="gi-zoom">⊕</span></div>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -1266,10 +1428,8 @@ export default function Home() {
             <h2 className="sec-h" style={{marginBottom:12}}>{c('Что говорят родители','What parents say','Mida vanemad ütlevad')}</h2>
             <p className="sec-sub" style={{margin:'0 auto'}}>{c('Настоящие отзывы родителей, чьи дети уже побывали в лагере.','Real reviews from parents whose children have attended camp.','Päris arvustused vanematelt, kelle lapsed on laagris käinud.')}</p>
           </div>
-          <div className="rev-g sg">
-            {reviews.length === 0 ? (
-              <div className="rev-empty">{c('Отзывы появятся здесь. Будьте первым!','Reviews will appear here. Be the first!','Arvustused ilmuvad siia. Olge esimene!')}</div>
-            ) : reviews.map(r => (
+          <div className="rev-g sg" style={{minHeight: reviews.length === 0 ? '0' : undefined}}>
+            {reviews.length === 0 ? null : reviews.map(r => (
               <div key={r.id} className="rc">
                 <div className="rc-stars">{Array.from({length:r.rating}).map((_,i) => <span key={i} className="rc-star">★</span>)}</div>
                 <p className="rc-text">"{r.text}"</p>
