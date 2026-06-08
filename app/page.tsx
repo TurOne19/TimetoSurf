@@ -26,8 +26,7 @@ function ScrollProgress() {
     }
     window.addEventListener('scroll', fn, { passive: true })
     return () => window.removeEventListener('scroll', fn)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps)
+  }, [])
   return (
     <div style={{position:'fixed',top:0,left:0,right:0,height:'3px',background:'transparent',zIndex:999,pointerEvents:'none'}}>
       <div style={{height:'100%',width:`${prog}%`,background:'linear-gradient(90deg,var(--teal),var(--teal-lt),var(--sun))',transition:'width 60ms linear',boxShadow:'0 0 8px rgba(10,172,172,.6)'}}/>
@@ -87,29 +86,25 @@ export default function Home() {
       if (bl.startsWith('et')) setLang('et')
       else if (bl.startsWith('en')) setLang('en')
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps)
+  }, [])
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 40)
     window.addEventListener('scroll', fn, { passive: true })
     return () => window.removeEventListener('scroll', fn)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps)
+  }, [])
 
   useEffect(() => { document.body.style.overflow = (menuOpen || galleryLightbox !== null || programModal !== null) ? 'hidden' : '' }, [menuOpen, galleryLightbox, programModal])
 
   useEffect(() => {
     fetch('/api/reviews').then(r => r.json()).then(d => { if (Array.isArray(d)) setReviews(d) }).catch(() => {})
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps)
+  }, [])
 
   useEffect(() => {
     fetch('/api/sessions').then(r => r.json()).then(d => { if (Array.isArray(d) && d.length > 0) setDbSessions(d) }).catch(() => {})
     fetch('/api/settings').then(r => r.json()).then(d => { if (d && typeof d === 'object') setSiteSettings(d) }).catch(() => {})
     fetch('/api/gallery').then(r => r.json()).then(d => { if (Array.isArray(d) && d.length > 0) setDbGallery(d) }).catch(() => {})
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps)
+  }, [])
 
   // 4 hero showcase photos (top grid, separate lightbox)
   const HERO_PHOTOS = dbGallery.filter(p => p.section === 'hero').map(p => p.url).length > 0
