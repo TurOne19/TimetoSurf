@@ -169,7 +169,7 @@ function ReviewsTab() {
               <span style={{color:'#F5A623'}}>{'★'.repeat(r.rating)}</span>
               <span style={{fontSize:11,color:'#aaa'}}>{new Date(r.created_at).toLocaleDateString('ru-RU')}</span>
             </div>
-            <p style={{fontSize:14,color:'#344E63',lineHeight:1.7,margin:'0 0 12px'}}>"{r.text}"</p>
+            <p style={{fontSize:14,color:'#344E63',lineHeight:1.7,margin:'0 0 12px',wordBreak:'break-word',overflowWrap:'anywhere'}}>"{r.text}"</p>
             <div style={{display:'flex',gap:8,justifyContent:'flex-end'}}>
               {!r.approved&&<button onClick={()=>approve(r.id)} style={S.btn('#16A34A')}>✓ Опубликовать</button>}
               <button onClick={()=>del(r.id)} style={S.btn('#fee2e2','#dc2626')}>✕ Удалить</button>

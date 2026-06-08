@@ -695,11 +695,11 @@ export default function Home() {
     .reviews{background:var(--sand-lt);padding:96px 0}
     .revh{text-align:center;margin-bottom:52px}
     .rev-g{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:36px}
-    .rc{background:white;border:2px solid var(--border);border-radius:14px;padding:20px;transition:transform 220ms var(--ease)}
+    .rc{background:white;border:2px solid var(--border);border-radius:14px;padding:20px;transition:transform 220ms var(--ease);overflow:hidden}
     .rc:hover{transform:translateY(-2px)}
     .rc-stars{display:flex;gap:3px;margin-bottom:10px}
     .rc-star{color:var(--sun);font-size:16px}
-    .rc-text{font-size:14px;color:var(--mid);line-height:1.75;margin-bottom:12px}
+    .rc-text{font-size:14px;color:var(--mid);line-height:1.75;margin-bottom:12px;word-break:break-word;overflow-wrap:anywhere}
     .rc-name{font-size:13px;font-weight:700;color:var(--ocean)}
     .rc-prog{font-size:11px;color:var(--muted);margin-top:2px}
     .rev-empty{grid-column:span 3;text-align:center;padding:48px;color:var(--muted);font-size:14px}
@@ -1513,7 +1513,8 @@ export default function Home() {
                 </div>
                 <div className="rf-field">
                   <label className="rf-label">{c('Ваш отзыв','Your review','Teie arvustus')} *</label>
-                  <textarea className="rf-input" rows={4} value={reviewForm.text} onChange={e => setReviewForm(f => ({...f,text:e.target.value}))} placeholder={c('Расскажите о вашем опыте...','Tell us about your experience...','Rääkige oma kogemusest...')} style={{resize:'vertical'}}/>
+                  <textarea className="rf-input" rows={4} value={reviewForm.text} onChange={e => setReviewForm(f => ({...f,text:e.target.value.slice(0,600)}))} placeholder={c('Расскажите о вашем опыте...','Tell us about your experience...','Rääkige oma kogemusest...')} maxLength={600} style={{resize:'vertical'}}/>
+                  <div style={{textAlign:'right',fontSize:11,color:reviewForm.text.length>=580?'#dc2626':'var(--muted)',marginTop:4}}>{reviewForm.text.length}/600</div>
                 </div>
                 <div style={{display:'flex',gap:10,justifyContent:'flex-end'}}>
                   <button className="btn btn-teal btn-sm" onClick={submitReview} disabled={reviewLoading}>
