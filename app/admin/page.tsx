@@ -150,7 +150,7 @@ function ReviewsTab() {
   const filtered=reviews.filter(r=>filter==='all'?true:filter==='pending'?!r.approved:r.approved)
 
   return <div>
-    <SectionHeader title="💬 Отзывы" sub="Модерация отзывов от участников"/>
+    <SectionHeader title="💬 Отзывы" sub="Нажми «Опубликовать» → отзыв появится на сайте. Непубликованные не видны посетителям."/>
     <div style={{display:'flex',gap:8,marginBottom:20}}>
       {(['pending','approved','all'] as const).map(f=>(
         <button key={f} onClick={()=>setFilter(f)} style={{...S.tab(filter===f),background:filter===f?'#0B3D6B':'white',color:filter===f?'white':'#344E63',boxShadow:'0 1px 4px rgba(0,0,0,.08)'}}>
@@ -272,12 +272,57 @@ function SessionsTab() {
 }
 
 // ── Gallery ──
+const STATIC_PHOTOS = [
+  { url: '/DSC02601-150x150.jpeg', section: 'water' },
+  { url: '/DSC02691-150x150.jpeg', section: 'water' },
+  { url: '/DSC02699-150x150.jpeg', section: 'water' },
+  { url: '/DSC02878-150x150.jpeg', section: 'water' },
+  { url: '/DSC02883-150x150.jpeg', section: 'water' },
+  { url: '/DSC02899-150x150.jpeg', section: 'water' },
+  { url: '/IMG_7757-150x150.jpeg', section: 'water' },
+  { url: '/IMG_7758-150x150.jpeg', section: 'water' },
+  { url: '/IMG_7773-150x150.jpeg', section: 'water' },
+  { url: '/IMG_7752-150x150.jpeg', section: 'water' },
+  { url: '/IMG_7796-150x150.jpeg', section: 'water' },
+  { url: '/IMG_7787-150x150.jpeg', section: 'water' },
+  { url: '/217650841_4107074432694657_6267790752617918985_n.jpg', section: 'team' },
+  { url: '/IMG_0806-150x150.jpeg', section: 'team' },
+  { url: '/IMG_0843-150x150.jpeg', section: 'team' },
+  { url: '/IMG_0850-150x150.jpeg', section: 'team' },
+  { url: '/IMG_0857-150x150.jpeg', section: 'team' },
+  { url: '/IMG_7805-150x150.jpeg', section: 'team' },
+  { url: '/IMG_7807-150x150.jpeg', section: 'team' },
+  { url: '/IMG_7809-150x150.jpeg', section: 'team' },
+  { url: '/IMG_7812-150x150.jpeg', section: 'team' },
+  { url: '/IMG_7659-150x150.jpeg', section: 'team' },
+  { url: '/IMG_7046-150x150.jpg', section: 'team' },
+  { url: '/IMG_9281-150x150.jpeg', section: 'moments' },
+  { url: '/IMG_9284-150x150.jpeg', section: 'moments' },
+  { url: '/IMG_9294-150x150.jpeg', section: 'moments' },
+  { url: '/IMG_9302-150x150.jpeg', section: 'moments' },
+  { url: '/IMG_9532-150x150.jpeg', section: 'moments' },
+  { url: '/IMG_9585-150x150.jpeg', section: 'moments' },
+  { url: '/IMG_6342-150x150.jpg', section: 'moments' },
+  { url: '/IMG_6351-150x150.jpg', section: 'moments' },
+  { url: '/IMG_6359-2-150x150.jpg', section: 'moments' },
+  { url: '/IMG_6613-150x150.jpeg', section: 'moments' },
+  { url: '/IMG_6614-150x150.jpeg', section: 'moments' },
+  { url: '/photo_2026-04-18-10_00_40-150x150.jpeg', section: 'moments' },
+  { url: '/photo_2026-04-18-10_00_44-150x150.jpeg', section: 'moments' },
+  { url: '/photo_2026-04-18-10_00_46-150x150.jpeg', section: 'moments' },
+  { url: '/photo-output-2-1024x1024__1_.jpeg', section: 'hero' },
+  { url: '/IMG_7917-1024x768.jpeg', section: 'hero' },
+  { url: '/IMG_6615-821x1024.jpeg', section: 'hero' },
+  { url: '/IMG_8779-1-768x1024.jpeg', section: 'hero' },
+]
+
 function GalleryTab() {
   const [photos,setPhotos]=useState<GalleryPhoto[]>([])
   const [loading,setLoading]=useState(true)
   const [newUrl,setNewUrl]=useState('')
   const [newSection,setNewSection]=useState('moments')
   const [adding,setAdding]=useState(false)
+  const [seeding,setSeeding]=useState(false)
   const [msg,setMsg]=useState('')
 
   const load=async()=>{setLoading(true);try{const r=await fetch('/api/gallery');const d=await r.json();if(Array.isArray(d))setPhotos(d)}catch{}setLoading(false)}
@@ -292,11 +337,47 @@ function GalleryTab() {
   }
   const del=async(id:number)=>{if(!confirm('Удалить фото?'))return;await fetch('/api/gallery',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({id})});load()}
 
+  const seedStatic=async()=>{
+    if(!confirm(`Перенести ${STATIC_PHOTOS.length} статических фото в базу данных? После этого сайт будет использовать фото из базы.`))return
+    setSeeding(true)
+    let ok=0,fail=0
+    for(const p of STATIC_PHOTOS){
+      try{
+        const r=await fetch('/api/gallery',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:p.url,section:p.section,sort_order:0})})
+        if(r.ok)ok++;else fail++
+      }catch{fail++}
+    }
+    setMsg(`Добавлено: ${ok} фото${fail>0?`, ошибок: ${fail}`:''}`)
+    setSeeding(false)
+    load()
+    setTimeout(()=>setMsg(''),5000)
+  }
+
   const grouped=SECTION_OPTIONS.map(s=>({...s,photos:photos.filter(p=>p.section===s.value)}))
 
   return <div>
     <SectionHeader title="📸 Галерея фото" sub="Управление фотографиями на сайте"/>
     {msg&&<Toast text={msg}/>}
+
+    {/* Seed button — shown only when DB is empty */}
+    {!loading&&photos.length===0&&(
+      <div style={{...S.card,border:'2px solid #F5A623',background:'#FFFBF0',marginBottom:24}}>
+        <div style={{display:'flex',alignItems:'flex-start',gap:14}}>
+          <div style={{fontSize:28}}>📂</div>
+          <div style={{flex:1}}>
+            <div style={{fontWeight:700,fontSize:14,color:'#92400E',marginBottom:6}}>База данных галереи пустая</div>
+            <p style={{fontSize:13,color:'#78350F',margin:'0 0 14px'}}>
+              На сайте есть <strong>{STATIC_PHOTOS.length} существующих фото</strong> (из папки /public/), но они не добавлены в базу. Нажми кнопку ниже — все фото перенесутся в Supabase и станут управляемыми через эту панель.
+            </p>
+            <button onClick={seedStatic} disabled={seeding} style={{...S.btn('#F5A623','#1C1C1C'),fontSize:13}}>
+              {seeding?'Переносим фото...':'🚀 Перенести все существующие фото в базу'}
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+
+    {/* Add new photo form */}
     <div style={{...S.card,border:'2px dashed #0AACAC',marginBottom:24}}>
       <h3 style={{fontSize:14,fontWeight:700,color:'#0B3D6B',marginBottom:12}}>Добавить фото</h3>
       <div style={{display:'grid',gridTemplateColumns:'1fr auto auto',gap:8,alignItems:'end'}}>
@@ -314,23 +395,25 @@ function GalleryTab() {
       </div>
       <p style={{fontSize:11,color:'#888',marginTop:8}}>💡 Для локальных файлов: загрузите в папку /public/ и введите /имя-файла.jpg</p>
     </div>
+
     {loading?<Spinner/>:(
-      grouped.map(group=>group.photos.length>0&&(
-        <div key={group.value} style={{marginBottom:28}}>
-          <h3 style={{fontSize:14,fontWeight:700,color:'#0B3D6B',marginBottom:12}}>{group.label} <span style={{color:'#888',fontWeight:400}}>({group.photos.length})</span></h3>
-          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(130px,1fr))',gap:10}}>
-            {group.photos.map(p=>(
-              <div key={p.id} style={{position:'relative',borderRadius:8,overflow:'hidden',background:'#EEF6FF'}}>
-                <img src={p.url} alt="" style={{width:'100%',height:90,objectFit:'cover',display:'block'}} onError={e=>{(e.target as HTMLImageElement).style.opacity='0.2'}}/>
-                <button onClick={()=>del(p.id)} style={{position:'absolute',top:4,right:4,width:22,height:22,borderRadius:'50%',background:'rgba(220,38,38,.85)',color:'white',border:'none',cursor:'pointer',fontSize:12,fontWeight:700}}>✕</button>
-                <div style={{padding:'4px 6px',fontSize:10,color:'#344E63',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{p.url}</div>
-              </div>
-            ))}
+      photos.length>0?(
+        grouped.map(group=>group.photos.length>0&&(
+          <div key={group.value} style={{marginBottom:28}}>
+            <h3 style={{fontSize:14,fontWeight:700,color:'#0B3D6B',marginBottom:12}}>{group.label} <span style={{color:'#888',fontWeight:400}}>({group.photos.length})</span></h3>
+            <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(130px,1fr))',gap:10}}>
+              {group.photos.map(p=>(
+                <div key={p.id} style={{position:'relative',borderRadius:8,overflow:'hidden',background:'#EEF6FF'}}>
+                  <img src={p.url} alt="" style={{width:'100%',height:90,objectFit:'cover',display:'block'}} onError={e=>{(e.target as HTMLImageElement).style.opacity='0.2'}}/>
+                  <button onClick={()=>del(p.id)} style={{position:'absolute',top:4,right:4,width:22,height:22,borderRadius:'50%',background:'rgba(220,38,38,.85)',color:'white',border:'none',cursor:'pointer',fontSize:12,fontWeight:700}}>✕</button>
+                  <div style={{padding:'4px 6px',fontSize:10,color:'#344E63',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{p.url}</div>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      ))
+        ))
+      ):null
     )}
-    {!loading&&photos.length===0&&<Empty text="Фото ещё не добавлены"/>}
   </div>
 }
 

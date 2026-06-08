@@ -69,6 +69,9 @@ export default function Home() {
   const [galleryLightbox, setGalleryLightbox] = useState<{src:string,idx:number,pool:'gallery'|'hero'} | null>(null)
   const [programModal, setProgramModal] = useState<string | null>(null)
   const [introVisible, setIntroVisible] = useState(true)
+  const [dbSessions, setDbSessions] = useState<any[]>([])
+  const [siteSettings, setSiteSettings] = useState<Record<string,string>>({})
+  const [dbGallery, setDbGallery] = useState<{id:number,url:string,section:string}[]>([])
 
   const c = (ru: string, en: string, et: string) => lang === 'ru' ? ru : lang === 'en' ? en : et
 
@@ -96,8 +99,16 @@ export default function Home() {
     fetch('/api/reviews').then(r => r.json()).then(d => { if (Array.isArray(d)) setReviews(d) }).catch(() => {})
   }, [])
 
+  useEffect(() => {
+    fetch('/api/sessions').then(r => r.json()).then(d => { if (Array.isArray(d) && d.length > 0) setDbSessions(d) }).catch(() => {})
+    fetch('/api/settings').then(r => r.json()).then(d => { if (d && typeof d === 'object') setSiteSettings(d) }).catch(() => {})
+    fetch('/api/gallery').then(r => r.json()).then(d => { if (Array.isArray(d) && d.length > 0) setDbGallery(d) }).catch(() => {})
+  }, [])
+
   // 4 hero showcase photos (top grid, separate lightbox)
-  const HERO_PHOTOS = [
+  const HERO_PHOTOS = dbGallery.filter(p => p.section === 'hero').map(p => p.url).length > 0
+    ? dbGallery.filter(p => p.section === 'hero').map(p => p.url)
+    : [
     '/photo-output-2-1024x1024__1_.jpeg',
     '/IMG_7917-1024x768.jpeg',
     '/IMG_6615-821x1024.jpeg',
@@ -105,7 +116,7 @@ export default function Home() {
   ]
 
   // All gallery photos organized in sections
-  const GALLERY_SECTIONS = [
+  const STATIC_GALLERY_SECTIONS = [
     {
       label: c('На воде', 'On the Water', 'Vees'),
       imgs: [
@@ -162,6 +173,14 @@ export default function Home() {
     },
   ]
 
+  const GALLERY_SECTIONS = dbGallery.length > 0
+    ? [
+        { label: c('На воде', 'On the Water', 'Vees'), imgs: dbGallery.filter(p => p.section === 'water').map(p => p.url) },
+        { label: c('Команда и атмосфера', 'Team & Vibes', 'Meeskond ja atmosfäär'), imgs: dbGallery.filter(p => p.section === 'team').map(p => p.url) },
+        { label: c('Моменты', 'Moments', 'Hetked'), imgs: dbGallery.filter(p => p.section === 'moments').map(p => p.url) },
+      ].filter(s => s.imgs.length > 0)
+    : STATIC_GALLERY_SECTIONS
+
   // Flat list for lightbox navigation
   const GALLERY_IMGS = GALLERY_SECTIONS.flatMap(s => s.imgs)
 
@@ -200,7 +219,7 @@ export default function Home() {
     setReviewLoading(false)
   }
 
-  const DATES = [
+  const STATIC_DATES = [
     { dates: '15.06 - 19.06.2026', type: c('СЕРФИНГ + КИНО','SURF + CINEMA','SURF + KINO'), color: '#7C3AED', leaders: c('Наташа К. + Даша','Natasha K. + Dasha','Natasha K. + Dasha'), hot: true, detail: 'kino' },
     { dates: '29.06 - 03.07.2026', type: c('СЕРФИНГ + КИНО','SURF + CINEMA','SURF + KINO'), color: '#7C3AED', leaders: c('Наташа К. + Даша','Natasha K. + Dasha','Natasha K. + Dasha'), hot: false, detail: 'kino' },
     { dates: '06.07 - 10.07.2026', type: c('СЕРФИНГ ЛАГЕРЬ','SURF CAMP','SURFI LAAGER'), color: '#1A6BAA', leaders: c('Надежда + Григорий','Nadezhda + Grigory','Nadezhda + Grigory'), hot: false, detail: 'surf' },
@@ -211,6 +230,10 @@ export default function Home() {
     { dates: '10.08 - 14.08.2026', type: c('СЕРФИНГ ЛАГЕРЬ','SURF CAMP','SURFI LAAGER'), color: '#1A6BAA', leaders: c('Надежда + ...','Nadezhda + ...','Nadezhda + ...'), hot: false, detail: 'surf' },
     { dates: '17.08 - 21.08.2026', type: c('СЕРФИНГ + ПОХОД','SURF + HIKE','SURF + MATK'), color: '#16A34A', leaders: c('Виталий + ...','Vitaliy + ...','Vitaliy + ...'), hot: false, detail: 'pohod' },
   ]
+
+  const DATES = dbSessions.length > 0
+    ? dbSessions.map(d => ({ dates: d.dates, type: c(d.type_ru, d.type_en, d.type_et), color: d.color, leaders: d.leaders, hot: d.hot, detail: d.detail }))
+    : STATIC_DATES
 
   const FAQS = [
     { q: c('Нужен ли опыт серфинга?','Is surfing experience required?','Kas surfikogemus on vajalik?'), a: c('Нет, лагерь подходит полным новичкам - учим с нуля. Дети с опытом тоже найдут задачу по уровню.','No. The camp suits complete beginners - we teach from scratch. Experienced kids find their challenge too.','Ei. Laager sobib algajatele - õpetame nullist.') },
@@ -977,7 +1000,7 @@ export default function Home() {
                 </p>
                 <div className="hero-pills rv" style={{transitionDelay:'150ms'}}>
                   <span className="pill">{c('Возраст 7-14 лет','Age 7-14','Vanus 7-14')}</span>
-                  <span className="pill">{c('от 190€','from €190','alates 190€')}</span>
+                  <span className="pill">{c(`от ${siteSettings.price_3day||'190€'}`,`from ${siteSettings.price_3day||'190€'}`,`alates ${siteSettings.price_3day||'190€'}`)}</span>
                   <span className="pill">{c('Питание включено','Meals included','Toitlustus sees')}</span>
                   <span className="pill">{c('12-16 детей в группе','Groups of 12-16','12-16 last rühmas')}</span>
                 </div>
@@ -987,14 +1010,14 @@ export default function Home() {
                 </div>
                 <div className="rv" style={{transitionDelay:'230ms',display:'flex',alignItems:'center',gap:10,marginTop:4}}>
                   <div style={{display:'flex',gap:4}}>
-                    {[0,1,2,3,4,5,6,7,8,9,10,11,12].map(i => (
+                    {[...Array(parseInt(siteSettings.spots_total||'16'))].map((_,i) => (
                       <div key={i} style={{width:8,height:8,borderRadius:'50%',
-                        background: i < 4 ? 'var(--sun)' : i < 10 ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.1)',
+                        background: i < parseInt(siteSettings.spots_taken||'4') ? 'var(--sun)' : 'rgba(255,255,255,0.25)',
                         transition:`background 400ms ${i*40}ms`}}/>
                     ))}
                   </div>
                   <span style={{fontSize:12,color:'rgba(255,255,255,.5)',fontWeight:600}}>
-                    {c('4 из 16 мест занято · Ближайшая смена 15.06','4 of 16 spots taken · Next session Jun 15','4/16 kohta võetud · Järgmine 15.06')}
+                    {c(`${siteSettings.spots_taken||'4'} из ${siteSettings.spots_total||'16'} мест занято · Ближайшая смена ${siteSettings.next_session_date||'15.06'}`,`${siteSettings.spots_taken||'4'} of ${siteSettings.spots_total||'16'} spots taken · Next session ${siteSettings.next_session_date||'Jun 15'}`,`${siteSettings.spots_taken||'4'}/${siteSettings.spots_total||'16'} kohta võetud · Järgmine ${siteSettings.next_session_date||'15.06'}`)}
                   </span>
                 </div>
               </div>
@@ -1016,7 +1039,7 @@ export default function Home() {
                 <div className="hcard-stats">
                   {[
                     {n:'7+', l:c('лет','years','aastat')},
-                    {n:'265€', l:c('5 дней','5 days','5 päeva')},
+                    {n:siteSettings.price_5day||'265€', l:c('5 дней','5 days','5 päeva')},
                     {n:'9', l:c('смен','sessions','vahetust')},
                   ].map(s => (
                     <div key={s.l} className="hstat">
@@ -1229,9 +1252,9 @@ export default function Home() {
           </div>
           <div className="pg sg">
             {[
-              {tag:'3', days:c('3 ДНЯ','3 DAYS','3 PÄEVA'), label:c('Пробная смена','Trial session','Proovisessioon'), price:'190€', note:c('Идеально для первого знакомства','Perfect for a first try','Ideaalne esimeseks tutvumiseks'), feat:false},
-              {tag:'pop', days:c('5 ДНЕЙ','5 DAYS','5 PÄEVA'), label:c('Полная программа','Full programme','Täisprogramm'), price:'265€', note:c('Максимум впечатлений и навыков','Maximum impressions and skills','Maksimaalselt muljeid ja oskusi'), feat:true},
-              {tag:'4', days:c('4 ДНЯ','4 DAYS','4 PÄEVA'), label:c('Гибкий формат','Flexible format','Paindlik formaat'), price:'235€', note:c('Удобно для занятых семей','Convenient for busy families','Mugav hõivatud peredele'), feat:false},
+              {tag:'3', days:c('3 ДНЯ','3 DAYS','3 PÄEVA'), label:c('Пробная смена','Trial session','Proovisessioon'), price:siteSettings.price_3day||'190€', note:c('Идеально для первого знакомства','Perfect for a first try','Ideaalne esimeseks tutvumiseks'), feat:false},
+              {tag:'pop', days:c('5 ДНЕЙ','5 DAYS','5 PÄEVA'), label:c('Полная программа','Full programme','Täisprogramm'), price:siteSettings.price_5day||'265€', note:c('Максимум впечатлений и навыков','Maximum impressions and skills','Maksimaalselt muljeid ja oskusi'), feat:true},
+              {tag:'4', days:c('4 ДНЯ','4 DAYS','4 PÄEVA'), label:c('Гибкий формат','Flexible format','Paindlik formaat'), price:siteSettings.price_4day||'235€', note:c('Удобно для занятых семей','Convenient for busy families','Mugav hõivatud peredele'), feat:false},
             ].map((p,i) => (
               <div key={i} className={`pc ${p.feat?'pc-feat':'pc-std'}`}>
                 {p.feat && <div className="pop-badge">{c('Самый популярный','Most popular','Populaarseim')}</div>}
