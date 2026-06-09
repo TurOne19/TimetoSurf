@@ -60,7 +60,7 @@ export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [openFaq, setOpenFaq] = useState<number | null>(null)
-  const [expandedFormat, setExpandedFormat] = useState<number | null>(null)
+
   const [reviews, setReviews] = useState<Review[]>([])
   const [reviewHover, setReviewHover] = useState(0)
   const [reviewForm, setReviewForm] = useState({ name: '', text: '', program: '', rating: 0 })
@@ -484,6 +484,10 @@ export default function Home() {
     .hcard-row{display:flex;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05);transition:background 180ms;border-radius:6px;padding-left:4px;padding-right:4px;margin:0 -4px}
     .hcard-row:hover{background:rgba(255,255,255,.05)}
     .hcard-row:last-child{border-bottom:none}
+    .hcard-row-btn{width:100%;background:none;border:none;text-align:left;cursor:pointer;color:inherit;font-family:inherit}
+    .hcard-row-btn:hover{background:rgba(255,255,255,.09)!important}
+    .hcard-row-btn:hover .hcard-name{color:white}
+    .hcard-row-btn:hover svg{opacity:.7!important}
     .hcard-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-right:12px}
     .hcard-name{font-size:13px;font-weight:500;color:rgba(255,255,255,.85);flex:1}
     .hcard-date{font-size:11px;color:rgba(255,255,255,.3);font-variant-numeric:tabular-nums}
@@ -521,6 +525,10 @@ export default function Home() {
     .fcard-banner{height:180px;display:flex;flex-direction:column;justify-content:flex-end;padding:20px;position:relative;overflow:hidden;background:#0B3D6B}
     .fcard-banner img.fb-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
     .fcard-banner::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.6) 0%,transparent 60%);pointer-events:none;z-index:1}
+    .fcard-banner-empty{background:rgba(11,61,107,.12);border-bottom:2px dashed var(--border);justify-content:center;align-items:center}
+    .fcard-banner-empty::after{display:none}
+    .fcard-banner-ph{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+    .fcard-placeholder{opacity:.7;pointer-events:none}
     .fcard-blbl{font-size:9px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:5px;position:relative;z-index:1}
     .fcard-bt{font-family:'Plus Jakarta Sans',sans-serif;font-size:23px;font-weight:800;color:white;line-height:1.05;letter-spacing:-.015em;position:relative;z-index:1}
     .fcard-body{padding:20px 20px 14px}
@@ -1031,15 +1039,19 @@ export default function Home() {
                 <div className="hcard-head">
                   <div className="hcard-lbl">{c('Форматы лагерей 2026','Camp Formats 2026','Laagri formaadid 2026')}</div>
                   {[
-                    {color:'#7C3AED', name:c('Серфинг + Кино','Surf + Cinema','Surf + Kino'), date:'Jun–Jul'},
-                    {color:'#16A34A', name:c('Серфинг + Поход','Surf + Hike','Surf + Matk'), date:'Jul–Aug'},
-                    {color:'#1A6BAA', name:c('Серфинг лагерь','Surf Camp','Surfilaager'), date:'Jun–Aug'},
+                    {color:'#7C3AED', name:c('Серфинг + Кино','Surf + Cinema','Surf + Kino'), date:'Jun–Jul', key:'kino'},
+                    {color:'#16A34A', name:c('Серфинг + Поход','Surf + Hike','Surf + Matk'), date:'Jul–Aug', key:'pohod'},
+                    {color:'#1A6BAA', name:c('Серфинг лагерь','Surf Camp','Surfilaager'), date:'Jun–Aug', key:'surf'},
                   ].map(r => (
-                    <div key={r.name} className="hcard-row">
+                    <button key={r.key} className="hcard-row hcard-row-btn" onClick={() => {
+                      document.getElementById('formats')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                      setTimeout(() => setProgramModal(r.key), 600)
+                    }}>
                       <div className="hcard-dot" style={{background:r.color}}/>
                       <span className="hcard-name">{r.name}</span>
                       <span className="hcard-date">{r.date}</span>
-                    </div>
+                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style={{flexShrink:0,opacity:.35,marginLeft:4}}><path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    </button>
                   ))}
                 </div>
                 <div className="hcard-stats">
@@ -1096,24 +1108,21 @@ export default function Home() {
             <p className="sec-sub" style={{margin:'0 auto'}}>{c('Серфинг - основа каждой программы. Всё остальное - особенный опыт, который не повторить.','Surfing is the core of every programme. The rest is a unique experience that can\'t be repeated.','Surfamine on iga programmi alus. Ülejäänud on ainulaadne kogemus.')}</p>
           </div>
           <div className="fg sg">
+            {/* Placeholder card — photo & name TBD */}
+            <div className="fcard fcard-placeholder">
+              <div className="fcard-banner fcard-banner-empty">
+                <div className="fcard-banner-ph">
+                  <svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect x="6" y="10" width="36" height="28" rx="4" stroke="rgba(255,255,255,.25)" strokeWidth="2" strokeDasharray="4 3"/><circle cx="18" cy="22" r="4" stroke="rgba(255,255,255,.25)" strokeWidth="2"/><path d="M6 34l10-8 8 6 6-5 12 7" stroke="rgba(255,255,255,.25)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  <div style={{fontSize:11,color:'rgba(255,255,255,.28)',marginTop:10,letterSpacing:'.08em',textTransform:'uppercase',fontWeight:600}}>{c('Скоро','Coming soon','Tulemas')}</div>
+                </div>
+              </div>
+              <div className="fcard-body" style={{opacity:.5}}>
+                <p className="fcard-desc" style={{fontStyle:'italic'}}>{c('Новый формат — скоро будет объявлен. Следите за обновлениями.','New format coming soon. Stay tuned.','Uus formaat tulemas.')}</p>
+              </div>
+            </div>
             {[
               {
-                bg:null, photo:'/IMG_7917-1024x768.jpeg',
-                lbl:c('Серфинг + Творчество','Surfing + Creativity','Surfamine + Loovus'),
-                title:c('Серфинг + Кино','Surf + Cinema','Surf + Kino'),
-                desc:c('Утром - серфинг и вода. После обеда - настоящая киностудия. Дети берут интервью, снимают репортажи и монтируют короткий фильм, который останется на память.','Morning: surfing and water. Afternoon: a real film studio. Kids interview, shoot reports and edit a short film.','Hommikul surfamine. Pärastlõunal päris filmistuudio. Lapsed monteerivad lühifilmi.'),
-                items:[
-                  c('SUP-серфинг, бодиборд, ОФП каждый день','SUP surfing, bodyboard, fitness every day','SUP surfamine, bodybord iga päev'),
-                  c('Роли: ведущий, оператор, монтажёр, сценарист','Roles: host, cameraman, editor, writer','Rollid: saatejuht, operaator, monteerija'),
-                  c('Финальный показ фильма для родителей','Final film screening for parents','Lõpulinastus vanematele'),
-                  c('Ведущая: Наталья Карасёва - ТВ-журналист, 20+ лет','Lead: Natalia Karaseva - TV journalist 20+ years','Juht: Natalia Karaseva - teleajakirjanik 20+ aastat'),
-                ],
-                leaderInitials:'НК',
-                leaderName:c('Наталья Карасёва','Natalia Karaseva','Natalia Karaseva'),
-                leaderRole:c('Тележурналист с 20-летним стажем в двух странах, автор подкаста «Cozy with Tasha», создатель документальных проектов. Учит детей видеть историю и не бояться камеры.','TV journalist 20+ years in two countries, podcast host "Cozy with Tasha". Teaches kids to see a story and not fear the camera.','Teleajakirjanik 20+ aastat kahes riigis, taskuhäälingu autor "Cozy with Tasha". Õpetab lapsi nägema lugu ja mitte kartma kaamerat.'),
-                dates:c('15.06 и 29.06.2026','June 15 and June 29, 2026','15.06 ja 29.06.2026'),
-              },
-              {
+                key:'pohod',
                 bg:null, photo:'/photo_2026-04-18-10_00_46-150x150.jpeg',
                 lbl:c('Серфинг + Приключение','Surfing + Adventure','Surfamine + Seiklus'),
                 title:c('Серфинг + Поход','Surf + Hike','Surf + Matk'),
@@ -1124,12 +1133,10 @@ export default function Home() {
                   c('Костёр, палатка, навыки выживания','Fire, tent, survival skills','Lõke, telk, ellujäämisoskused'),
                   c('Ведущий: Виталий - хайкер, Höga Kusten 140 км (UNESCO)','Lead: Vitaliy - hiker, Höga Kusten 140km (UNESCO)','Juht: Vitaliy - matkaja, Höga Kusten 140km'),
                 ],
-                leaderInitials:'ВХ',
-                leaderName:c('Виталий Холстинин','Vitaliy Kholstinin','Vitaliy Kholstinin'),
-                leaderRole:c('Предприниматель, хайкер, основатель Join The Hike. Höga Kusten 140 км (UNESCO) и Land of Giants 120 км. Живёт тем, что преподаёт.','Entrepreneur, hiker, founder of Join The Hike. Höga Kusten 140km (UNESCO) and Land of Giants 120km.','Ettevõtja, matkaja, Join The Hike asutaja. Höga Kusten 140km (UNESCO) ja Land of Giants 120km. Elab seda, mida õpetab.'),
                 dates:c('13.07 и 17.08.2026','July 13 and Aug 17, 2026','13.07 ja 17.08.2026'),
               },
               {
+                key:'surf',
                 bg:null, photo:'/DSC02878-150x150.jpeg',
                 lbl:c('Классика · Лучший старт','Classic · Best start','Klassika · Parim algus'),
                 title:c('Серфинг лагерь','Surf Camp','Surfilaager'),
@@ -1140,13 +1147,10 @@ export default function Home() {
                   c('Культура серфинга: виды костюмов и уход','Surf culture: wetsuit types and care','Surfikultuur: märjaksüidi tüübid ja hooldus'),
                   c('Подходит для новичков и с опытом','Suits beginners and experienced kids','Sobib algajatele ja kogenud lastele'),
                 ],
-                leaderInitials:'НГ',
-                leaderName:c('Надежда + Григорий','Nadezhda + Grigory','Nadezhda + Grigory'),
-                leaderRole:c('Сертифицированные инструктора с многолетним опытом работы с детьми на Балтийском море. Умеют мотивировать и поддерживать на каждом этапе.','Certified surf instructors with years of experience working with children on the Baltic Sea.','Sertifitseeritud instruktorid Läänemere lastega töötamisel mitmeaastase kogemusega.'),
                 dates:c('6 смен: июнь - август 2026','6 sessions: June - August 2026','6 vahetust: juuni - august 2026'),
               },
             ].map((f, i) => (
-              <div key={i} className="fcard">
+              <div key={f.key} className="fcard">
                 <div className="fcard-banner">
                   {f.photo && <img src={f.photo} alt={f.title as string} className="fb-img" />}
                   <div className="fcard-blbl">{f.lbl}</div>
@@ -1165,24 +1169,10 @@ export default function Home() {
                     ))}
                   </div>
                 </div>
-                {expandedFormat === i && (
-                  <div className="fcard-exp">
-                    <h4>{c('Ведущий программы','Programme lead','Programmi juht')}</h4>
-                    <div className="fcard-leader">
-                      <div style={{width:44,height:44,borderRadius:'50%',background:'var(--ocean)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,color:'rgba(255,255,255,.8)',fontWeight:800,fontSize:14,fontFamily:"'Plus Jakarta Sans',sans-serif",letterSpacing:'-.01em'}}>{f.leaderInitials}</div>
-                      <div>
-                        <div className="fcard-lname">{f.leaderName}</div>
-                        <div className="fcard-lrole">{f.leaderRole}</div>
-                      </div>
-                    </div>
-                    <h4 style={{marginTop:14}}>{c('Даты','Dates','Kuupäevad')}</h4>
-                    <div style={{fontWeight:700,color:'var(--ocean)',fontSize:14}}>{f.dates}</div>
-                  </div>
-                )}
                 <div className="fcard-foot">
                   <div className="fcard-btns">
-                    <button className="fcard-more" onClick={() => setExpandedFormat(expandedFormat===i?null:i)}>
-                      {expandedFormat===i ? c('Свернуть','Close','Sulge') : c('Подробнее','Details','Loe lähemalt')}
+                    <button className="fcard-more" onClick={() => setProgramModal(f.key)}>
+                      {c('Подробнее','Details','Loe lähemalt')}
                     </button>
                     <a href={REG} target="_blank" className="btn btn-teal btn-sm">{c('Записаться','Register','Registreeru')}</a>
                   </div>
