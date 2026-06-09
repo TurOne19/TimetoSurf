@@ -459,22 +459,22 @@ export default function Home() {
     .mob-close{position:absolute;top:20px;right:24px;background:none;border:none;color:rgba(255,255,255,.6)}
 
     /* HERO */
-    .hero{min-height:100vh;background:linear-gradient(160deg,#082847 0%,#0B3D6B 45%,#0E5080 100%);display:flex;flex-direction:column;position:relative;overflow:hidden;padding-top:66px}
-    .hero::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
-    .hero-glow{position:absolute;width:900px;height:900px;background:radial-gradient(ellipse,rgba(10,172,172,.15) 0%,rgba(10,172,172,.04) 40%,transparent 65%);top:-200px;right:-200px;pointer-events:none;animation:floatY 8s ease-in-out infinite}
-    .hero-glow2{position:absolute;width:600px;height:600px;background:radial-gradient(ellipse,rgba(245,166,35,.08) 0%,transparent 60%);bottom:0;left:-100px;pointer-events:none;animation:floatY2 10s ease-in-out infinite}
-    .hero-wave{position:absolute;bottom:0;left:0;right:0;height:100px;background:var(--sand-lt);clip-path:ellipse(55% 100% at 50% 100%)}
-    .hero-in{flex:1;display:flex;align-items:center;position:relative;z-index:1}
-    .hero-grid{display:grid;grid-template-columns:1fr 400px;gap:56px;align-items:center;padding:72px 0 110px;width:100%}
+    .hero{min-height:100vh;display:flex;flex-direction:column;position:relative;overflow:hidden;padding-top:66px}
+    .hero-video-bg{position:absolute;inset:0;z-index:0;overflow:hidden}
+    .hero-video-bg video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center}
+    .hero-video-overlay{position:absolute;inset:0;background:linear-gradient(160deg,rgba(8,40,71,.82) 0%,rgba(11,61,107,.72) 50%,rgba(14,80,128,.65) 100%);z-index:1}
+    .hero-wave{position:absolute;bottom:0;left:0;right:0;height:100px;background:var(--sand-lt);clip-path:ellipse(55% 100% at 50% 100%);z-index:2}
+    .hero-in{flex:1;display:flex;align-items:center;position:relative;z-index:3}
+    .hero-grid{display:grid;grid-template-columns:1fr 420px;gap:56px;align-items:center;padding:72px 0 110px;width:100%}
     .hero-ey{display:flex;align-items:center;gap:12px;margin-bottom:18px}
     .hero-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);flex-shrink:0;animation:dotBlink 2s ease-in-out infinite}
-    .hero-ey-t{font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.5)}
-    .hero-h1{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(42px,5.2vw,72px);font-weight:800;line-height:1.0;letter-spacing:-.035em;color:white;margin-bottom:20px}
-    .hero-h1 em{font-style:italic;color:var(--teal-lt);text-shadow:0 0 60px rgba(29,207,207,.4)}
-    .hero-desc{font-size:16px;color:rgba(255,255,255,.62);line-height:1.8;max-width:460px;margin-bottom:12px}
+    .hero-ey-t{font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.65)}
+    .hero-h1{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(44px,5.5vw,76px);font-weight:800;line-height:1.0;letter-spacing:-.035em;color:white;margin-bottom:20px;text-shadow:0 2px 32px rgba(0,0,0,.3)}
+    .hero-h1 em{font-style:italic;color:var(--teal-lt);text-shadow:0 0 60px rgba(29,207,207,.5)}
+    .hero-desc{font-size:16px;color:rgba(255,255,255,.78);line-height:1.8;max-width:480px;margin-bottom:12px;text-shadow:0 1px 8px rgba(0,0,0,.25)}
     .hero-pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:34px}
-    .pill{font-size:12px;font-weight:600;color:rgba(255,255,255,.75);padding:6px 14px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:50px;transition:background 200ms,border-color 200ms,transform 200ms var(--ease);cursor:default}
-    .pill:hover{background:rgba(255,255,255,.18);border-color:var(--teal-lt);transform:translateY(-1px)}
+    .pill{font-size:12px;font-weight:600;color:rgba(255,255,255,.85);padding:6px 14px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:50px;backdrop-filter:blur(4px);transition:background 200ms,border-color 200ms,transform 200ms var(--ease);cursor:default}
+    .pill:hover{background:rgba(255,255,255,.22);border-color:var(--teal-lt);transform:translateY(-1px)}
     .hero-acts{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:40px}
 
     /* HERO CARD */
@@ -797,7 +797,7 @@ export default function Home() {
       .nav-links,.nav-r .btn-teal{display:none}
       .mob-btn{display:block}
       .hero-h1{font-size:clamp(32px,9vw,50px)}
-      .hero-grid{padding:40px 0 96px}
+      .hero-grid{grid-template-columns:1fr!important;padding:40px 0 96px}
       .fg{grid-template-columns:1fr}
       .why-g{grid-template-columns:1fr}
       .why-it{border-right:none!important}
@@ -982,9 +982,12 @@ export default function Home() {
 
       {/* HERO */}
       <section className="hero">
-        <div className="hero-glow"/>
-        <div className="hero-glow2"/>
-        <FloatingBubbles />
+        {/* Full-screen background video */}
+        <div className="hero-video-bg">
+          <video src="/hero-video.mp4" autoPlay muted loop playsInline preload="auto"
+            style={{minWidth:'100%',minHeight:'100%'}}/>
+        </div>
+        <div className="hero-video-overlay"/>
         <div className="hero-in">
           <div className="wrap" style={{width:'100%'}}>
             <div className="hero-grid">
@@ -997,52 +1000,40 @@ export default function Home() {
                   {c('Детский','Kids','Laste')}<br/><em>{c('серфинг-лагерь','Surf Camp','surfilaager')}</em><br/>{c('на море','by the Sea','mere ääres')}
                 </h1>
                 <p className="hero-desc rv" style={{transitionDelay:'110ms'}}>
-                  {c('Серфинг, природа, настоящая команда - 5 дней, которые ребёнок запомнит навсегда. Море, ветер, новые друзья.','Surfing, nature and real teamwork - 5 days your child will never forget. Sea, wind, new friends.','Surfamine, loodus ja meeskonnatöö - 5 päeva, mida laps igavesti mäletab.')}
+                  {c('5 дней серфинга, друзей и настоящих приключений. Ребёнок будет на воде, не в телефоне — с профессиональными инструкторами и в безопасности.','5 days of surfing, new friends and real adventure. Your child will be on the water, not on a phone — with certified instructors, safe and happy.','5 päeva surfamist, uusi sõpru ja päris seiklusi. Laps on vees, mitte telefonis — koos sertifitseeritud instruktoritega.')}
                 </p>
                 <div className="hero-pills rv" style={{transitionDelay:'150ms'}}>
-                  <span className="pill">{c('Возраст 7-14 лет','Age 7-14','Vanus 7-14')}</span>
-                  <span className="pill">{c(`от ${siteSettings.price_3day||'190€'}`,`from ${siteSettings.price_3day||'190€'}`,`alates ${siteSettings.price_3day||'190€'}`)}</span>
-                  <span className="pill">{c('Питание включено','Meals included','Toitlustus sees')}</span>
-                  <span className="pill">{c('12-16 детей в группе','Groups of 12-16','12-16 last rühmas')}</span>
+                  <span className="pill">🧒 {c('Возраст 7–14 лет','Age 7–14','Vanus 7–14')}</span>
+                  <span className="pill">💰 {c(`от ${siteSettings.price_3day||'190€'}`,`from ${siteSettings.price_3day||'190€'}`,`alates ${siteSettings.price_3day||'190€'}`)}</span>
+                  <span className="pill">🍽️ {c('Питание включено','Meals included','Toitlustus sees')}</span>
+                  <span className="pill">🛟 {c('Жилеты и гидрокостюмы','Life jackets & wetsuits','Päästevested sees')}</span>
+                  <span className="pill">📍 Stroomi, Tallinn</span>
                 </div>
                 <div className="hero-acts rv" style={{transitionDelay:'190ms'}}>
-                  <a href={REG} target="_blank" className="btn btn-sun" style={{padding:'15px 36px',fontSize:15}}>{c('Записать ребёнка','Register my child','Registreeri laps')}</a>
-                  <button onClick={() => go('formats')} className="btn btn-ghost">{c('Узнать больше','Learn more','Loe lähemalt')}</button>
+                  <a href={REG} target="_blank" className="btn btn-sun" style={{padding:'16px 40px',fontSize:16,fontWeight:800}}>{c('Записать ребёнка','Register my child','Registreeri laps')} →</a>
+                  <a href="https://t.me/Andrei_Time_to_Surf" target="_blank" className="btn btn-ghost" style={{padding:'16px 28px',fontSize:15}}>{c('Задать вопрос','Ask a question','Küsi küsimus')}</a>
                 </div>
                 <div className="rv" style={{transitionDelay:'230ms',display:'flex',alignItems:'center',gap:10,marginTop:4}}>
                   <div style={{display:'flex',gap:4}}>
-                    {[...Array(parseInt(siteSettings.spots_total||'16'))].map((_,i) => (
+                    {[...Array(Math.min(parseInt(siteSettings.spots_total||'16'),20))].map((_,i) => (
                       <div key={i} style={{width:8,height:8,borderRadius:'50%',
                         background: i < parseInt(siteSettings.spots_taken||'4') ? 'var(--sun)' : 'rgba(255,255,255,0.25)',
                         transition:`background 400ms ${i*40}ms`}}/>
                     ))}
                   </div>
-                  <span style={{fontSize:12,color:'rgba(255,255,255,.5)',fontWeight:600}}>
-                    {c(`${siteSettings.spots_taken||'4'} из ${siteSettings.spots_total||'16'} мест занято · Ближайшая смена ${siteSettings.next_session_date||'15.06'}`,`${siteSettings.spots_taken||'4'} of ${siteSettings.spots_total||'16'} spots taken · Next session ${siteSettings.next_session_date||'Jun 15'}`,`${siteSettings.spots_taken||'4'}/${siteSettings.spots_total||'16'} kohta võetud · Järgmine ${siteSettings.next_session_date||'15.06'}`)}
+                  <span style={{fontSize:12,color:'rgba(255,255,255,.65)',fontWeight:600}}>
+                    {c(`${siteSettings.spots_taken||'4'} из ${siteSettings.spots_total||'16'} мест занято · Ближайшая смена ${siteSettings.next_session_date||'15.06'}`,`${siteSettings.spots_taken||'4'} of ${siteSettings.spots_total||'16'} spots taken · Next: ${siteSettings.next_session_date||'Jun 15'}`,`${siteSettings.spots_taken||'4'}/${siteSettings.spots_total||'16'} kohta võetud · Järgmine ${siteSettings.next_session_date||'15.06'}`)}
                   </span>
                 </div>
               </div>
-              <div style={{display:'flex',flexDirection:'column',gap:14}}>
-              <div className="rv" style={{transitionDelay:'160ms',borderRadius:16,overflow:'hidden',position:'relative',aspectRatio:'16/9',boxShadow:'0 20px 60px rgba(0,0,0,.35)',cursor:'pointer',flexShrink:0}}
-                onClick={() => {
-                  const v = document.getElementById('hero-vid') as HTMLVideoElement|null
-                  if(v){v.paused?v.play():v.pause()}
-                }}>
-                <video id="hero-vid" src="/hero-video.mp4" autoPlay muted loop playsInline
-                  style={{width:'100%',height:'100%',objectFit:'cover',display:'block'}}/>
-                <div style={{position:'absolute',inset:0,background:'linear-gradient(to top,rgba(0,0,0,.3) 0%,transparent 60%)',pointerEvents:'none'}}/>
-                <div style={{position:'absolute',bottom:12,left:14,background:'rgba(10,172,172,0.9)',borderRadius:50,padding:'4px 12px',display:'flex',alignItems:'center',gap:6,pointerEvents:'none'}}>
-                  <div style={{width:6,height:6,borderRadius:'50%',background:'white',animation:'dotBlink 1.5s ease-in-out infinite'}}/>
-                  <span style={{fontSize:10,fontWeight:700,letterSpacing:'.12em',textTransform:'uppercase',color:'white'}}>{c('Прямой эфир','Live','Otse')}</span>
-                </div>
-              </div>
-              <div className="hcard rv" style={{transitionDelay:'170ms'}} >
+              {/* Right column: info card */}
+              <div className="hcard rv" style={{transitionDelay:'160ms'}}>
                 <div className="hcard-head">
                   <div className="hcard-lbl">{c('Форматы лагерей 2026','Camp Formats 2026','Laagri formaadid 2026')}</div>
                   {[
-                    {color:'#7C3AED', name:c('Серфинг + Кино','Surf + Cinema','Surf + Kino'), date:'Jun-Jul'},
-                    {color:'#16A34A', name:c('Серфинг + Поход','Surf + Hike','Surf + Matk'), date:'Jul-Aug'},
-                    {color:'#1A6BAA', name:c('Серфинг лагерь','Surf Camp','Surfilaager'), date:'Jun-Aug'},
+                    {color:'#7C3AED', name:c('Серфинг + Кино','Surf + Cinema','Surf + Kino'), date:'Jun–Jul'},
+                    {color:'#16A34A', name:c('Серфинг + Поход','Surf + Hike','Surf + Matk'), date:'Jul–Aug'},
+                    {color:'#1A6BAA', name:c('Серфинг лагерь','Surf Camp','Surfilaager'), date:'Jun–Aug'},
                   ].map(r => (
                     <div key={r.name} className="hcard-row">
                       <div className="hcard-dot" style={{background:r.color}}/>
@@ -1053,9 +1044,9 @@ export default function Home() {
                 </div>
                 <div className="hcard-stats">
                   {[
-                    {n:'7+', l:c('лет','years','aastat')},
+                    {n:'7+', l:c('лет опыта','yrs experience','aastat kogemust')},
                     {n:siteSettings.price_5day||'265€', l:c('5 дней','5 days','5 päeva')},
-                    {n:'9', l:c('смен','sessions','vahetust')},
+                    {n:'9', l:c('смен летом','sessions/summer','vahetust suvel')},
                   ].map(s => (
                     <div key={s.l} className="hstat">
                       <div className="hstat-n">{s.n}</div>
@@ -1063,7 +1054,6 @@ export default function Home() {
                     </div>
                   ))}
                 </div>
-              </div>
               </div>
             </div>
           </div>
@@ -1076,9 +1066,9 @@ export default function Home() {
         <div className="wrap">
           <div className="trust-g sg">
             {[
-              {n:'7+', l:c('лет школа работает','years running','aastat töötame'), color:'var(--ocean)'},
-              {n:'1000+', l:c('детей прошли лагерь','kids attended','last osalenud'), color:'var(--teal)'},
-              {n:'3', l:c('уникальных программы','unique programmes','ainulaadset programmi'), color:'var(--ocean)'},
+              {n:'15+', l:c('лет на воде','years on the water','aastat vee peal'), color:'var(--ocean)'},
+              {n:'1000+', l:c('детей прошли лагерь','kids attended camp','last läbinud laagri'), color:'var(--teal)'},
+              {n:'12–16', l:c('детей в группе','kids per group','last grupis'), color:'var(--ocean)'},
               {n:'9', l:c('смен за лето','sessions per summer','vahetust suvel'), color:'var(--teal)'},
             ].map((t,i) => (
               <div key={t.l} className="trust-it" style={{animation:`countUp 600ms var(--ease) ${i*120}ms both`}}>
@@ -1307,23 +1297,23 @@ export default function Home() {
         <div className="wrap">
           <div className="why-h">
             <div className="rv">
-              <div className="tag tag-teal">{c('Почему серфинг','Why surfing','Miks surfamine')}</div>
-              <h2 className="sec-h sec-h-lt">{c('Серфинг - это больше,','Surfing is more','Surfamine on rohkem')}<br/><em>{c('чем спорт','than a sport','kui sport')}</em></h2>
+              <div className="tag tag-teal">{c('Почему родители выбирают нас','Why parents choose us','Miks vanemad valivad meid')}</div>
+              <h2 className="sec-h sec-h-lt">{c('Time to Surf —','Time to Surf —','Time to Surf —')}<br/><em>{c('не просто лагерь','more than a camp','rohkem kui laager')}</em></h2>
             </div>
             <div className="rv" style={{transitionDelay:'80ms'}}>
               <p className="sec-sub" style={{color:'rgba(255,255,255,.42)'}}>
-                {c('На волне невозможно думать о лишнем - только здесь и сейчас. Серфинг - это стиль мышления, который остаётся с ребёнком навсегда.','On a wave, your mind can only be here and now. Surfing is a mindset that stays with the child forever.','Lainel saab mõelda ainult praegusele hetkele. Surfamine on mõtteviis, mis jääb kogu eluks.')}
+                {c('Ребёнок активно проводит лето, пробует водные виды спорта, становится увереннее и находит новых друзей. А родители знают, что он под присмотром.','The child has an active summer, tries water sports, grows in confidence and makes new friends. Parents know they are supervised.','Laps veedab suve aktiivselt, proovib veespordialasid ja leiab uusi sõpru. Vanemad teavad, et laps on järelevalve all.')}
               </p>
             </div>
           </div>
           <div className="why-g sg">
             {[
-              {n:'01', t:c('Здоровье и сила','Health & Strength','Tervis ja tugevus'), d:c('Морской воздух, движение, солнце - полная перезагрузка тела и головы без гаджетов.','Sea air, movement, sun - a complete reset of body and mind without screens.','Mereõhk, liikumine, päike - keha ja pea täielik taastumine ekraanideta.')},
-              {n:'02', t:c('Здесь и сейчас','Present moment','Praegune hetk'), d:c('Вода учит концентрации и осознанности лучше любого тренинга. Лишние мысли просто не помещаются.','Water teaches focus and mindfulness better than any training. Distracting thoughts just don\'t fit.','Vesi õpetab keskendumisvõimet paremini kui ükski treening.')},
-              {n:'03', t:c('Чтение природы','Reading nature','Looduse lugemine'), d:c('Дети учатся читать ветер, воду и погоду - навык, который остаётся с ними на всю жизнь.','Children learn to read wind, water and weather - a lifelong skill.','Lapsed õpivad lugema tuult, vett ja ilma - eluaegne oskus.')},
-              {n:'04', t:c('Уверенность в себе','Self-confidence','Enesekindlus'), d:c('Встать на доску и поймать волну - маленькая, но настоящая победа. Ребёнок видит свой прогресс каждый день.','Standing on a board and catching a wave is a small but real victory. The child sees their progress every day.','Lapse iga päev nähtav areng annab tõelise enesekindluse.')},
-              {n:'05', t:c('Командный дух','Team spirit','Meeskonnavaim'), d:c('Дети поддерживают друг друга в воде и на берегу. Настоящая дружба - один из главных результатов лагеря.','Kids support each other in the water and on shore. Real friendship is one of the main outcomes.','Lapsed toetavad üksteist. Päris sõprus on üks peamisi tulemusi.')},
-              {n:'06', t:c('Внутренний баланс','Inner balance','Sisemine tasakaal'), d:c('Вода учит спокойствию и контролю эмоций. Ребёнок возвращается домой спокойнее и увереннее.','Water teaches calm and emotional control. The child comes home calmer and more confident.','Vesi õpetab rahulikkust. Laps tuleb koju rahulikuma ja enesekindlamana.')},
+              {n:'01', t:c('Меньше телефона, больше моря','Less screen, more sea','Vähem telefoni, rohkem merd'), d:c('5 дней на воде, ветру и солнце. Гаджеты остаются на берегу — ребёнок занят делом.','5 days on the water, wind and sun. Screens stay on shore — the child is busy doing real things.','5 päeva vees, tuules ja päikeses. Ekraanid jäävad kaldale.')},
+              {n:'02', t:c('Под контролем — всегда','Always supervised','Alati järelevalve all'), d:c('Профессиональные инструктора, группы 12–16 детей, жилеты и гидрокостюмы — никто не остаётся без внимания.','Certified instructors, groups of 12–16, life jackets and wetsuits — no one goes unnoticed.','Sertifitseeritud instruktorid, grupid 12–16 last, päästevested – ükski laps ei jää tähelepanuta.')},
+              {n:'03', t:c('Уверенность на воде и в жизни','Confidence in water and in life','Enesekindlus vees ja elus'), d:c('Встать на доску — маленькая победа, которую ребёнок запомнит навсегда. Прогресс виден уже на второй день.','Standing on a board is a small victory the child will never forget. Progress shows already on day two.','Laual seismine on väike võit, mida laps igavesti mäletab. Areng on näha juba teisel päeval.')},
+              {n:'04', t:c('Новые друзья на всё лето','New friends for the whole summer','Uued sõbrad kogu suveks'), d:c('Маленькие группы — значит все друг друга знают. Дружба из лагеря продолжается после.','Small groups mean everyone knows each other. Friendships from camp continue after.','Väikesed rühmad – kõik tunnevad üksteist. Laagrisõprus kestab edasi.')},
+              {n:'05', t:c('Питание, костюмы, оборудование — всё наше','Meals, suits, gear — all included','Toitlustus, ülikonnad, varustus – kõik meie'), d:c('Родителям не нужно ничего закупать. Гидрокостюм, жилет, инвентарь, еда — всё включено в цену.','Parents don\'t need to buy anything. Wetsuit, life jacket, gear, food — all included in the price.','Vanematel pole vaja midagi osta. Märjaksüit, päästevest, inventar, toit – kõik hinnas.')},
+              {n:'06', t:c('Настоящий опыт, не турлагерь','Real experience, not a tourist camp','Päris kogemus, mitte turismilager'), d:c('Мы не просто присматриваем за детьми. Каждый день — программа, цели, новые навыки и живые эмоции.','We don\'t just babysit. Each day has a programme, goals, new skills and real emotions.','Me ei ole lihtsalt laste järele vaatamas. Igal päeval on programm, eesmärgid, uued oskused.')},
             ].map(w => (
               <div key={w.n} className="why-it">
                 <div className="why-n">{w.n}</div>
@@ -1608,10 +1598,10 @@ export default function Home() {
             </h2>
             <p className="cta-p">{c(`Мы работаем в малых группах - ${siteSettings.group_size||'12-16'} детей - чтобы каждый ребёнок получил внимание инструктора. Ближайшая смена: ${siteSettings.next_session_date_full||siteSettings.next_session_date||'15 июня 2026'}.`,`Small groups of ${siteSettings.group_size||'12-16'} children - every child gets personal instructor attention. Next session: ${siteSettings.next_session_date_full||siteSettings.next_session_date||'June 15, 2026'}.`,`Väikesed rühmad ${siteSettings.group_size||'12-16'} last - iga laps saab instruktori tähelepanu. Järgmine vahetus: ${siteSettings.next_session_date_full||siteSettings.next_session_date||'15. juuni 2026'}.`)}</p>
             <div className="cta-btns">
-              <a href={REG} target="_blank" className="btn btn-sun" style={{padding:'16px 40px',fontSize:16}}>{c('Записать ребёнка','Register my child','Registreeri laps')}</a>
-              <a href="tel:+37255512872" className="btn btn-ghost" style={{padding:'16px 28px',fontSize:15}}>+372 55512872</a>
+              <a href={REG} target="_blank" className="btn btn-sun" style={{padding:'16px 40px',fontSize:16,fontWeight:800}}>{c('Записать ребёнка','Register my child','Registreeri laps')} →</a>
+              <a href="https://t.me/Andrei_Time_to_Surf" target="_blank" className="btn btn-ghost" style={{padding:'16px 28px',fontSize:15}}>{c('Задать вопрос','Ask a question','Küsi küsimus')}</a>
             </div>
-            <div className="cta-sub">Telegram: <a href="https://t.me/Andrei_Time_to_Surf" target="_blank">@Andrei_Time_to_Surf</a></div>
+            <div className="cta-sub">{c('Или звоните:','Or call us:','Või helista:')} <a href="tel:+37255512872">+372 55512872</a> · Telegram: <a href="https://t.me/Andrei_Time_to_Surf" target="_blank">@Andrei_Time_to_Surf</a></div>
           </div>
         </div>
       </section>
