@@ -652,7 +652,7 @@ export default function Home() {
     /* LIGHTBOX */
     @keyframes lbIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
     .lb-overlay{position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.95);display:flex;align-items:center;justify-content:center;animation:lbIn 220ms ease}
-    .lb-overlay img{max-width:88vw;max-height:86vh;object-fit:contain;border-radius:8px;cursor:default;user-select:none}
+    .lb-overlay img{width:auto;height:auto;max-width:88vw;max-height:86vh;min-width:min(500px,80vw);object-fit:contain;border-radius:8px;cursor:default;user-select:none;display:block}
     .lb-close{position:absolute;top:18px;right:22px;background:rgba(255,255,255,.12);border:none;color:white;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;transition:background 160ms;z-index:1}
     .lb-close:hover{background:rgba(255,255,255,.28)}
     .lb-prev,.lb-next{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.12);border:none;color:white;width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;transition:background 160ms;z-index:1;user-select:none}
@@ -1022,7 +1022,21 @@ export default function Home() {
                   </span>
                 </div>
               </div>
-              <div className="hcard rv" style={{transitionDelay:'170ms',animation:'floatY2 5s ease-in-out infinite'}}>
+              <div style={{display:'flex',flexDirection:'column',gap:14}}>
+              <div className="rv" style={{transitionDelay:'160ms',borderRadius:16,overflow:'hidden',position:'relative',aspectRatio:'16/9',boxShadow:'0 20px 60px rgba(0,0,0,.35)',cursor:'pointer',flexShrink:0}}
+                onClick={() => {
+                  const v = document.getElementById('hero-vid') as HTMLVideoElement|null
+                  if(v){v.paused?v.play():v.pause()}
+                }}>
+                <video id="hero-vid" src="/hero-video.mp4" autoPlay muted loop playsInline
+                  style={{width:'100%',height:'100%',objectFit:'cover',display:'block'}}/>
+                <div style={{position:'absolute',inset:0,background:'linear-gradient(to top,rgba(0,0,0,.3) 0%,transparent 60%)',pointerEvents:'none'}}/>
+                <div style={{position:'absolute',bottom:12,left:14,background:'rgba(10,172,172,0.9)',borderRadius:50,padding:'4px 12px',display:'flex',alignItems:'center',gap:6,pointerEvents:'none'}}>
+                  <div style={{width:6,height:6,borderRadius:'50%',background:'white',animation:'dotBlink 1.5s ease-in-out infinite'}}/>
+                  <span style={{fontSize:10,fontWeight:700,letterSpacing:'.12em',textTransform:'uppercase',color:'white'}}>{c('Прямой эфир','Live','Otse')}</span>
+                </div>
+              </div>
+              <div className="hcard rv" style={{transitionDelay:'170ms'}} >
                 <div className="hcard-head">
                   <div className="hcard-lbl">{c('Форматы лагерей 2026','Camp Formats 2026','Laagri formaadid 2026')}</div>
                   {[
@@ -1049,6 +1063,7 @@ export default function Home() {
                     </div>
                   ))}
                 </div>
+              </div>
               </div>
             </div>
           </div>
@@ -1591,7 +1606,7 @@ export default function Home() {
             <h2 className="cta-h">
               {c('Места','Spots are','Kohti on')} <em>{c('ограничены.','limited.','piiratud.')}</em><br/>{c('Записывайтесь сейчас.','Register now.','Registreeruge kohe.')}
             </h2>
-            <p className="cta-p">{c('Мы работаем в малых группах - 12-16 детей - чтобы каждый ребёнок получил внимание инструктора. Ближайшая смена: 15 июня 2026.','Small groups of 12-16 children - every child gets personal instructor attention. Next session: June 15, 2026.','Väikesed rühmad 12-16 last - iga laps saab instruktori tähelepanu. Järgmine vahetus: 15. juuni 2026.')}</p>
+            <p className="cta-p">{c(`Мы работаем в малых группах - ${siteSettings.group_size||'12-16'} детей - чтобы каждый ребёнок получил внимание инструктора. Ближайшая смена: ${siteSettings.next_session_date_full||siteSettings.next_session_date||'15 июня 2026'}.`,`Small groups of ${siteSettings.group_size||'12-16'} children - every child gets personal instructor attention. Next session: ${siteSettings.next_session_date_full||siteSettings.next_session_date||'June 15, 2026'}.`,`Väikesed rühmad ${siteSettings.group_size||'12-16'} last - iga laps saab instruktori tähelepanu. Järgmine vahetus: ${siteSettings.next_session_date_full||siteSettings.next_session_date||'15. juuni 2026'}.`)}</p>
             <div className="cta-btns">
               <a href={REG} target="_blank" className="btn btn-sun" style={{padding:'16px 40px',fontSize:16}}>{c('Записать ребёнка','Register my child','Registreeri laps')}</a>
               <a href="tel:+37255512872" className="btn btn-ghost" style={{padding:'16px 28px',fontSize:15}}>+372 55512872</a>

@@ -13,7 +13,7 @@ interface GalleryPhoto {
   id: number; url: string; section: string; sort_order: number
 }
 interface Settings {
-  spots_taken?: string; spots_total?: string; next_session_date?: string
+  spots_taken?: string; spots_total?: string; next_session_date?: string; next_session_date_full?: string; group_size?: string
   price_3day?: string; price_4day?: string; price_5day?: string; schedule_year_label?: string
 }
 
@@ -477,7 +477,7 @@ function SettingsTab() {
 
   const save=async()=>{
     setSaving(true)
-    try{await fetch('/api/settings',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({settings:{spots_taken:s.spots_taken||'4',spots_total:s.spots_total||'16',next_session_date:s.next_session_date||'15.06',schedule_year_label:s.schedule_year_label||'Лето 2026'}})});setMsg('Настройки сохранены ✓')}
+    try{await fetch('/api/settings',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({settings:{spots_taken:s.spots_taken||'4',spots_total:s.spots_total||'16',next_session_date:s.next_session_date||'15.06',next_session_date_full:s.next_session_date_full||'15 июня 2026',group_size:s.group_size||'12-16',schedule_year_label:s.schedule_year_label||'Лето 2026'}})});setMsg('Настройки сохранены ✓')}
     catch{setMsg('Ошибка')}
     setSaving(false);setTimeout(()=>setMsg(''),3000)
   }
@@ -489,11 +489,13 @@ function SettingsTab() {
       <div style={{display:'flex',flexDirection:'column',gap:16}}>
         <div style={S.card}>
           <h3 style={{fontSize:14,fontWeight:700,color:'#0B3D6B',marginBottom:4}}>📍 Счётчик мест</h3>
-          <p style={{fontSize:12,color:'#888',marginBottom:16}}>Сейчас на сайте: «<strong>{s.spots_taken||'4'} из {s.spots_total||'16'} мест занято · Ближайшая смена {s.next_session_date||'15.06'}</strong>»</p>
+          <p style={{fontSize:12,color:'#888',marginBottom:16}}>Hero: «<strong>{s.spots_taken||'4'} из {s.spots_total||'16'} мест занято · Ближайшая смена {s.next_session_date||'15.06'}</strong>» · CTA: «<strong>Ближайшая смена: {s.next_session_date_full||'15 июня 2026'}</strong>»</p>
           <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:12}}>
             <div><label style={S.label}>Мест занято</label><input style={S.input} type="number" value={s.spots_taken||''} onChange={e=>setS({...s,spots_taken:e.target.value})} placeholder="4"/></div>
             <div><label style={S.label}>Мест всего</label><input style={S.input} type="number" value={s.spots_total||''} onChange={e=>setS({...s,spots_total:e.target.value})} placeholder="16"/></div>
-            <div><label style={S.label}>Дата ближайшей смены</label><input style={S.input} value={s.next_session_date||''} onChange={e=>setS({...s,next_session_date:e.target.value})} placeholder="15.06"/></div>
+            <div><label style={S.label}>Дата ближайшей смены (короткая, для Hero)</label><input style={S.input} value={s.next_session_date||''} onChange={e=>setS({...s,next_session_date:e.target.value})} placeholder="15.06"/></div>
+            <div><label style={S.label}>Дата ближайшей смены (полная, для CTA блока)</label><input style={S.input} value={s.next_session_date_full||''} onChange={e=>setS({...s,next_session_date_full:e.target.value})} placeholder="15 июня 2026"/></div>
+            <div><label style={S.label}>Размер группы (для CTA блока)</label><input style={S.input} value={s.group_size||''} onChange={e=>setS({...s,group_size:e.target.value})} placeholder="12-16"/></div>
           </div>
         </div>
         <div style={S.card}>
