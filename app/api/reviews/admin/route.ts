@@ -13,10 +13,12 @@ export async function GET() {
 }
 
 export async function PATCH(req: Request) {
-  const { id, approved } = await req.json()
+  const { id, ...updates } = await req.json()
+  if (!id) return Response.json({ error: 'Missing id' }, { status: 400 })
+
   const { error } = await supabase
     .from('reviews')
-    .update({ approved })
+    .update(updates)
     .eq('id', id)
 
   if (error) return Response.json({ error: error.message }, { status: 500 })
