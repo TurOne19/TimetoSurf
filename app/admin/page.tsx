@@ -1,951 +1,519 @@
 'use client'
+import { useState, useEffect } from 'react'
 
-import { useEffect, useMemo, useState } from 'react'
-import {
-  Lang,
-  SiteContent,
-  defaultContent,
-  languages,
-  listToText,
-  parseContent,
-  publicPhotos,
-  textToList,
-} from '@/lib/siteContent'
-
-type Review = {
-  id: number
-  name: string
-  text: string
-  program?: string
-  rating: number
-  approved: boolean
-  created_at: string
+interface Review {
+  id: number; name: string; text: string; program?: string
+  rating: number; approved: boolean; created_at: string
 }
-
-type Session = {
-  id: number
-  dates: string
-  type_ru: string
-  type_en: string
-  type_et: string
-  color: string
-  leaders: string
-  hot: boolean
-  detail: string
-  sort_order: number
-  spots_left?: number | null
-  capacity?: number | null
+interface Session {
+  id: number; dates: string; type_ru: string; type_en: string; type_et: string
+  color: string; leaders: string; hot: boolean; detail: string; sort_order: number
 }
-
-type Photo = { id: number; url: string; section: string; sort_order: number }
-type Settings = Record<string, string>
+interface GalleryPhoto {
+  id: number; url: string; section: string; sort_order: number
+}
+interface Settings {
+  spots_taken?: string; spots_total?: string; next_session_date?: string; next_session_date_full?: string; group_size?: string
+  price_3day?: string; price_4day?: string; price_5day?: string; schedule_year_label?: string
+}
 
 const ADMIN_PASSWORD = 'surf2026admin'
 
-const input: React.CSSProperties = {
-  width: '100%',
-  border: '1px solid #d8e5ec',
-  borderRadius: 8,
-  padding: '11px 12px',
-  outline: 0,
-  fontSize: 14,
-  boxSizing: 'border-box',
-  background: 'white',
+const COLOR_OPTIONS = [
+  { label: 'Синий (Серфинг)', value: '#1A6BAA' },
+  { label: 'Фиолетовый (Кино)', value: '#7C3AED' },
+  { label: 'Зелёный (Поход)', value: '#16A34A' },
+  { label: 'Бирюзовый', value: '#0AACAC' },
+  { label: 'Оранжевый', value: '#F5A623' },
+]
+
+const SECTION_OPTIONS = [
+  { value: 'hero', label: 'Главные фото (верх страницы)' },
+  { value: 'water', label: 'На воде' },
+  { value: 'team', label: 'Команда и атмосфера' },
+  { value: 'moments', label: 'Моменты' },
+]
+
+const S = {
+  btn: (bg = '#0B3D6B', color = 'white') => ({
+    padding: '9px 18px', background: bg, color, border: 'none',
+    borderRadius: 8, cursor: 'pointer', fontWeight: 600, fontSize: 13,
+    transition: 'opacity .15s'
+  } as React.CSSProperties),
+  input: {
+    width: '100%', padding: '10px 14px', border: '1.5px solid #D4E6F1',
+    borderRadius: 8, fontSize: 14, fontFamily: 'inherit', outline: 'none',
+    boxSizing: 'border-box'
+  } as React.CSSProperties,
+  card: {
+    background: 'white', borderRadius: 12, padding: 20,
+    boxShadow: '0 2px 8px rgba(0,0,0,.06)', marginBottom: 12
+  } as React.CSSProperties,
+  label: { fontSize: 12, fontWeight: 700, color: '#344E63', marginBottom: 4, display: 'block' } as React.CSSProperties,
+  tab: (active: boolean) => ({
+    padding: '10px 18px', borderRadius: 8, border: 'none', cursor: 'pointer',
+    fontWeight: 600, fontSize: 13,
+    background: active ? 'white' : 'transparent',
+    color: active ? '#0B3D6B' : 'rgba(255,255,255,.7)',
+    transition: 'all .15s'
+  } as React.CSSProperties),
 }
 
 export default function AdminPage() {
   const [authed, setAuthed] = useState(false)
-  const [password, setPassword] = useState('')
-  const [tab, setTab] = useState('content')
+  const [pwInput, setPwInput] = useState('')
+  const [pwError, setPwError] = useState(false)
+  const [tab, setTab] = useState<'reviews'|'sessions'|'gallery'|'pricing'|'settings'>('reviews')
 
   useEffect(() => {
-    if (sessionStorage.getItem('tts-admin') === ADMIN_PASSWORD) setAuthed(true)
+    if (typeof window !== 'undefined' && sessionStorage.getItem('tts-admin') === ADMIN_PASSWORD) setAuthed(true)
   }, [])
 
-  if (!authed) {
-    return (
-      <main style={loginWrap}>
-        <section style={loginCard}>
-          <img src="/logo.jpeg" alt="" style={{ width: 64, height: 64, borderRadius: '50%', objectFit: 'cover', margin: '0 auto 16px' }} />
-          <h1 style={{ margin: 0, color: '#07395d', fontSize: 24 }}>Time to Surf</h1>
-          <p style={{ color: '#688092', margin: '6px 0 24px' }}>Админка сайта</p>
-          <input
-            type="password"
-            value={password}
-            onChange={event => setPassword(event.target.value)}
-            onKeyDown={event => {
-              if (event.key === 'Enter' && password === ADMIN_PASSWORD) {
-                sessionStorage.setItem('tts-admin', ADMIN_PASSWORD)
-                setAuthed(true)
-              }
-            }}
-            placeholder="Пароль"
-            style={{ ...input, marginBottom: 12 }}
-          />
-          <button style={{ ...button(), width: '100%' }} onClick={() => {
-            if (password === ADMIN_PASSWORD) {
-              sessionStorage.setItem('tts-admin', ADMIN_PASSWORD)
-              setAuthed(true)
-            }
-          }}>
-            Войти
-          </button>
-        </section>
-      </main>
-    )
+  const login = () => {
+    if (pwInput === ADMIN_PASSWORD) { sessionStorage.setItem('tts-admin', ADMIN_PASSWORD); setAuthed(true) }
+    else { setPwError(true); setTimeout(() => setPwError(false), 2000) }
   }
+  const logout = () => { sessionStorage.removeItem('tts-admin'); setAuthed(false) }
+
+  if (!authed) return (
+    <div style={{minHeight:'100vh',background:'#0B3D6B',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'system-ui,sans-serif'}}>
+      <div style={{background:'white',borderRadius:16,padding:'48px 40px',width:360,textAlign:'center',boxShadow:'0 20px 60px rgba(0,0,0,.3)'}}>
+        <div style={{fontSize:48,marginBottom:8}}>🏄</div>
+        <h1 style={{fontSize:22,fontWeight:800,color:'#0B3D6B',marginBottom:4}}>Time to Surf</h1>
+        <p style={{fontSize:13,color:'#888',marginBottom:32}}>Панель администратора</p>
+        <div style={{textAlign:'left',marginBottom:16}}>
+          <label style={S.label}>Пароль</label>
+          <input type="password" value={pwInput} onChange={e=>setPwInput(e.target.value)}
+            onKeyDown={e=>e.key==='Enter'&&login()} placeholder="Введите пароль..."
+            autoFocus
+            style={{...S.input,border:`1.5px solid ${pwError?'#ef4444':'#D4E6F1'}`,fontSize:16}}/>
+          {pwError&&<div style={{color:'#ef4444',fontSize:12,marginTop:6}}>Неверный пароль</div>}
+        </div>
+        <button onClick={login} style={{...S.btn('#0B3D6B'),width:'100%',padding:'12px 0',fontSize:15}}>Войти</button>
+      </div>
+    </div>
+  )
 
   return (
-    <main style={{ minHeight: '100vh', background: '#f6f8f8', fontFamily: 'Manrope, system-ui, sans-serif' }}>
-      <header style={adminTop}>
+    <div style={{background:'#f8fafc',minHeight:'100vh',fontFamily:'system-ui,sans-serif'}}>
+      <div style={{background:'#0B3D6B',padding:'16px 32px',display:'flex',alignItems:'center',justifyContent:'space-between'}}>
         <div>
-          <strong style={{ color: 'white', fontSize: 18 }}>Time to Surf админка</strong>
-          <p style={{ margin: '3px 0 0', color: 'rgba(255,255,255,.62)', fontSize: 12 }}>
-            Полное управление сайтом: RU/EN/ET тексты отдельно, цифры и ссылки один раз
-          </p>
+          <div style={{color:'white',fontSize:18,fontWeight:700}}>🏄 Time to Surf — Админка</div>
+          <div style={{color:'rgba(255,255,255,.45)',fontSize:11,marginTop:1}}>Панель управления сайтом</div>
         </div>
-        <a href="/" style={{ color: 'white', fontWeight: 800 }}>На сайт</a>
-      </header>
-      <nav style={tabsWrap}>
-        {[
-          ['content', 'Все тексты'],
-          ['numbers', 'Цифры и ссылки'],
-          ['sessions', 'Смены'],
-          ['gallery', 'Фото'],
-          ['reviews', 'Отзывы'],
-          ['seo', 'SEO'],
-        ].map(([id, label]) => (
-          <button key={id} onClick={() => setTab(id)} style={tabStyle(tab === id)}>
-            {label}
-          </button>
-        ))}
-      </nav>
-      <section style={{ width: 'min(1180px, calc(100% - 32px))', margin: '0 auto', padding: '28px 0 56px' }}>
-        {tab === 'content' && <ContentTab />}
-        {tab === 'numbers' && <NumbersTab />}
-        {tab === 'sessions' && <SessionsTab />}
-        {tab === 'gallery' && <GalleryTab />}
-        {tab === 'reviews' && <ReviewsTab />}
-        {tab === 'seo' && <SeoTab />}
-      </section>
-    </main>
-  )
-}
-
-function ContentTab() {
-  const { settings, saveSettings, msg, saving } = useSettings()
-  const [lang, setLang] = useState<Lang>('ru')
-  const [content, setContent] = useState<SiteContent>(defaultContent)
-  const [rawOpen, setRawOpen] = useState(false)
-  const [raw, setRaw] = useState('')
-
-  useEffect(() => {
-    const parsed = parseContent(settings.content_json)
-    setContent(parsed)
-    setRaw(JSON.stringify(parsed, null, 2))
-  }, [settings.content_json])
-
-  const patch = (mutate: (draft: SiteContent) => void) => {
-    setContent(prev => {
-      const next = JSON.parse(JSON.stringify(prev)) as SiteContent
-      mutate(next)
-      setRaw(JSON.stringify(next, null, 2))
-      return next
-    })
-  }
-
-  const save = async () => {
-    await saveSettings({ content_json: JSON.stringify(content) })
-  }
-
-  const applyRaw = () => {
-    try {
-      const next = parseContent(raw)
-      setContent(next)
-      setRaw(JSON.stringify(next, null, 2))
-    } catch {
-      alert('JSON не читается')
-    }
-  }
-
-  return (
-    <Panel title="Все тексты сайта" subtitle="Выбираешь язык и меняешь каждую видимую фразу. Цены, возраст, даты, телефон и места меняются отдельно во вкладке “Цифры и ссылки”.">
-      {msg && <Notice text={msg} />}
-      <LangTabs lang={lang} setLang={setLang} />
-
-      <EditorSection title="Навигация">
-        <Grid columns={4}>
-          {Object.entries(content.nav).map(([key, value]) => (
-            <Field key={key} label={key}>
-              <input style={input} value={value[lang]} onChange={e => patch(c => { c.nav[key][lang] = e.target.value })} />
-            </Field>
-          ))}
-        </Grid>
-      </EditorSection>
-
-      <EditorSection title="Hero">
-        <Grid>
-          <TextField label="eyebrow" value={content.hero.eyebrow[lang]} onChange={value => patch(c => { c.hero.eyebrow[lang] = value })} />
-          <TextField label="title" value={content.hero.title[lang]} onChange={value => patch(c => { c.hero.title[lang] = value })} />
-          <AreaField label="text" value={content.hero.text[lang]} onChange={value => patch(c => { c.hero.text[lang] = value })} />
-          <TextField label="primary button" value={content.hero.primary[lang]} onChange={value => patch(c => { c.hero.primary[lang] = value })} />
-          <TextField label="secondary button" value={content.hero.secondary[lang]} onChange={value => patch(c => { c.hero.secondary[lang] = value })} />
-          <ListField label="facts, по строке" value={content.hero.facts[lang]} onChange={value => patch(c => { c.hero.facts[lang] = value })} />
-        </Grid>
-      </EditorSection>
-
-      <EditorSection title="Time to Surf — не просто лагерь">
-        <Grid>
-          <TextField label="eyebrow" value={content.about.eyebrow[lang]} onChange={value => patch(c => { c.about.eyebrow[lang] = value })} />
-          <TextField label="title" value={content.about.title[lang]} onChange={value => patch(c => { c.about.title[lang] = value })} />
-          <AreaField label="text" value={content.about.text[lang]} onChange={value => patch(c => { c.about.text[lang] = value })} />
-          <ListField label="points, по строке" value={content.about.points[lang]} onChange={value => patch(c => { c.about.points[lang] = value })} />
-        </Grid>
-      </EditorSection>
-
-      <EditorSection title="Почему родители выбирают">
-        <Grid>
-          <TextField label="eyebrow" value={content.why.eyebrow[lang]} onChange={value => patch(c => { c.why.eyebrow[lang] = value })} />
-          <TextField label="title" value={content.why.title[lang]} onChange={value => patch(c => { c.why.title[lang] = value })} />
-          <AreaField label="text" value={content.why.text[lang]} onChange={value => patch(c => { c.why.text[lang] = value })} />
-        </Grid>
-        {content.why.points.map((point, index) => (
-          <div key={index} style={subCard}>
-            <strong style={smallTitle}>Доверие {index + 1}</strong>
-            <Grid columns={3}>
-              <TextField label="value" value={point.value[lang]} onChange={value => patch(c => { c.why.points[index].value[lang] = value })} />
-              <TextField label="label" value={point.label[lang]} onChange={value => patch(c => { c.why.points[index].label[lang] = value })} />
-              <AreaField label="text" value={point.text[lang]} onChange={value => patch(c => { c.why.points[index].text[lang] = value })} />
-            </Grid>
-          </div>
-        ))}
-      </EditorSection>
-
-      <EditorSection title="Безопасность / доверие">
-        <Grid>
-          <TextField label="eyebrow" value={content.safety.eyebrow[lang]} onChange={value => patch(c => { c.safety.eyebrow[lang] = value })} />
-          <TextField label="title" value={content.safety.title[lang]} onChange={value => patch(c => { c.safety.title[lang] = value })} />
-          <ListField label="cards, по строке" value={content.safety.points[lang]} onChange={value => patch(c => { c.safety.points[lang] = value })} />
-        </Grid>
-      </EditorSection>
-
-      <EditorSection title="Что входит в лагерь">
-        <Grid>
-          <TextField label="eyebrow" value={content.included.eyebrow[lang]} onChange={value => patch(c => { c.included.eyebrow[lang] = value })} />
-          <TextField label="title" value={content.included.title[lang]} onChange={value => patch(c => { c.included.title[lang] = value })} />
-          <AreaField label="text" value={content.included.text[lang]} onChange={value => patch(c => { c.included.text[lang] = value })} />
-        </Grid>
-        {content.included.items.map((item, index) => (
-          <div key={index} style={subCard}>
-            <strong style={smallTitle}>Пункт {index + 1}</strong>
-            <Grid>
-              <TextField label="title" value={item.title[lang]} onChange={value => patch(c => { c.included.items[index].title[lang] = value })} />
-              <AreaField label="text" value={item.text[lang]} onChange={value => patch(c => { c.included.items[index].text[lang] = value })} />
-            </Grid>
-          </div>
-        ))}
-      </EditorSection>
-
-      <EditorSection title="Наши программы / 3 программы">
-        <Grid>
-          <TextField label="section eyebrow" value={content.programs.eyebrow[lang]} onChange={value => patch(c => { c.programs.eyebrow[lang] = value })} />
-          <TextField label="section title" value={content.programs.title[lang]} onChange={value => patch(c => { c.programs.title[lang] = value })} />
-        </Grid>
-        {content.programs.items.map((program, index) => (
-          <div key={program.key} style={subCard}>
-            <strong style={smallTitle}>Программа {index + 1}</strong>
-            <Grid>
-              <TextField label="photo" value={program.photo} onChange={value => patch(c => { c.programs.items[index].photo = value })} />
-              <TextField label="kicker" value={program.kicker[lang]} onChange={value => patch(c => { c.programs.items[index].kicker[lang] = value })} />
-              <TextField label="title" value={program.title[lang]} onChange={value => patch(c => { c.programs.items[index].title[lang] = value })} />
-              <AreaField label="text" value={program.text[lang]} onChange={value => patch(c => { c.programs.items[index].text[lang] = value })} />
-              <ListField label="bullets" value={program.bullets[lang]} onChange={value => patch(c => { c.programs.items[index].bullets[lang] = value })} />
-              <ListField label="dates" value={program.dates} onChange={value => patch(c => { c.programs.items[index].dates = value })} />
-              <TextField label="modal title" value={program.detailsTitle[lang]} onChange={value => patch(c => { c.programs.items[index].detailsTitle[lang] = value })} />
-              <AreaField label="modal intro" value={program.detailsIntro[lang]} onChange={value => patch(c => { c.programs.items[index].detailsIntro[lang] = value })} />
-              <ListField label="result" value={program.result[lang]} onChange={value => patch(c => { c.programs.items[index].result[lang] = value })} />
-            </Grid>
-            <strong style={smallTitle}>Ведущий / команда</strong>
-            {program.leader && (
-              <Grid>
-                <TextField label="initials" value={program.leader.initials} onChange={value => patch(c => { if (c.programs.items[index].leader) c.programs.items[index].leader.initials = value })} />
-                <TextField label="name" value={program.leader.name[lang]} onChange={value => patch(c => { if (c.programs.items[index].leader) c.programs.items[index].leader.name[lang] = value })} />
-                <TextField label="role" value={program.leader.role[lang]} onChange={value => patch(c => { if (c.programs.items[index].leader) c.programs.items[index].leader.role[lang] = value })} />
-                <AreaField label="bio" value={program.leader.bio[lang]} onChange={value => patch(c => { if (c.programs.items[index].leader) c.programs.items[index].leader.bio[lang] = value })} />
-              </Grid>
-            )}
-            <strong style={smallTitle}>Блоки в модалке</strong>
-            <button style={{ ...button('#14a7a3'), marginBottom: 12 }} onClick={() => patch(c => {
-              c.programs.items[index].details.push({
-                title: { ru: '', en: '', et: '' },
-                items: { ru: [], en: [], et: [] },
-              })
-            })}>
-              Добавить блок в модалку
-            </button>
-            {program.details.map((detail, detailIndex) => (
-              <div key={detailIndex} style={subCard}>
-                <Grid>
-                  <TextField label="detail title" value={detail.title[lang]} onChange={value => patch(c => { c.programs.items[index].details[detailIndex].title[lang] = value })} />
-                  <ListField label="items" value={detail.items[lang]} onChange={value => patch(c => { c.programs.items[index].details[detailIndex].items[lang] = value })} />
-                </Grid>
-                <button style={button('#fee2e2', '#b91c1c')} onClick={() => patch(c => { c.programs.items[index].details.splice(detailIndex, 1) })}>Удалить блок</button>
-              </div>
-            ))}
-          </div>
-        ))}
-      </EditorSection>
-
-      <EditorSection title="Программа дня">
-        <Grid>
-          <TextField label="eyebrow" value={content.day.eyebrow[lang]} onChange={value => patch(c => { c.day.eyebrow[lang] = value })} />
-          <TextField label="title" value={content.day.title[lang]} onChange={value => patch(c => { c.day.title[lang] = value })} />
-          <AreaField label="text" value={content.day.text[lang]} onChange={value => patch(c => { c.day.text[lang] = value })} />
-        </Grid>
-        {content.day.items.map((item, index) => (
-          <div key={`${item.time}-${index}`} style={subCard}>
-            <Grid columns={3}>
-              <TextField label="time" value={item.time} onChange={value => patch(c => { c.day.items[index].time = value })} />
-              <TextField label="title" value={item.title[lang]} onChange={value => patch(c => { c.day.items[index].title[lang] = value })} />
-              <AreaField label="text" value={item.text[lang]} onChange={value => patch(c => { c.day.items[index].text[lang] = value })} />
-            </Grid>
-          </div>
-        ))}
-      </EditorSection>
-
-      <EditorSection title="Смены, цены, галерея, отзывы">
-        <Grid>
-          <TextField label="sessions eyebrow" value={content.sessions.eyebrow[lang]} onChange={value => patch(c => { c.sessions.eyebrow[lang] = value })} />
-          <TextField label="sessions title" value={content.sessions.title[lang]} onChange={value => patch(c => { c.sessions.title[lang] = value })} />
-          <TextField label="spots available" value={content.sessions.spotsAvailable[lang]} onChange={value => patch(c => { c.sessions.spotsAvailable[lang] = value })} />
-          <TextField label="low spots" value={content.sessions.lowSpots[lang]} onChange={value => patch(c => { c.sessions.lowSpots[lang] = value })} />
-          <TextField label="spots word" value={content.sessions.spotsWord[lang]} onChange={value => patch(c => { c.sessions.spotsWord[lang] = value })} />
-          <TextField label="prices eyebrow" value={content.prices.eyebrow[lang]} onChange={value => patch(c => { c.prices.eyebrow[lang] = value })} />
-          <TextField label="prices title" value={content.prices.title[lang]} onChange={value => patch(c => { c.prices.title[lang] = value })} />
-          <AreaField label="prices included" value={content.prices.included[lang]} onChange={value => patch(c => { c.prices.included[lang] = value })} />
-          <TextField label="gallery eyebrow" value={content.gallery.eyebrow[lang]} onChange={value => patch(c => { c.gallery.eyebrow[lang] = value })} />
-          <TextField label="gallery title" value={content.gallery.title[lang]} onChange={value => patch(c => { c.gallery.title[lang] = value })} />
-          <AreaField label="gallery text" value={content.gallery.text[lang]} onChange={value => patch(c => { c.gallery.text[lang] = value })} />
-          <TextField label="gallery button" value={content.gallery.button[lang]} onChange={value => patch(c => { c.gallery.button[lang] = value })} />
-          <TextField label="reviews eyebrow" value={content.reviews.eyebrow[lang]} onChange={value => patch(c => { c.reviews.eyebrow[lang] = value })} />
-          <TextField label="reviews title" value={content.reviews.title[lang]} onChange={value => patch(c => { c.reviews.title[lang] = value })} />
-          <TextField label="review form title" value={content.reviews.formTitle[lang]} onChange={value => patch(c => { c.reviews.formTitle[lang] = value })} />
-          <TextField label="review submit" value={content.reviews.submit[lang]} onChange={value => patch(c => { c.reviews.submit[lang] = value })} />
-        </Grid>
-        {content.prices.cards.map((card, index) => (
-          <div key={card.priceKey} style={subCard}>
-            <strong style={smallTitle}>{card.priceKey}</strong>
-            <Grid>
-              <TextField label="label" value={card.label[lang]} onChange={value => patch(c => { c.prices.cards[index].label[lang] = value })} />
-              <AreaField label="text" value={card.text[lang]} onChange={value => patch(c => { c.prices.cards[index].text[lang] = value })} />
-            </Grid>
-          </div>
-        ))}
-      </EditorSection>
-
-      <EditorSection title="FAQ">
-        <Grid>
-          <TextField label="eyebrow" value={content.faq.eyebrow[lang]} onChange={value => patch(c => { c.faq.eyebrow[lang] = value })} />
-          <TextField label="title" value={content.faq.title[lang]} onChange={value => patch(c => { c.faq.title[lang] = value })} />
-        </Grid>
-        <button style={{ ...button('#14a7a3'), marginBottom: 12 }} onClick={() => patch(c => {
-          c.faq.items.push({ q: { ru: '', en: '', et: '' }, a: { ru: '', en: '', et: '' } })
-        })}>
-          Добавить вопрос
-        </button>
-        {content.faq.items.map((item, index) => (
-          <div key={index} style={subCard}>
-            <Grid>
-              <TextField label="question" value={item.q[lang]} onChange={value => patch(c => { c.faq.items[index].q[lang] = value })} />
-              <AreaField label="answer" value={item.a[lang]} onChange={value => patch(c => { c.faq.items[index].a[lang] = value })} />
-            </Grid>
-            <button style={button('#fee2e2', '#b91c1c')} onClick={() => patch(c => { c.faq.items.splice(index, 1) })}>Удалить вопрос</button>
-          </div>
-        ))}
-      </EditorSection>
-
-      <EditorSection title="Место проведения, CTA, футер">
-        <Grid>
-          <TextField label="location eyebrow" value={content.location.eyebrow[lang]} onChange={value => patch(c => { c.location.eyebrow[lang] = value })} />
-          <TextField label="location title" value={content.location.title[lang]} onChange={value => patch(c => { c.location.title[lang] = value })} />
-          <AreaField label="location text" value={content.location.text[lang]} onChange={value => patch(c => { c.location.text[lang] = value })} />
-          <TextField label="location button" value={content.location.button[lang]} onChange={value => patch(c => { c.location.button[lang] = value })} />
-          <TextField label="cta eyebrow" value={content.cta.eyebrow[lang]} onChange={value => patch(c => { c.cta.eyebrow[lang] = value })} />
-          <TextField label="cta title" value={content.cta.title[lang]} onChange={value => patch(c => { c.cta.title[lang] = value })} />
-          <AreaField label="cta text" value={content.cta.text[lang]} onChange={value => patch(c => { c.cta.text[lang] = value })} />
-          <TextField label="cta primary" value={content.cta.primary[lang]} onChange={value => patch(c => { c.cta.primary[lang] = value })} />
-          <TextField label="cta secondary" value={content.cta.secondary[lang]} onChange={value => patch(c => { c.cta.secondary[lang] = value })} />
-          <AreaField label="footer text" value={content.footer.text[lang]} onChange={value => patch(c => { c.footer.text[lang] = value })} />
-          <TextField label="footer contacts" value={content.footer.contacts[lang]} onChange={value => patch(c => { c.footer.contacts[lang] = value })} />
-          <TextField label="footer links" value={content.footer.links[lang]} onChange={value => patch(c => { c.footer.links[lang] = value })} />
-          <TextField label="NorthPixel credit" value={content.footer.credit[lang]} onChange={value => patch(c => { c.footer.credit[lang] = value })} />
-        </Grid>
-      </EditorSection>
-
-      <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginTop: 18, position: 'sticky', bottom: 16, zIndex: 2 }}>
-        <button style={button()} onClick={save} disabled={saving}>Сохранить весь контент</button>
-        <button style={button('#eef4f7', '#07395d')} onClick={() => setRawOpen(!rawOpen)}>JSON для разработчика</button>
-      </div>
-
-      {rawOpen && (
-        <div style={{ marginTop: 18 }}>
-          <textarea style={{ ...input, minHeight: 380, fontFamily: 'Consolas, monospace' }} value={raw} onChange={e => setRaw(e.target.value)} />
-          <button style={{ ...button('#14a7a3'), marginTop: 10 }} onClick={applyRaw}>Применить JSON в форму</button>
+        <div style={{display:'flex',gap:12,alignItems:'center'}}>
+          <a href="/" style={{color:'rgba(255,255,255,.6)',fontSize:13,textDecoration:'none'}}>← На сайт</a>
+          <button onClick={logout} style={{...S.btn('rgba(255,255,255,.15)'),fontSize:12}}>Выйти</button>
         </div>
-      )}
-    </Panel>
-  )
-}
+      </div>
 
-function NumbersTab() {
-  const { settings, setSettings, saveSettings, msg, saving } = useSettings()
-  const save = () => saveSettings({
-    price_3day: settings.price_3day || '190€',
-    price_4day: settings.price_4day || '235€',
-    price_5day: settings.price_5day || '265€',
-    group_size: settings.group_size || '12-16',
-    age_range: settings.age_range || '7-12',
-    day_hours: settings.day_hours || '09:00-16:30',
-    phone: settings.phone || '+372 55512872',
-    email: settings.email || 'info@timetosurf.ee',
-    cta_link: settings.cta_link || '',
-    hero_video: settings.hero_video || '/hero-video.mp4',
-    next_session_date: settings.next_session_date || '15.06.2026',
-    telegram_link: settings.telegram_link || 'https://t.me/Andrei_Time_to_Surf',
-    instagram_link: settings.instagram_link || 'https://www.instagram.com/timetosurf.ee',
-    facebook_link: settings.facebook_link || 'https://www.facebook.com/timetosurf.ee',
-    site_link: settings.site_link || 'https://timetosurf.ee',
-  })
-
-  return (
-    <Panel title="Цифры, цены и ссылки" subtitle="Эти значения общие для всех языков. Меняешь один раз — на сайте в RU/EN/ET цифры не расходятся.">
-      {msg && <Notice text={msg} />}
-      <Grid columns={3}>
-        {[
-          ['price_3day', 'Цена 3 дня'],
-          ['price_4day', 'Цена 4 дня'],
-          ['price_5day', 'Цена 5 дней'],
-          ['group_size', 'Размер группы'],
-          ['age_range', 'Возраст'],
-          ['day_hours', 'Время дня'],
-          ['next_session_date', 'Ближайшая смена'],
-          ['hero_video', 'Видео в hero'],
-          ['phone', 'Телефон'],
-          ['email', 'Email'],
-          ['cta_link', 'Ссылка записи'],
-          ['telegram_link', 'Telegram'],
-          ['instagram_link', 'Instagram'],
-          ['facebook_link', 'Facebook'],
-          ['site_link', 'Основной сайт'],
-        ].map(([key, label]) => (
-          <Field key={key} label={label}>
-            <input style={input} value={settings[key] || ''} onChange={e => setSettings({ ...settings, [key]: e.target.value })} />
-          </Field>
-        ))}
-      </Grid>
-      <button style={button()} onClick={save} disabled={saving}>Сохранить цифры и ссылки</button>
-    </Panel>
-  )
-}
-
-function SeoTab() {
-  const { settings, setSettings, saveSettings, msg, saving } = useSettings()
-  return (
-    <Panel title="SEO title/description" subtitle="Для Vercel/Google: основной title и description. Контент на странице всё равно меняется в трёх языках.">
-      {msg && <Notice text={msg} />}
-      <Grid>
-        <Field label="SEO title">
-          <input style={input} value={settings.seo_title || ''} onChange={e => setSettings({ ...settings, seo_title: e.target.value })} />
-        </Field>
-        <Field label="SEO description">
-          <textarea style={input} rows={5} value={settings.seo_description || ''} onChange={e => setSettings({ ...settings, seo_description: e.target.value })} />
-        </Field>
-      </Grid>
-      <button style={button()} onClick={() => saveSettings({ seo_title: settings.seo_title || '', seo_description: settings.seo_description || '' })} disabled={saving}>
-        Сохранить SEO
-      </button>
-    </Panel>
-  )
-}
-
-function SessionsTab() {
-  const [sessions, setSessions] = useState<Session[]>([])
-  const [loading, setLoading] = useState(true)
-  const [editing, setEditing] = useState<Partial<Session> | null>(null)
-  const [msg, setMsg] = useState('')
-
-  const blank: Partial<Session> = {
-    dates: '',
-    type_ru: '',
-    type_en: '',
-    type_et: '',
-    color: '#0e7490',
-    leaders: '',
-    hot: false,
-    detail: 'surf',
-    spots_left: 16,
-    capacity: 16,
-  }
-
-  const load = async () => {
-    setLoading(true)
-    try {
-      const data = await fetch('/api/sessions').then(r => r.json())
-      if (Array.isArray(data)) setSessions(data)
-    } catch {}
-    setLoading(false)
-  }
-
-  useEffect(() => {
-    load()
-  }, [])
-
-  const save = async () => {
-    if (!editing?.dates || !editing?.type_ru) return
-    const method = editing.id ? 'PATCH' : 'POST'
-    await fetch('/api/sessions', {
-      method,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        ...editing,
-        type_en: editing.type_en || editing.type_ru,
-        type_et: editing.type_et || editing.type_ru,
-        sort_order: editing.sort_order ?? sessions.length + 1,
-      }),
-    })
-    setEditing(null)
-    setMsg('Смена сохранена')
-    load()
-    setTimeout(() => setMsg(''), 2500)
-  }
-
-  const remove = async (id: number) => {
-    if (!confirm('Удалить смену?')) return
-    await fetch('/api/sessions', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) })
-    load()
-  }
-
-  return (
-    <Panel title="Смены" subtitle="Даты и места задаются один раз. Название программы редактируется отдельно на RU/EN/ET.">
-      {msg && <Notice text={msg} />}
-      <button style={{ ...button('#14a7a3'), marginBottom: 16 }} onClick={() => setEditing(blank)}>Добавить смену</button>
-      {editing && (
-        <section style={{ ...card, marginBottom: 18, borderColor: '#14a7a3' }}>
-          <Grid columns={3}>
-            <TextField label="Даты" value={editing.dates || ''} onChange={value => setEditing({ ...editing, dates: value })} />
-            <TextField label="Название RU" value={editing.type_ru || ''} onChange={value => setEditing({ ...editing, type_ru: value })} />
-            <TextField label="Название EN" value={editing.type_en || ''} onChange={value => setEditing({ ...editing, type_en: value })} />
-            <TextField label="Название ET" value={editing.type_et || ''} onChange={value => setEditing({ ...editing, type_et: value })} />
-            <TextField label="Руководители" value={editing.leaders || ''} onChange={value => setEditing({ ...editing, leaders: value })} />
-            <NumberField label="Мест осталось" value={editing.spots_left ?? ''} onChange={value => setEditing({ ...editing, spots_left: value })} />
-            <NumberField label="Всего мест" value={editing.capacity ?? ''} onChange={value => setEditing({ ...editing, capacity: value })} />
-            <NumberField label="Порядок" value={editing.sort_order ?? sessions.length + 1} onChange={value => setEditing({ ...editing, sort_order: Number(value) || 0 })} />
-            <Field label="Тип">
-              <select style={input} value={editing.detail || 'surf'} onChange={e => setEditing({ ...editing, detail: e.target.value })}>
-                <option value="surf">Серфинг лагерь</option>
-                <option value="kino">Серфинг + кино</option>
-                <option value="hike">Серфинг + поход</option>
-                <option value="pohod">Серфинг + поход</option>
-              </select>
-            </Field>
-            <Field label="Цвет">
-              <input type="color" style={{ ...input, height: 43 }} value={editing.color || '#0e7490'} onChange={e => setEditing({ ...editing, color: e.target.value })} />
-            </Field>
-          </Grid>
-          <label style={{ display: 'flex', alignItems: 'center', gap: 8, margin: '8px 0 14px', fontWeight: 800, color: '#496273' }}>
-            <input type="checkbox" checked={Boolean(editing.hot)} onChange={e => setEditing({ ...editing, hot: e.target.checked })} />
-            Выделить как “мало мест”
-          </label>
-          <button style={button()} onClick={save}>Сохранить</button>
-          <button style={{ ...button('#eef4f7', '#173349'), marginLeft: 8 }} onClick={() => setEditing(null)}>Отмена</button>
-        </section>
-      )}
-      {loading ? <p>Загрузка...</p> : sessions.map(session => (
-        <article key={session.id} style={{ ...card, display: 'grid', gridTemplateColumns: '1fr auto', gap: 12, marginBottom: 10 }}>
-          <div>
-            <strong style={{ color: '#07395d' }}>{session.dates}</strong>
-            <p style={{ margin: '4px 0 0', color: '#62798b' }}>
-              {session.type_ru} / {session.type_en} / {session.type_et} · {session.leaders} · {session.spots_left ?? '-'} из {session.capacity ?? '-'}
-            </p>
-          </div>
-          <div>
-            <button style={button('#eef4f7', '#07395d')} onClick={() => setEditing(session)}>Изменить</button>
-            <button style={{ ...button('#fee2e2', '#b91c1c'), marginLeft: 8 }} onClick={() => remove(session.id)}>Удалить</button>
-          </div>
-        </article>
-      ))}
-    </Panel>
-  )
-}
-
-function GalleryTab() {
-  const [photos, setPhotos] = useState<Photo[]>([])
-  const [url, setUrl] = useState('')
-  const [section, setSection] = useState('moments')
-  const [sortOrder, setSortOrder] = useState('0')
-  const [editing, setEditing] = useState<Photo | null>(null)
-  const [msg, setMsg] = useState('')
-
-  const load = async () => {
-    try {
-      const data = await fetch('/api/gallery').then(r => r.json())
-      if (Array.isArray(data)) setPhotos(data)
-    } catch {}
-  }
-
-  useEffect(() => {
-    load()
-  }, [])
-
-  const add = async (photoUrl = url, order = sortOrder) => {
-    if (!photoUrl.trim()) return
-    await fetch('/api/gallery', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url: photoUrl.trim(), section, sort_order: Number(order) || 0 }),
-    })
-    setUrl('')
-    load()
-  }
-
-  const seed = async () => {
-    let order = photos.length + 1
-    for (const photo of publicPhotos) {
-      await add(photo, String(order))
-      order += 1
-    }
-    setMsg('Фото из public добавлены')
-    setTimeout(() => setMsg(''), 2500)
-  }
-
-  const remove = async (id: number) => {
-    await fetch('/api/gallery', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) })
-    load()
-  }
-
-  const saveEdit = async () => {
-    if (!editing) return
-    await fetch('/api/gallery', {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(editing),
-    })
-    setEditing(null)
-    load()
-  }
-
-  return (
-    <Panel title="Фото / Галерея" subtitle="Старые фото удалены из проекта. Здесь можно добавить все новые фото из public или управлять каждым URL вручную.">
-      {msg && <Notice text={msg} />}
-      <Grid columns={4}>
-        <TextField label="Путь или URL" value={url} onChange={setUrl} />
-        <Field label="Раздел">
-          <select style={input} value={section} onChange={e => setSection(e.target.value)}>
-            <option value="moments">Моменты</option>
-            <option value="water">Вода</option>
-            <option value="team">Команда</option>
-            <option value="hero">Hero</option>
-          </select>
-        </Field>
-        <TextField label="Порядок" value={sortOrder} onChange={setSortOrder} />
-        <Field label="Действие">
-          <button style={{ ...button(), width: '100%' }} onClick={() => add()}>Добавить</button>
-        </Field>
-      </Grid>
-      <button style={{ ...button('#14a7a3'), margin: '4px 0 18px' }} onClick={seed}>Добавить все фото из public</button>
-      {editing && (
-        <section style={{ ...card, marginBottom: 18, borderColor: '#14a7a3' }}>
-          <Grid columns={3}>
-            <TextField label="Путь или URL" value={editing.url} onChange={value => setEditing({ ...editing, url: value })} />
-            <Field label="Раздел">
-              <select style={input} value={editing.section} onChange={e => setEditing({ ...editing, section: e.target.value })}>
-                <option value="moments">Моменты</option>
-                <option value="water">Вода</option>
-                <option value="team">Команда</option>
-                <option value="hero">Hero</option>
-              </select>
-            </Field>
-            <NumberField label="Порядок" value={editing.sort_order} onChange={value => setEditing({ ...editing, sort_order: Number(value) || 0 })} />
-          </Grid>
-          <button style={button()} onClick={saveEdit}>Сохранить фото</button>
-          <button style={{ ...button('#eef4f7', '#07395d'), marginLeft: 8 }} onClick={() => setEditing(null)}>Отмена</button>
-        </section>
-      )}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: 10 }}>
-        {photos.map(photo => (
-          <article key={photo.id} style={{ position: 'relative', overflow: 'hidden', borderRadius: 8, background: 'white', border: '1px solid #e1ebf0' }}>
-            <img src={photo.url} alt="" style={{ width: '100%', height: 92, objectFit: 'cover' }} />
-            <button style={{ position: 'absolute', top: 6, right: 6, ...button('rgba(185,28,28,.9)') }} onClick={() => remove(photo.id)}>x</button>
-            <p style={{ margin: 0, padding: 7, fontSize: 11, color: '#62798b', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{photo.url}</p>
-            <button style={{ ...button('#eef4f7', '#07395d'), width: '100%', borderRadius: 0 }} onClick={() => setEditing(photo)}>Изменить</button>
-          </article>
+      <div style={{background:'#0B3D6B',padding:'0 32px',display:'flex',gap:4,borderTop:'1px solid rgba(255,255,255,.1)'}}>
+        {([['reviews','💬 Отзывы'],['sessions','📅 Смены'],['gallery','📸 Фото'],['pricing','💰 Цены'],['settings','⚙️ Настройки']] as const).map(([id,label])=>(
+          <button key={id} style={S.tab(tab===id)} onClick={()=>setTab(id)}>{label}</button>
         ))}
       </div>
-    </Panel>
-  )
-}
 
-function ReviewsTab() {
-  const [reviews, setReviews] = useState<Review[]>([])
-  const [filter, setFilter] = useState('pending')
-  const [editing, setEditing] = useState<Partial<Review> | null>(null)
-
-  const load = async () => {
-    try {
-      const data = await fetch('/api/reviews/admin').then(r => r.json())
-      if (Array.isArray(data)) setReviews(data)
-    } catch {}
-  }
-
-  useEffect(() => {
-    load()
-  }, [])
-
-  const save = async () => {
-    if (!editing) return
-    await fetch('/api/reviews/admin', { method: editing.id ? 'PATCH' : 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(editing) })
-    setEditing(null)
-    load()
-  }
-
-  const remove = async (id: number) => {
-    await fetch('/api/reviews/admin', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) })
-    load()
-  }
-
-  const approve = async (id: number) => {
-    await fetch('/api/reviews/admin', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, approved: true }) })
-    load()
-  }
-
-  const visible = useMemo(
-    () => reviews.filter(review => (filter === 'all' ? true : filter === 'approved' ? review.approved : !review.approved)),
-    [reviews, filter],
-  )
-
-  return (
-    <Panel title="Отзывы" subtitle="Можно публиковать, удалять и редактировать текст, имя, программу и рейтинг.">
-      <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
-        {['pending', 'approved', 'all'].map(item => (
-          <button key={item} style={button(filter === item ? '#07395d' : '#eef4f7', filter === item ? 'white' : '#07395d')} onClick={() => setFilter(item)}>
-            {item === 'pending' ? 'На проверке' : item === 'approved' ? 'Опубликованные' : 'Все'}
-          </button>
-        ))}
-        <button style={button('#14a7a3')} onClick={() => setEditing({ name: '', text: '', program: '', rating: 5, approved: true })}>
-          Добавить отзыв
-        </button>
+      <div style={{maxWidth:920,margin:'0 auto',padding:'32px 24px'}}>
+        {tab==='reviews'&&<ReviewsTab/>}
+        {tab==='sessions'&&<SessionsTab/>}
+        {tab==='gallery'&&<GalleryTab/>}
+        {tab==='pricing'&&<PricingTab/>}
+        {tab==='settings'&&<SettingsTab/>}
       </div>
-      {editing && (
-        <section style={{ ...card, marginBottom: 16, borderColor: '#14a7a3' }}>
-          <Grid>
-            <TextField label="Имя" value={editing.name || ''} onChange={value => setEditing({ ...editing, name: value })} />
-            <TextField label="Программа" value={editing.program || ''} onChange={value => setEditing({ ...editing, program: value })} />
-            <NumberField label="Рейтинг" value={editing.rating || 5} onChange={value => setEditing({ ...editing, rating: Number(value) || 5 })} />
-            <AreaField label="Текст" value={editing.text || ''} onChange={value => setEditing({ ...editing, text: value })} />
-          </Grid>
-          <label style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 12, fontWeight: 800 }}>
-            <input type="checkbox" checked={Boolean(editing.approved)} onChange={e => setEditing({ ...editing, approved: e.target.checked })} />
-            Опубликован
-          </label>
-          <button style={button()} onClick={save}>Сохранить отзыв</button>
-          <button style={{ ...button('#eef4f7', '#07395d'), marginLeft: 8 }} onClick={() => setEditing(null)}>Отмена</button>
-        </section>
-      )}
-      {visible.map(review => (
-        <article key={review.id} style={{ ...card, marginBottom: 10 }}>
-          <strong style={{ color: '#07395d' }}>{review.name}</strong>
-          <p style={{ color: '#62798b' }}>{review.text}</p>
-          <button style={button('#eef4f7', '#07395d')} onClick={() => setEditing(review)}>Изменить</button>
-          {!review.approved && <button style={{ ...button('#14a7a3'), marginLeft: 8 }} onClick={() => approve(review.id)}>Опубликовать</button>}
-          <button style={{ ...button('#fee2e2', '#b91c1c'), marginLeft: 8 }} onClick={() => remove(review.id)}>Удалить</button>
-        </article>
-      ))}
-    </Panel>
-  )
-}
-
-function useSettings() {
-  const [settings, setSettings] = useState<Settings>({})
-  const [saving, setSaving] = useState(false)
-  const [msg, setMsg] = useState('')
-
-  useEffect(() => {
-    fetch('/api/settings')
-      .then(r => r.json())
-      .then(d => d && typeof d === 'object' && setSettings(d))
-      .catch(() => {})
-  }, [])
-
-  const saveSettings = async (payload: Settings) => {
-    setSaving(true)
-    await fetch('/api/settings', {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ settings: payload }),
-    })
-    setSettings(prev => ({ ...prev, ...payload }))
-    setSaving(false)
-    setMsg('Сохранено')
-    setTimeout(() => setMsg(''), 2500)
-  }
-
-  return { settings, setSettings, saveSettings, saving, msg }
-}
-
-function LangTabs({ lang, setLang }: { lang: Lang; setLang: (lang: Lang) => void }) {
-  return (
-    <div style={{ display: 'flex', gap: 8, marginBottom: 18 }}>
-      {languages.map(item => (
-        <button key={item.code} style={button(lang === item.code ? '#07395d' : '#eef4f7', lang === item.code ? 'white' : '#07395d')} onClick={() => setLang(item.code)}>
-          {item.label}
-        </button>
-      ))}
     </div>
   )
 }
 
-function Panel({ title, subtitle, children }: { title: string; subtitle: string; children: React.ReactNode }) {
-  return (
-    <section>
-      <div style={{ marginBottom: 18 }}>
-        <h1 style={{ margin: 0, color: '#07395d', fontSize: 28 }}>{title}</h1>
-        <p style={{ margin: '5px 0 0', color: '#62798b' }}>{subtitle}</p>
+function SectionHeader({title,sub}:{title:string;sub:string}) {
+  return <div style={{marginBottom:24}}><h2 style={{fontSize:22,fontWeight:800,color:'#0B3D6B',margin:0}}>{title}</h2><p style={{fontSize:13,color:'#888',marginTop:4}}>{sub}</p></div>
+}
+function Spinner() { return <div style={{textAlign:'center',padding:60,color:'#888'}}>Загрузка...</div> }
+function Empty({text}:{text:string}) { return <div style={{textAlign:'center',padding:60,color:'#888',background:'white',borderRadius:12}}>{text}</div> }
+function Toast({text}:{text:string}) {
+  const ok=text.includes('✓')
+  return <div style={{padding:'12px 16px',borderRadius:8,marginBottom:16,background:ok?'#dcfce7':'#fee2e2',color:ok?'#16A34A':'#dc2626',fontWeight:600,fontSize:14}}>{text}</div>
+}
+
+// ── Reviews ──
+function ReviewsTab() {
+  const [reviews,setReviews]=useState<Review[]>([])
+  const [loading,setLoading]=useState(true)
+  const [filter,setFilter]=useState<'pending'|'approved'|'all'>('pending')
+
+  const load=async()=>{setLoading(true);try{const r=await fetch('/api/reviews/admin');const d=await r.json();if(Array.isArray(d))setReviews(d)}catch{}setLoading(false)}
+  useEffect(()=>{load()},[])
+
+  const approve=async(id:number)=>{await fetch('/api/reviews/admin',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,approved:true})});load()}
+  const del=async(id:number)=>{if(!confirm('Удалить?'))return;await fetch('/api/reviews/admin',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({id})});load()}
+
+  const pending=reviews.filter(r=>!r.approved).length
+  const filtered=reviews.filter(r=>filter==='all'?true:filter==='pending'?!r.approved:r.approved)
+
+  return <div>
+    <SectionHeader title="💬 Отзывы" sub="Нажми «Опубликовать» → отзыв появится на сайте. Непубликованные не видны посетителям."/>
+    <div style={{display:'flex',gap:8,marginBottom:20}}>
+      {(['pending','approved','all'] as const).map(f=>(
+        <button key={f} onClick={()=>setFilter(f)} style={{...S.tab(filter===f),background:filter===f?'#0B3D6B':'white',color:filter===f?'white':'#344E63',boxShadow:'0 1px 4px rgba(0,0,0,.08)'}}>
+          {f==='pending'?`Ожидают (${pending})`:f==='approved'?'Опубликованные':'Все'}
+        </button>
+      ))}
+      <button onClick={load} style={{...S.btn('white','#344E63'),marginLeft:'auto',border:'1px solid #D4E6F1'}}>⟳ Обновить</button>
+    </div>
+    {loading?<Spinner/>:filtered.length===0?<Empty text={filter==='pending'?'Нет отзывов на проверке 🎉':'Отзывов нет'}/>:(
+      <div style={{display:'flex',flexDirection:'column',gap:10}}>
+        {filtered.map(r=>(
+          <div key={r.id} style={{...S.card,border:`2px solid ${r.approved?'#D4E6F1':'#F5A623'}`}}>
+            <div style={{display:'flex',gap:8,alignItems:'center',marginBottom:6,flexWrap:'wrap'}}>
+              <span style={{fontWeight:700,color:'#0B3D6B'}}>{r.name}</span>
+              {r.program&&<span style={{fontSize:11,background:'#EEF6FF',color:'#0B3D6B',padding:'2px 8px',borderRadius:20,fontWeight:600}}>{r.program}</span>}
+              <span style={{color:'#F5A623'}}>{'★'.repeat(r.rating)}</span>
+              <span style={{fontSize:11,color:'#aaa'}}>{new Date(r.created_at).toLocaleDateString('ru-RU')}</span>
+            </div>
+            <p style={{fontSize:14,color:'#344E63',lineHeight:1.7,margin:'0 0 12px',wordBreak:'break-word',overflowWrap:'anywhere'}}>"{r.text}"</p>
+            <div style={{display:'flex',gap:8,justifyContent:'flex-end'}}>
+              {!r.approved&&<button onClick={()=>approve(r.id)} style={S.btn('#16A34A')}>✓ Опубликовать</button>}
+              <button onClick={()=>del(r.id)} style={S.btn('#fee2e2','#dc2626')}>✕ Удалить</button>
+            </div>
+          </div>
+        ))}
       </div>
-      <div style={card}>{children}</div>
-    </section>
-  )
+    )}
+  </div>
 }
 
-function EditorSection({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <details open style={{ borderTop: '1px solid #e1ebf0', padding: '16px 0' }}>
-      <summary style={{ color: '#07395d', fontSize: 17, fontWeight: 900, cursor: 'pointer', marginBottom: 14 }}>{title}</summary>
-      {children}
-    </details>
-  )
-}
+// ── Sessions ──
+function SessionsTab() {
+  const [sessions,setSessions]=useState<Session[]>([])
+  const [loading,setLoading]=useState(true)
+  const [editing,setEditing]=useState<Session|null>(null)
+  const [adding,setAdding]=useState(false)
+  const blank={dates:'',type_ru:'',type_en:'',type_et:'',color:'#1A6BAA',leaders:'',hot:false,detail:'surf'}
+  const [form,setForm]=useState(blank)
+  const [saving,setSaving]=useState(false)
+  const [msg,setMsg]=useState('')
 
-function Grid({ children, columns = 2 }: { children: React.ReactNode; columns?: number }) {
-  return <div style={{ display: 'grid', gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`, gap: 14, marginBottom: 16 }}>{children}</div>
-}
+  const load=async()=>{setLoading(true);try{const r=await fetch('/api/sessions');const d=await r.json();if(Array.isArray(d))setSessions(d)}catch{}setLoading(false)}
+  useEffect(()=>{load()},[])
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <label>
-      <span style={{ display: 'block', marginBottom: 5, color: '#496273', fontSize: 12, fontWeight: 900 }}>{label}</span>
-      {children}
-    </label>
-  )
-}
-
-function TextField({ label, value, onChange }: { label: string; value: string; onChange: (value: string) => void }) {
-  return <Field label={label}><input style={input} value={value} onChange={e => onChange(e.target.value)} /></Field>
-}
-
-function AreaField({ label, value, onChange }: { label: string; value: string; onChange: (value: string) => void }) {
-  return <Field label={label}><textarea style={input} rows={4} value={value} onChange={e => onChange(e.target.value)} /></Field>
-}
-
-function ListField({ label, value, onChange }: { label: string; value: string[]; onChange: (value: string[]) => void }) {
-  return <Field label={label}><textarea style={input} rows={5} value={listToText(value)} onChange={e => onChange(textToList(e.target.value))} /></Field>
-}
-
-function NumberField({ label, value, onChange }: { label: string; value: number | string; onChange: (value: number | null) => void }) {
-  return (
-    <Field label={label}>
-      <input
-        style={input}
-        type="number"
-        value={value}
-        onChange={e => onChange(e.target.value === '' ? null : Number(e.target.value))}
-      />
-    </Field>
-  )
-}
-
-function Notice({ text }: { text: string }) {
-  return <div style={{ marginBottom: 14, padding: 12, borderRadius: 8, background: '#e8fbf6', color: '#08756d', fontWeight: 800 }}>{text}</div>
-}
-
-function button(bg = '#07395d', color = 'white'): React.CSSProperties {
-  return {
-    border: 0,
-    borderRadius: 8,
-    background: bg,
-    color,
-    padding: '10px 14px',
-    fontWeight: 900,
-    cursor: 'pointer',
+  const save=async()=>{
+    setSaving(true)
+    try{
+      if(editing){await fetch('/api/sessions',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:editing.id,...form})});setMsg('Смена обновлена ✓')}
+      else{await fetch('/api/sessions',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...form,sort_order:sessions.length+1})});setMsg('Смена добавлена ✓')}
+      setEditing(null);setAdding(false);setForm(blank);load()
+    }catch{setMsg('Ошибка')}
+    setSaving(false);setTimeout(()=>setMsg(''),3000)
   }
+  const del=async(id:number)=>{if(!confirm('Удалить смену?'))return;await fetch('/api/sessions',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({id})});load()}
+  const startEdit=(s:Session)=>{setEditing(s);setAdding(false);setForm({dates:s.dates,type_ru:s.type_ru,type_en:s.type_en,type_et:s.type_et,color:s.color,leaders:s.leaders,hot:s.hot,detail:s.detail})}
+
+  return <div>
+    <SectionHeader title="📅 Смены лагеря" sub="Расписание на сезон — добавляй, убирай, меняй"/>
+    {msg&&<Toast text={msg}/>}
+    <div style={{display:'flex',gap:8,marginBottom:20}}>
+      <button onClick={()=>{setAdding(true);setEditing(null);setForm(blank)}} style={S.btn('#0AACAC')}>+ Добавить смену</button>
+      <button onClick={load} style={{...S.btn('white','#344E63'),border:'1px solid #D4E6F1'}}>⟳ Обновить</button>
+    </div>
+    {(adding||editing)&&(
+      <div style={{...S.card,border:'2px solid #0AACAC',marginBottom:20}}>
+        <h3 style={{fontSize:15,fontWeight:700,color:'#0B3D6B',marginBottom:16}}>{editing?'✏️ Редактировать смену':'➕ Новая смена'}</h3>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+          <div><label style={S.label}>Даты *</label><input style={S.input} value={form.dates} onChange={e=>setForm({...form,dates:e.target.value})} placeholder="15.06 - 19.06.2026"/></div>
+          <div><label style={S.label}>Руководители</label><input style={S.input} value={form.leaders} onChange={e=>setForm({...form,leaders:e.target.value})} placeholder="Наташа К. + Даша"/></div>
+          <div><label style={S.label}>Название RU *</label><input style={S.input} value={form.type_ru} onChange={e=>setForm({...form,type_ru:e.target.value})} placeholder="СЕРФИНГ ЛАГЕРЬ"/></div>
+          <div><label style={S.label}>Название EN</label><input style={S.input} value={form.type_en} onChange={e=>setForm({...form,type_en:e.target.value})} placeholder="SURF CAMP"/></div>
+          <div><label style={S.label}>Название ET</label><input style={S.input} value={form.type_et} onChange={e=>setForm({...form,type_et:e.target.value})} placeholder="SURFI LAAGER"/></div>
+          <div><label style={S.label}>Цвет карточки</label>
+            <select style={S.input} value={form.color} onChange={e=>setForm({...form,color:e.target.value})}>
+              {COLOR_OPTIONS.map(o=><option key={o.value} value={o.value}>{o.label}</option>)}
+            </select>
+          </div>
+          <div><label style={S.label}>Тип программы</label>
+            <select style={S.input} value={form.detail} onChange={e=>setForm({...form,detail:e.target.value})}>
+              <option value="surf">Серфинг лагерь</option>
+              <option value="kino">Серфинг + Кино</option>
+              <option value="pohod">Серфинг + Поход</option>
+            </select>
+          </div>
+          <div style={{display:'flex',alignItems:'center',gap:8,paddingTop:20}}>
+            <input type="checkbox" checked={form.hot} onChange={e=>setForm({...form,hot:e.target.checked})} id="hot" style={{width:18,height:18}}/>
+            <label htmlFor="hot" style={{fontSize:14,color:'#344E63',cursor:'pointer'}}>🔥 Горящая смена</label>
+          </div>
+        </div>
+        <div style={{display:'flex',gap:8,marginTop:16}}>
+          <button onClick={save} disabled={saving} style={S.btn('#0B3D6B')}>{saving?'Сохранение...':'✓ Сохранить'}</button>
+          <button onClick={()=>{setEditing(null);setAdding(false)}} style={S.btn('white','#344E63')}>Отмена</button>
+        </div>
+      </div>
+    )}
+    {loading?<Spinner/>:(
+      <div style={{display:'flex',flexDirection:'column',gap:8}}>
+        {sessions.map(s=>(
+          <div key={s.id} style={{...S.card,display:'flex',alignItems:'center',gap:12}}>
+            <div style={{width:8,height:44,borderRadius:4,background:s.color,flexShrink:0}}/>
+            <div style={{flex:1}}>
+              <div style={{fontWeight:700,fontSize:14,color:'#0B3D6B'}}>{s.dates}</div>
+              <div style={{fontSize:12,color:'#344E63',marginTop:2}}>{s.type_ru} {s.hot&&'🔥'} · {s.leaders}</div>
+            </div>
+            <div style={{display:'flex',gap:6}}>
+              <button onClick={()=>startEdit(s)} style={S.btn('#EEF6FF','#0B3D6B')}>✏️ Изменить</button>
+              <button onClick={()=>del(s.id)} style={S.btn('#fee2e2','#dc2626')}>✕</button>
+            </div>
+          </div>
+        ))}
+        {sessions.length===0&&<Empty text="Смен нет. Добавьте первую!"/>}
+      </div>
+    )}
+  </div>
 }
 
-const card: React.CSSProperties = {
-  background: 'white',
-  border: '1px solid #e1ebf0',
-  borderRadius: 8,
-  padding: 18,
-  boxShadow: '0 12px 36px rgba(7,57,93,.06)',
-}
+// ── Gallery ──
+const STATIC_PHOTOS = [
+  { url: '/DSC02601-150x150.jpeg', section: 'water' },
+  { url: '/DSC02691-150x150.jpeg', section: 'water' },
+  { url: '/DSC02699-150x150.jpeg', section: 'water' },
+  { url: '/DSC02878-150x150.jpeg', section: 'water' },
+  { url: '/DSC02883-150x150.jpeg', section: 'water' },
+  { url: '/DSC02899-150x150.jpeg', section: 'water' },
+  { url: '/IMG_7757-150x150.jpeg', section: 'water' },
+  { url: '/IMG_7758-150x150.jpeg', section: 'water' },
+  { url: '/IMG_7773-150x150.jpeg', section: 'water' },
+  { url: '/IMG_7752-150x150.jpeg', section: 'water' },
+  { url: '/IMG_7796-150x150.jpeg', section: 'water' },
+  { url: '/IMG_7787-150x150.jpeg', section: 'water' },
+  { url: '/217650841_4107074432694657_6267790752617918985_n.jpg', section: 'team' },
+  { url: '/IMG_0806-150x150.jpeg', section: 'team' },
+  { url: '/IMG_0843-150x150.jpeg', section: 'team' },
+  { url: '/IMG_0850-150x150.jpeg', section: 'team' },
+  { url: '/IMG_0857-150x150.jpeg', section: 'team' },
+  { url: '/IMG_7805-150x150.jpeg', section: 'team' },
+  { url: '/IMG_7807-150x150.jpeg', section: 'team' },
+  { url: '/IMG_7809-150x150.jpeg', section: 'team' },
+  { url: '/IMG_7812-150x150.jpeg', section: 'team' },
+  { url: '/IMG_7659-150x150.jpeg', section: 'team' },
+  { url: '/IMG_7046-150x150.jpg', section: 'team' },
+  { url: '/IMG_9281-150x150.jpeg', section: 'moments' },
+  { url: '/IMG_9284-150x150.jpeg', section: 'moments' },
+  { url: '/IMG_9294-150x150.jpeg', section: 'moments' },
+  { url: '/IMG_9302-150x150.jpeg', section: 'moments' },
+  { url: '/IMG_9532-150x150.jpeg', section: 'moments' },
+  { url: '/IMG_9585-150x150.jpeg', section: 'moments' },
+  { url: '/IMG_6342-150x150.jpg', section: 'moments' },
+  { url: '/IMG_6351-150x150.jpg', section: 'moments' },
+  { url: '/IMG_6359-2-150x150.jpg', section: 'moments' },
+  { url: '/IMG_6613-150x150.jpeg', section: 'moments' },
+  { url: '/IMG_6614-150x150.jpeg', section: 'moments' },
+  { url: '/photo_2026-04-18-10_00_40-150x150.jpeg', section: 'moments' },
+  { url: '/photo_2026-04-18-10_00_44-150x150.jpeg', section: 'moments' },
+  { url: '/photo_2026-04-18-10_00_46-150x150.jpeg', section: 'moments' },
+  { url: '/photo-output-2-1024x1024__1_.jpeg', section: 'hero' },
+  { url: '/IMG_7917-1024x768.jpeg', section: 'hero' },
+  { url: '/IMG_6615-821x1024.jpeg', section: 'hero' },
+  { url: '/IMG_8779-1-768x1024.jpeg', section: 'hero' },
+]
 
-const subCard: React.CSSProperties = {
-  border: '1px solid #e1ebf0',
-  borderRadius: 8,
-  padding: 14,
-  marginBottom: 12,
-  background: '#fbfdfd',
-}
+function GalleryTab() {
+  const [photos,setPhotos]=useState<GalleryPhoto[]>([])
+  const [loading,setLoading]=useState(true)
+  const [newUrl,setNewUrl]=useState('')
+  const [newSection,setNewSection]=useState('moments')
+  const [adding,setAdding]=useState(false)
+  const [seeding,setSeeding]=useState(false)
+  const [msg,setMsg]=useState('')
 
-const smallTitle: React.CSSProperties = {
-  display: 'block',
-  marginBottom: 10,
-  color: '#07395d',
-  fontSize: 13,
-}
+  const load=async()=>{setLoading(true);try{const r=await fetch('/api/gallery');const d=await r.json();if(Array.isArray(d))setPhotos(d)}catch{}setLoading(false)}
+  useEffect(()=>{load()},[])
 
-const loginWrap: React.CSSProperties = {
-  minHeight: '100vh',
-  display: 'grid',
-  placeItems: 'center',
-  background: 'linear-gradient(135deg, #07395d, #14a7a3)',
-  fontFamily: 'Manrope, system-ui, sans-serif',
-}
-
-const loginCard: React.CSSProperties = {
-  width: 360,
-  maxWidth: 'calc(100% - 32px)',
-  borderRadius: 12,
-  background: 'white',
-  padding: 34,
-  textAlign: 'center',
-  boxShadow: '0 24px 70px rgba(0,0,0,.22)',
-}
-
-const adminTop: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  padding: '18px 28px',
-  background: '#07395d',
-}
-
-const tabsWrap: React.CSSProperties = {
-  display: 'flex',
-  gap: 6,
-  overflowX: 'auto',
-  padding: '12px 28px',
-  background: '#07395d',
-  borderTop: '1px solid rgba(255,255,255,.14)',
-}
-
-function tabStyle(active: boolean): React.CSSProperties {
-  return {
-    border: 0,
-    borderRadius: 8,
-    padding: '10px 14px',
-    whiteSpace: 'nowrap',
-    background: active ? 'white' : 'rgba(255,255,255,.1)',
-    color: active ? '#07395d' : 'white',
-    fontWeight: 900,
-    cursor: 'pointer',
+  const add=async()=>{
+    if(!newUrl.trim())return
+    setAdding(true)
+    try{await fetch('/api/gallery',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:newUrl.trim(),section:newSection})});setNewUrl('');setMsg('Фото добавлено ✓');load()}
+    catch{setMsg('Ошибка')}
+    setAdding(false);setTimeout(()=>setMsg(''),3000)
   }
+  const del=async(id:number)=>{if(!confirm('Удалить фото?'))return;await fetch('/api/gallery',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({id})});load()}
+
+  const seedStatic=async()=>{
+    if(!confirm(`Перенести ${STATIC_PHOTOS.length} статических фото в базу данных? После этого сайт будет использовать фото из базы.`))return
+    setSeeding(true)
+    let ok=0,fail=0
+    for(const p of STATIC_PHOTOS){
+      try{
+        const r=await fetch('/api/gallery',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:p.url,section:p.section,sort_order:0})})
+        if(r.ok)ok++;else fail++
+      }catch{fail++}
+    }
+    setMsg(`Добавлено: ${ok} фото${fail>0?`, ошибок: ${fail}`:''}`)
+    setSeeding(false)
+    load()
+    setTimeout(()=>setMsg(''),5000)
+  }
+
+  const grouped=SECTION_OPTIONS.map(s=>({...s,photos:photos.filter(p=>p.section===s.value)}))
+
+  return <div>
+    <SectionHeader title="📸 Галерея фото" sub="Управление фотографиями на сайте"/>
+    {msg&&<Toast text={msg}/>}
+
+    {/* Seed button — shown only when DB is empty */}
+    {!loading&&photos.length===0&&(
+      <div style={{...S.card,border:'2px solid #F5A623',background:'#FFFBF0',marginBottom:24}}>
+        <div style={{display:'flex',alignItems:'flex-start',gap:14}}>
+          <div style={{fontSize:28}}>📂</div>
+          <div style={{flex:1}}>
+            <div style={{fontWeight:700,fontSize:14,color:'#92400E',marginBottom:6}}>База данных галереи пустая</div>
+            <p style={{fontSize:13,color:'#78350F',margin:'0 0 14px'}}>
+              На сайте есть <strong>{STATIC_PHOTOS.length} существующих фото</strong> (из папки /public/), но они не добавлены в базу. Нажми кнопку ниже — все фото перенесутся в Supabase и станут управляемыми через эту панель.
+            </p>
+            <button onClick={seedStatic} disabled={seeding} style={{...S.btn('#F5A623','#1C1C1C'),fontSize:13}}>
+              {seeding?'Переносим фото...':'🚀 Перенести все существующие фото в базу'}
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+
+    {/* Add new photo form */}
+    <div style={{...S.card,border:'2px dashed #0AACAC',marginBottom:24}}>
+      <h3 style={{fontSize:14,fontWeight:700,color:'#0B3D6B',marginBottom:12}}>Добавить фото</h3>
+      <div style={{display:'grid',gridTemplateColumns:'1fr auto auto',gap:8,alignItems:'end'}}>
+        <div>
+          <label style={S.label}>URL или путь к фото</label>
+          <input style={S.input} value={newUrl} onChange={e=>setNewUrl(e.target.value)} placeholder="/имя-файла.jpg или https://..."/>
+        </div>
+        <div>
+          <label style={S.label}>Раздел</label>
+          <select style={S.input} value={newSection} onChange={e=>setNewSection(e.target.value)}>
+            {SECTION_OPTIONS.map(o=><option key={o.value} value={o.value}>{o.label}</option>)}
+          </select>
+        </div>
+        <button onClick={add} disabled={adding||!newUrl.trim()} style={S.btn('#0B3D6B')}>+ Добавить</button>
+      </div>
+      <p style={{fontSize:11,color:'#888',marginTop:8}}>💡 Для локальных файлов: загрузите в папку /public/ и введите /имя-файла.jpg</p>
+    </div>
+
+    {loading?<Spinner/>:(
+      photos.length>0?(
+        grouped.map(group=>group.photos.length>0&&(
+          <div key={group.value} style={{marginBottom:28}}>
+            <h3 style={{fontSize:14,fontWeight:700,color:'#0B3D6B',marginBottom:12}}>{group.label} <span style={{color:'#888',fontWeight:400}}>({group.photos.length})</span></h3>
+            <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(130px,1fr))',gap:10}}>
+              {group.photos.map(p=>(
+                <div key={p.id} style={{position:'relative',borderRadius:8,overflow:'hidden',background:'#EEF6FF'}}>
+                  <img src={p.url} alt="" style={{width:'100%',height:90,objectFit:'cover',display:'block'}} onError={e=>{(e.target as HTMLImageElement).style.opacity='0.2'}}/>
+                  <button onClick={()=>del(p.id)} style={{position:'absolute',top:4,right:4,width:22,height:22,borderRadius:'50%',background:'rgba(220,38,38,.85)',color:'white',border:'none',cursor:'pointer',fontSize:12,fontWeight:700}}>✕</button>
+                  <div style={{padding:'4px 6px',fontSize:10,color:'#344E63',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{p.url}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))
+      ):null
+    )}
+  </div>
+}
+
+// ── Pricing ──
+function PricingTab() {
+  const [s,setS]=useState<Settings>({})
+  const [loading,setLoading]=useState(true)
+  const [saving,setSaving]=useState(false)
+  const [msg,setMsg]=useState('')
+
+  const load=async()=>{setLoading(true);try{const r=await fetch('/api/settings');const d=await r.json();setS(d)}catch{}setLoading(false)}
+  useEffect(()=>{load()},[])
+
+  const save=async()=>{
+    setSaving(true)
+    try{await fetch('/api/settings',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({settings:{price_3day:s.price_3day||'190€',price_4day:s.price_4day||'235€',price_5day:s.price_5day||'265€'}})});setMsg('Цены обновлены ✓')}
+    catch{setMsg('Ошибка')}
+    setSaving(false);setTimeout(()=>setMsg(''),3000)
+  }
+
+  return <div>
+    <SectionHeader title="💰 Цены" sub="Стоимость участия в лагере"/>
+    {msg&&<Toast text={msg}/>}
+    {loading?<Spinner/>:(
+      <div style={S.card}>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:20,marginBottom:20}}>
+          <div style={{background:'#F0F8FF',borderRadius:12,padding:20}}>
+            <div style={{fontSize:28,marginBottom:6}}>📅</div>
+            <div style={{fontSize:13,fontWeight:700,color:'#344E63',marginBottom:4}}>3 дня — Пробная смена</div>
+            <div style={{fontSize:11,color:'#888',marginBottom:12}}>«Идеально для первого знакомства»</div>
+            <input value={s.price_3day||''} onChange={e=>setS({...s,price_3day:e.target.value})}
+              style={{...S.input,fontWeight:800,fontSize:28,textAlign:'center',color:'#0B3D6B',border:'2px solid #D4E6F1'}} placeholder="190€"/>
+          </div>
+          <div style={{background:'#F0FFF4',borderRadius:12,padding:20}}>
+            <div style={{fontSize:28,marginBottom:6}}>📆</div>
+            <div style={{fontSize:13,fontWeight:700,color:'#344E63',marginBottom:4}}>4 дня</div>
+            <div style={{fontSize:11,color:'#888',marginBottom:12}}>«Расширенная программа»</div>
+            <input value={s.price_4day||''} onChange={e=>setS({...s,price_4day:e.target.value})}
+              style={{...S.input,fontWeight:800,fontSize:28,textAlign:'center',color:'#16A34A',border:'2px solid #bbf7d0'}} placeholder="235€"/>
+          </div>
+          <div style={{background:'#0B3D6B',borderRadius:12,padding:20}}>
+            <div style={{fontSize:28,marginBottom:6}}>🏄</div>
+            <div style={{fontSize:13,fontWeight:700,color:'rgba(255,255,255,.7)',marginBottom:4}}>5 дней — Полная программа</div>
+            <div style={{fontSize:11,color:'rgba(255,255,255,.45)',marginBottom:12}}>«Максимум впечатлений и навыков»</div>
+            <input value={s.price_5day||''} onChange={e=>setS({...s,price_5day:e.target.value})}
+              style={{...S.input,fontWeight:800,fontSize:28,textAlign:'center',color:'white',background:'rgba(255,255,255,.1)',border:'2px solid rgba(255,255,255,.3)'}} placeholder="265€"/>
+          </div>
+        </div>
+        <button onClick={save} disabled={saving} style={S.btn('#0B3D6B')}>{saving?'Сохранение...':'✓ Сохранить цены'}</button>
+        <p style={{fontSize:12,color:'#888',marginTop:10}}>💡 Формат: 190€ или €190. Изменения применятся на сайте после следующей загрузки страницы.</p>
+      </div>
+    )}
+  </div>
+}
+
+// ── Settings ──
+function SettingsTab() {
+  const [s,setS]=useState<Settings>({})
+  const [loading,setLoading]=useState(true)
+  const [saving,setSaving]=useState(false)
+  const [msg,setMsg]=useState('')
+
+  const load=async()=>{setLoading(true);try{const r=await fetch('/api/settings');const d=await r.json();setS(d)}catch{}setLoading(false)}
+  useEffect(()=>{load()},[])
+
+  const save=async()=>{
+    setSaving(true)
+    try{await fetch('/api/settings',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({settings:{spots_taken:s.spots_taken||'4',spots_total:s.spots_total||'16',next_session_date:s.next_session_date||'15.06',next_session_date_full:s.next_session_date_full||'15 июня 2026',group_size:s.group_size||'12-16',schedule_year_label:s.schedule_year_label||'Лето 2026'}})});setMsg('Настройки сохранены ✓')}
+    catch{setMsg('Ошибка')}
+    setSaving(false);setTimeout(()=>setMsg(''),3000)
+  }
+
+  return <div>
+    <SectionHeader title="⚙️ Основные настройки" sub="Места, расписание и текстовые метки"/>
+    {msg&&<Toast text={msg}/>}
+    {loading?<Spinner/>:(
+      <div style={{display:'flex',flexDirection:'column',gap:16}}>
+        <div style={S.card}>
+          <h3 style={{fontSize:14,fontWeight:700,color:'#0B3D6B',marginBottom:4}}>📍 Счётчик мест</h3>
+          <p style={{fontSize:12,color:'#888',marginBottom:16}}>Hero: «<strong>{s.spots_taken||'4'} из {s.spots_total||'16'} мест занято · Ближайшая смена {s.next_session_date||'15.06'}</strong>» · CTA: «<strong>Ближайшая смена: {s.next_session_date_full||'15 июня 2026'}</strong>»</p>
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:12}}>
+            <div><label style={S.label}>Мест занято</label><input style={S.input} type="number" value={s.spots_taken||''} onChange={e=>setS({...s,spots_taken:e.target.value})} placeholder="4"/></div>
+            <div><label style={S.label}>Мест всего</label><input style={S.input} type="number" value={s.spots_total||''} onChange={e=>setS({...s,spots_total:e.target.value})} placeholder="16"/></div>
+            <div><label style={S.label}>Дата ближайшей смены (короткая, для Hero)</label><input style={S.input} value={s.next_session_date||''} onChange={e=>setS({...s,next_session_date:e.target.value})} placeholder="15.06"/></div>
+            <div><label style={S.label}>Дата ближайшей смены (полная, для CTA блока)</label><input style={S.input} value={s.next_session_date_full||''} onChange={e=>setS({...s,next_session_date_full:e.target.value})} placeholder="15 июня 2026"/></div>
+            <div><label style={S.label}>Размер группы (для CTA блока)</label><input style={S.input} value={s.group_size||''} onChange={e=>setS({...s,group_size:e.target.value})} placeholder="12-16"/></div>
+          </div>
+        </div>
+        <div style={S.card}>
+          <h3 style={{fontSize:14,fontWeight:700,color:'#0B3D6B',marginBottom:4}}>📅 Метка расписания</h3>
+          <p style={{fontSize:12,color:'#888',marginBottom:16}}>Заголовок раздела: «<strong>Расписание {s.schedule_year_label||'Лето 2026'}</strong>»</p>
+          <div><label style={S.label}>Год / Сезон</label><input style={{...S.input,maxWidth:300}} value={s.schedule_year_label||''} onChange={e=>setS({...s,schedule_year_label:e.target.value})} placeholder="Лето 2026"/></div>
+          <p style={{fontSize:11,color:'#888',marginTop:8}}>Примеры: «Лето 2027», «Summer 2027», «Сезон 2027»</p>
+        </div>
+        <div>
+          <button onClick={save} disabled={saving} style={S.btn('#0B3D6B')}>{saving?'Сохранение...':'✓ Сохранить настройки'}</button>
+        </div>
+        <div style={{...S.card,background:'#FFF7E6',border:'1.5px solid #F5A623'}}>
+          <h3 style={{fontSize:13,fontWeight:700,color:'#92400E',marginBottom:8}}>ℹ️ Как изменения появляются на сайте</h3>
+          <p style={{fontSize:13,color:'#92400E',lineHeight:1.8,margin:0}}>
+            Данные сохраняются в Supabase. Чтобы сайт подтягивал их автоматически, нужно добавить в <code>page.tsx</code> fetch-запрос к <code>/api/settings</code> при загрузке страницы (уже подготовлено в API-роуте). До этого настройки используются как fallback-значения.
+          </p>
+        </div>
+      </div>
+    )}
+  </div>
 }

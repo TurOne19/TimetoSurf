@@ -14,7 +14,7 @@ export async function GET() {
 
 export async function POST(req: Request) {
   const body = await req.json()
-  const { dates, type_ru, type_en, type_et, color, leaders, hot, detail, sort_order, spots_left, capacity } = body
+  const { dates, type_ru, type_en, type_et, color, leaders, hot, detail, sort_order } = body
 
   if (!dates || !type_ru) {
     return Response.json({ error: 'Missing required fields' }, { status: 400 })
@@ -22,19 +22,7 @@ export async function POST(req: Request) {
 
   const { data, error } = await supabase
     .from('camp_sessions')
-    .insert([{
-      dates,
-      type_ru,
-      type_en: type_en || type_ru,
-      type_et: type_et || type_ru,
-      color: color || '#0e7490',
-      leaders: leaders || '',
-      hot: hot || false,
-      detail: detail || 'surf',
-      sort_order: sort_order || 0,
-      spots_left: spots_left ?? null,
-      capacity: capacity ?? null,
-    }])
+    .insert([{ dates, type_ru, type_en: type_en || type_ru, type_et: type_et || type_ru, color: color || '#1A6BAA', leaders: leaders || '', hot: hot || false, detail: detail || 'surf', sort_order: sort_order || 0 }])
     .select()
     .single()
 

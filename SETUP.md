@@ -1,28 +1,28 @@
-# Time to Surf — детские лагеря 2026
+# Time to Surf — Детские лагеря 2026
 
-## Что внутри
+## Что сделано
 
-- Next.js лендинг для Time to Surf Stroomi camps.
-- Hero с видео `/public/hero-video.mp4`.
-- Три программы с кнопками `Подробнее` и модалками: серфинг, серфинг + кино, серфинг + поход.
-- Галерея с lightbox и нижней лентой фото.
-- Админка `/admin` для текстов, цифр, смен, фото, отзывов и SEO.
-- Supabase setup в одном файле: `supabase_setup.sql`.
+- Новый дизайн: морская палитра (бирюза, глубокий синий, песочный), шрифты Manrope + Plus Jakarta Sans
+- Настоящее лого (`/public/logo.jpeg`)
+- Кнопка «Подробнее» на каждой карточке формата — раскрывает детали ведущего
+- Отзывы через Supabase (GET/POST `/api/reviews`)
+- Все реальные фотографии в галерее
+- Мобильное меню, анимации при скролле, FAQ-аккордеон
+- 3 языка: RU / EN / ET
+
+## Настройка Supabase
+
+1. Создайте проект на [supabase.com](https://supabase.com)
+2. Запустите `supabase_schema.sql` в SQL-редакторе
+3. Добавьте в `.env.local`:
+```
+NEXT_PUBLIC_SUPABASE_URL=https://xxxx.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJxxxx
+```
 
 ## Запуск
 
 ```bash
 npm install
 npm run dev
-```
-
-## Supabase
-
-1. Создай проект в Supabase.
-2. Выполни `supabase_setup.sql` в SQL Editor.
-3. Добавь переменные в `.env.local` и Vercel:
-
-```bash
-NEXT_PUBLIC_SUPABASE_URL=https://xxxx.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJxxxx
 ```
