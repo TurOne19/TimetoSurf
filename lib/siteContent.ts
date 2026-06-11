@@ -10,6 +10,17 @@ export type ProgramContent = {
   title: L10n
   text: L10n
   bullets: L10nList
+  dates: string[]
+  detailsTitle: L10n
+  detailsIntro: L10n
+  details: { title: L10n; items: L10nList }[]
+  result: L10nList
+  leader?: {
+    initials: string
+    name: L10n
+    role: L10n
+    bio: L10n
+  }
 }
 
 export type DayItem = {
@@ -39,10 +50,22 @@ export type SiteContent = {
     text: L10n
     points: L10nList
   }
+  why: {
+    eyebrow: L10n
+    title: L10n
+    text: L10n
+    points: { value: L10n; label: L10n; text: L10n }[]
+  }
   safety: {
     eyebrow: L10n
     title: L10n
     points: L10nList
+  }
+  included: {
+    eyebrow: L10n
+    title: L10n
+    text: L10n
+    items: { title: L10n; text: L10n }[]
   }
   programs: {
     eyebrow: L10n
@@ -178,7 +201,9 @@ export const publicPhotos = [
 export const defaultContent: SiteContent = {
   nav: {
     about: { ru: 'О лагере', en: 'About', et: 'Laagrist' },
+    why: { ru: 'Почему мы', en: 'Why us', et: 'Miks meie' },
     safety: { ru: 'Безопасность', en: 'Safety', et: 'Turvalisus' },
+    included: { ru: 'Что входит', en: 'Included', et: 'Hinna sees' },
     programs: { ru: 'Программы', en: 'Programs', et: 'Programmid' },
     day: { ru: 'День', en: 'Day', et: 'Päev' },
     sessions: { ru: 'Смены', en: 'Dates', et: 'Vahetused' },
@@ -200,11 +225,11 @@ export const defaultContent: SiteContent = {
       et: 'Lapsed proovivad veespordialasid, liiguvad, leiavad uusi sõpru ja on terve päeva juhendajate hoole all.',
     },
     primary: { ru: 'Записать ребёнка', en: 'Register my child', et: 'Registreeri laps' },
-    secondary: { ru: 'Смотреть программы', en: 'See programs', et: 'Vaata programme' },
+    secondary: { ru: 'Задать вопрос', en: 'Ask a question', et: 'Küsi küsimus' },
     facts: {
-      ru: ['7-14 лет', '09:30-16:30', 'детей в группе'],
-      en: ['Ages 7-14', '09:30-16:30', 'children per group'],
-      et: ['7-14 aastat', '09:30-16:30', 'last grupis'],
+      ru: ['7-12 лет', 'от 265€', 'места ограничены'],
+      en: ['Ages 7-12', 'from 265€', 'limited spots'],
+      et: ['7-12 aastat', 'alates 265€', 'kohtade arv piiratud'],
     },
   },
   about: {
@@ -225,6 +250,48 @@ export const defaultContent: SiteContent = {
       et: ['veespordialad', 'uued sõbrad', 'enesekindlus', 'aktiivne suvi'],
     },
   },
+  why: {
+    eyebrow: { ru: 'Почему родители выбирают Time to Surf', en: 'Why parents choose Time to Surf', et: 'Miks vanemad valivad Time to Surfi' },
+    title: {
+      ru: 'Ребёнок занят делом, а родитель понимает, кто рядом с ним',
+      en: 'Kids stay busy with real activities, parents know who is nearby',
+      et: 'Lapsel on päris tegevus ja vanem teab, kes tema kõrval on',
+    },
+    text: {
+      ru: 'Мы не обещаем “магическое лето”. Мы делаем понятную смену у моря: инструкторы, оборудование, питание, вода, игры и спокойный контроль детей каждый день.',
+      en: 'We do not sell a magic summer. We run a clear seaside week: instructors, equipment, meals, water, games and calm supervision every day.',
+      et: 'Me ei luba maagilist suve. Teeme selge mereäärse vahetuse: juhendajad, varustus, toit, vesi, mängud ja rahulik järelevalve iga päev.',
+    },
+    points: [
+      {
+        value: { ru: '15+', en: '15+', et: '15+' },
+        label: { ru: 'лет опыта', en: 'years of experience', et: 'aastat kogemust' },
+        text: {
+          ru: 'Команда Time to Surf много лет работает с водой, ветром и детьми на Балтийском море.',
+          en: 'The Time to Surf team has worked for years with water, wind and kids on the Baltic Sea.',
+          et: 'Time to Surfi tiim on aastaid töötanud vee, tuule ja lastega Läänemere ääres.',
+        },
+      },
+      {
+        value: { ru: '12-16', en: '12-16', et: '12-16' },
+        label: { ru: 'детей в группе', en: 'kids per group', et: 'last grupis' },
+        text: {
+          ru: 'Группа небольшая, поэтому инструкторы видят детей и успевают помогать.',
+          en: 'Groups are small, so instructors can see the kids and help in time.',
+          et: 'Grupid on väikesed, seega juhendajad näevad lapsi ja jõuavad aidata.',
+        },
+      },
+      {
+        value: { ru: '100%', en: '100%', et: '100%' },
+        label: { ru: 'жилеты на воде', en: 'life jackets on water', et: 'päästevestid vees' },
+        text: {
+          ru: 'На воду дети выходят только после правил безопасности, в жилетах и под контролем.',
+          en: 'Kids enter the water only after safety rules, with life jackets and supervision.',
+          et: 'Lapsed lähevad vette ainult pärast ohutusreegleid, päästevestiga ja järelevalve all.',
+        },
+      },
+    ],
+  },
   safety: {
     eyebrow: { ru: 'Безопасность · Родителям спокойно', en: 'Safety · Parents can relax', et: 'Turvalisus · Vanematel on rahulik' },
     title: {
@@ -233,10 +300,57 @@ export const defaultContent: SiteContent = {
       et: 'Me ei kiirusta lapsi vette enne, kui nad on valmis',
     },
     points: {
-      ru: ['Инструкторы рядом на воде и на берегу', 'Жилеты и гидрокостюмы включены', 'Понятный день с 09:30 до 16:30', 'Малые группы: 12-16 детей'],
-      en: ['Instructors stay close on water and shore', 'Life jackets and wetsuits included', 'Clear day from 09:30 to 16:30', 'Small groups: 12-16 kids'],
-      et: ['Juhendajad on lähedal vees ja kaldal', 'Päästevestid ja kalipsod hinna sees', 'Selge päev 09:30-16:30', 'Väikesed grupid: 12-16 last'],
+      ru: ['Инструкторы рядом на воде и на берегу', 'Жилеты и гидрокостюмы включены', 'Перед водой повторяем правила', 'Если погода небезопасна, активность переносится на берег', 'Малые группы: 12-16 детей', 'Родителям понятно, где ребёнок и что он делает'],
+      en: ['Instructors stay close on water and shore', 'Life jackets and wetsuits included', 'Rules are repeated before water sessions', 'If the weather is unsafe, activities move to shore', 'Small groups: 12-16 kids', 'Parents understand where the child is and what they do'],
+      et: ['Juhendajad on lähedal vees ja kaldal', 'Päästevestid ja kalipsod hinna sees', 'Enne vett kordame reegleid', 'Kui ilm ei ole turvaline, liigume kaldale', 'Väikesed grupid: 12-16 last', 'Vanem teab, kus laps on ja mida ta teeb'],
     },
+  },
+  included: {
+    eyebrow: { ru: 'Что входит в лагерь', en: 'What is included', et: 'Mis laagris sisaldub' },
+    title: {
+      ru: 'Вода, движение, питание и оборудование уже внутри программы',
+      en: 'Water, movement, meals and equipment are already inside the program',
+      et: 'Vesi, liikumine, toit ja varustus on programmis sees',
+    },
+    text: {
+      ru: 'Ребёнку не нужен опыт серфинга. Нужны сменная одежда, полотенце, бутылка воды и готовность пробовать новое.',
+      en: 'Your child does not need surfing experience. They need spare clothes, a towel, a water bottle and willingness to try.',
+      et: 'Surfikogemust ei ole vaja. Kaasa vahetusriided, rätik, veepudel ja valmisolek proovida.',
+    },
+    items: [
+      {
+        title: { ru: 'SUP, виндсерфинг, wing и bodyboard', en: 'SUP, windsurfing, wing and bodyboard', et: 'SUP, purjelaud, wing ja bodyboard' },
+        text: {
+          ru: 'Дети видят разные водные виды спорта и пробуют то, что подходит погоде и уровню группы.',
+          en: 'Kids see different water sports and try what fits the weather and group level.',
+          et: 'Lapsed näevad eri veespordialasid ja proovivad seda, mis sobib ilma ja grupi tasemega.',
+        },
+      },
+      {
+        title: { ru: 'Гидрокостюм и спасательный жилет', en: 'Wetsuit and life jacket', et: 'Kalipso ja päästevest' },
+        text: {
+          ru: 'Оборудование выдаём на месте. На воде дети только в жилетах.',
+          en: 'Equipment is provided on site. Kids are on the water only with life jackets.',
+          et: 'Varustus antakse kohapeal. Vees on lapsed ainult päästevestiga.',
+        },
+      },
+      {
+        title: { ru: 'Обед и полдник', en: 'Lunch and snack', et: 'Lõuna ja vahepala' },
+        text: {
+          ru: 'Порционное питание от Tark Catering, особенности питания учитываются при регистрации.',
+          en: 'Individual meals from Tark Catering, dietary needs are noted at registration.',
+          et: 'Portsjonitoit Tark Cateringilt, erisoovid märgitakse registreerimisel.',
+        },
+      },
+      {
+        title: { ru: 'Игры, квесты и командные задания', en: 'Games, quests and team tasks', et: 'Mängud, ülesanded ja tiimitöö' },
+        text: {
+          ru: 'После воды дети не зависают в телефоне: общаются, двигаются и делают общий проект смены.',
+          en: 'After water sessions kids do not disappear into phones: they talk, move and work on the week project.',
+          et: 'Pärast vett ei kao lapsed telefoni: nad suhtlevad, liiguvad ja teevad vahetuse projekti.',
+        },
+      },
+    ],
   },
   programs: {
     eyebrow: { ru: 'Наши программы · Три уникальные программы', en: 'Our programs · Three unique options', et: 'Meie programmid · Kolm eri valikut' },
@@ -257,6 +371,46 @@ export const defaultContent: SiteContent = {
           en: ['water sessions', 'games and team tasks', 'instructor supervision all day'],
           et: ['veetreeningud', 'mängud ja tiimitööd', 'juhendajad jälgivad kogu päeva'],
         },
+        dates: ['06.07 - 10.07.2026', '20.07 - 24.07.2026', '27.07 - 30.07.2026', '03.08 - 07.08.2026', '10.08 - 14.08.2026'],
+        detailsTitle: { ru: 'Что внутри серфинг-лагеря', en: 'What is inside Surf Camp', et: 'Mis on surfilaagris sees' },
+        detailsIntro: {
+          ru: 'Это базовая программа Time to Surf: максимум моря, движения и понятной техники безопасности. Подходит детям, которые впервые пробуют водные виды спорта.',
+          en: 'This is the core Time to Surf program: lots of sea, movement and clear water safety. Good for kids trying water sports for the first time.',
+          et: 'See on Time to Surfi põhiprogramm: meri, liikumine ja selge veeohutus. Sobib lastele, kes proovivad veespordialasid esimest korda.',
+        },
+        details: [
+          {
+            title: { ru: 'Водный блок', en: 'Water block', et: 'Veeplokk' },
+            items: {
+              ru: ['SUP-прогулки и баланс', 'первые шаги в виндсерфинге', 'bodyboard и игры на воде', 'знакомство с ветром и условиями моря'],
+              en: ['SUP walks and balance', 'first windsurfing steps', 'bodyboard and water games', 'learning wind and sea conditions'],
+              et: ['SUP-sõidud ja tasakaal', 'esimesed sammud purjelaual', 'bodyboard ja veemängud', 'tuule ja mereolude tundmaõppimine'],
+            },
+          },
+          {
+            title: { ru: 'Берег и команда', en: 'Shore and team', et: 'Kallas ja tiim' },
+            items: {
+              ru: ['разминки и командные игры', 'простая теория безопасности', 'экология моря и бережное отношение к природе', 'спокойные задания после обеда'],
+              en: ['warm-ups and team games', 'simple safety theory', 'sea ecology and care for nature', 'calm tasks after lunch'],
+              et: ['soojendused ja tiimimängud', 'lihtne ohutusteooria', 'mereökoloogia ja looduse hoidmine', 'rahulikud ülesanded pärast lõunat'],
+            },
+          },
+        ],
+        result: {
+          ru: ['ребёнок увереннее чувствует себя рядом с водой', 'понимает базовые правила безопасности', 'много двигается и меньше сидит в телефоне', 'знакомится с новыми друзьями'],
+          en: ['the child feels more confident near water', 'understands basic safety rules', 'moves a lot and spends less time on a phone', 'meets new friends'],
+          et: ['laps tunneb end vee ääres kindlamalt', 'mõistab põhilisi ohutusreegleid', 'liigub palju ja on vähem telefonis', 'leiab uusi sõpru'],
+        },
+        leader: {
+          initials: 'TS',
+          name: { ru: 'Команда Time to Surf', en: 'Time to Surf team', et: 'Time to Surfi tiim' },
+          role: { ru: 'Инструкторы по водным видам спорта', en: 'Water sports instructors', et: 'Veespordi juhendajad' },
+          bio: {
+            ru: 'Инструкторы работают рядом с детьми на воде и на берегу: объясняют, помогают, страхуют и следят за темпом группы.',
+            en: 'Instructors stay with kids on water and shore: explain, help, support and watch the group pace.',
+            et: 'Juhendajad on lastega vees ja kaldal: selgitavad, aitavad, toetavad ja jälgivad grupi tempot.',
+          },
+        },
       },
       {
         key: 'kino',
@@ -273,6 +427,54 @@ export const defaultContent: SiteContent = {
           en: ['surf and SUP', 'short film project', 'screening for parents'],
           et: ['surf ja SUP', 'lühifilmi tegemine', 'esitlus vanematele'],
         },
+        dates: ['15.06 - 19.06.2026', '29.06 - 03.07.2026'],
+        detailsTitle: { ru: 'Серфинг + кино: что делает ребёнок', en: 'Surf + Cinema: what the child does', et: 'Surf + kino: mida laps teeb' },
+        detailsIntro: {
+          ru: 'Ребята пробуют SUP и серфинг, а во второй части дня снимают свой короткий фильм про лагерь: репортажи, интервью, кадры с воды и премьера.',
+          en: 'Kids try SUP and surfing, then create their own short camp film: reports, interviews, water shots and a screening.',
+          et: 'Lapsed proovivad SUP-i ja surfamist, seejärel teevad oma lühifilmi laagrist: reportaažid, intervjuud, veekaadrid ja esitlus.',
+        },
+        details: [
+          {
+            title: { ru: 'Серфинг и активность', en: 'Surfing and activity', et: 'Surfamine ja aktiivsus' },
+            items: {
+              ru: ['SUP, баланс и координация', 'игры на пляже', 'безопасность на воде', 'движение каждый день'],
+              en: ['SUP, balance and coordination', 'beach games', 'water safety', 'movement every day'],
+              et: ['SUP, tasakaal ja koordinatsioon', 'rannamängud', 'veeohutus', 'liikumine iga päev'],
+            },
+          },
+          {
+            title: { ru: 'Создание фильма', en: 'Making the film', et: 'Filmi tegemine' },
+            items: {
+              ru: ['ведущие снимают репортажи', 'операторы учатся видеть кадр', 'дети берут интервью', 'команда собирает историю смены'],
+              en: ['hosts make reports', 'camera operators learn framing', 'kids take interviews', 'the team builds the week story'],
+              et: ['saatejuhid teevad reportaaže', 'operaatorid õpivad kaadrit nägema', 'lapsed teevad intervjuusid', 'tiim paneb vahetuse loo kokku'],
+            },
+          },
+          {
+            title: { ru: 'Что остаётся после смены', en: 'What stays after the week', et: 'Mis jääb pärast vahetust' },
+            items: {
+              ru: ['короткий фильм на память', 'опыт перед камерой', 'новая уверенность', 'живые кадры с друзьями и морем'],
+              en: ['a short film as a memory', 'camera confidence', 'new confidence', 'real shots with friends and the sea'],
+              et: ['lühifilm mälestuseks', 'julgus kaamera ees', 'uus enesekindlus', 'päris hetked sõprade ja merega'],
+            },
+          },
+        ],
+        result: {
+          ru: ['ребёнок пробует водные виды спорта', 'учится говорить и работать в команде', 'получает опыт съёмки', 'у семьи остаётся фильм со смены'],
+          en: ['the child tries water sports', 'learns to speak and work in a team', 'gets filming experience', 'the family keeps a film from the week'],
+          et: ['laps proovib veespordialasid', 'õpib rääkima ja tiimis töötama', 'saab filmimise kogemuse', 'perele jääb film vahetusest'],
+        },
+        leader: {
+          initials: 'НК',
+          name: { ru: 'Наталья Карасёва', en: 'Natalia Karaseva', et: 'Natalia Karaseva' },
+          role: { ru: 'Ведущая программы “Серфинг + кино”', en: 'Surf + Cinema lead', et: 'Surf + kino programmi juht' },
+          bio: {
+            ru: 'Тележурналист с 20-летним опытом в двух странах, автор подкаста “Cozy with Tasha”, создатель видео и документального короткого формата.',
+            en: 'TV journalist with 20 years of experience in two countries, author of the Cozy with Tasha podcast and creator of video/documentary short formats.',
+            et: 'Teleajakirjanik 20-aastase kogemusega kahes riigis, Cozy with Tasha taskuhäälingu autor ja videolugude looja.',
+          },
+        },
       },
       {
         key: 'hike',
@@ -288,6 +490,54 @@ export const defaultContent: SiteContent = {
           ru: ['день у моря', 'походные навыки', 'уверенность и самостоятельность'],
           en: ['day by the sea', 'hiking skills', 'confidence and independence'],
           et: ['päev mere ääres', 'matkaoskused', 'julgus ja iseseisvus'],
+        },
+        dates: ['13.07 - 17.07.2026', '17.08 - 21.08.2026'],
+        detailsTitle: { ru: 'Серфинг + поход: море и приключение', en: 'Surf + Hike: sea and adventure', et: 'Surf + matk: meri ja seiklus' },
+        detailsIntro: {
+          ru: 'Это смена для детей, которым мало просто воды. Здесь есть серфинг, ориентирование, лес, палатка, командные задания и финальный мини-поход.',
+          en: 'This week is for kids who want more than water. It has surfing, navigation, forest, tent, team tasks and a final mini-hike.',
+          et: 'See vahetus on lastele, kellele ainult veest ei piisa. Siin on surf, orienteerumine, mets, telk, tiimitöö ja lõpu-minimatk.',
+        },
+        details: [
+          {
+            title: { ru: 'На воде', en: 'On the water', et: 'Vees' },
+            items: {
+              ru: ['SUP и баланс', 'виндсерфинг по погоде', 'правила воды и ветра', 'работа с уверенностью ребёнка'],
+              en: ['SUP and balance', 'windsurfing when weather fits', 'water and wind rules', 'building child confidence'],
+              et: ['SUP ja tasakaal', 'purjelaud sobiva ilmaga', 'vee ja tuule reeglid', 'lapse enesekindluse toetamine'],
+            },
+          },
+          {
+            title: { ru: 'В природе', en: 'In nature', et: 'Looduses' },
+            items: {
+              ru: ['карта и компас', 'как вести себя в лесу', 'палатка и организация лагеря', 'простые основы костра и выживания'],
+              en: ['map and compass', 'how to behave in the forest', 'tent and camp setup', 'simple fire and survival basics'],
+              et: ['kaart ja kompass', 'kuidas metsas käituda', 'telk ja laagri ülespanek', 'lihtsad lõkke ja ellujäämise alused'],
+            },
+          },
+          {
+            title: { ru: 'Команда', en: 'Team', et: 'Tiim' },
+            items: {
+              ru: ['каждый участник важен', 'решения принимаются вместе', 'финальный мини-поход', 'нашивка Time to Surf hiker'],
+              en: ['every participant matters', 'decisions are made together', 'final mini-hike', 'Time to Surf hiker patch'],
+              et: ['iga osaleja on oluline', 'otsuseid tehakse koos', 'lõpu-minimatk', 'Time to Surf hiker märk'],
+            },
+          },
+        ],
+        result: {
+          ru: ['ребёнок увереннее на воде и в природе', 'понимает карту, компас и базовые условия', 'учится принимать решения', 'получает опыт настоящей команды'],
+          en: ['the child is more confident on water and in nature', 'understands map, compass and basic conditions', 'learns to make decisions', 'gets real team experience'],
+          et: ['laps on vees ja looduses kindlam', 'mõistab kaarti, kompassi ja olusid', 'õpib otsuseid tegema', 'saab päris tiimikogemuse'],
+        },
+        leader: {
+          initials: 'ВХ',
+          name: { ru: 'Виталий Холстинин', en: 'Vitaliy Kholstinin', et: 'Vitaliy Kholstinin' },
+          role: { ru: 'Ведущий программы “Серфинг + поход”', en: 'Surf + Hike lead', et: 'Surf + matk programmi juht' },
+          bio: {
+            ru: 'Хайкер, предприниматель и основатель Join The Hike. Больше 10 лет ходит в походы в Эстонии и Скандинавии и учит детей уважать природу.',
+            en: 'Hiker, entrepreneur and founder of Join The Hike. Over 10 years of hiking in Estonia and Scandinavia, teaching kids to respect nature.',
+            et: 'Matkaja, ettevõtja ja Join The Hike asutaja. Üle 10 aasta matku Eestis ja Skandinaavias, õpetab lapsi loodust austama.',
+          },
         },
       },
     ],
@@ -306,16 +556,16 @@ export const defaultContent: SiteContent = {
     },
     items: [
       {
-        time: '09:30',
+        time: '09:00-09:30',
         title: { ru: 'Сбор у станции', en: 'Arrival at the station', et: 'Kogunemine jaamas' },
         text: {
-          ru: 'Встречаем детей, проверяем одежду и воду, спокойно запускаем день.',
-          en: 'We meet the kids, check clothes and water bottles, and start the day calmly.',
-          et: 'Võtame lapsed vastu, kontrollime riided ja veepudelid ning alustame rahulikult.',
+          ru: 'Встречаем детей, проверяем одежду, воду и самочувствие. День начинается без спешки.',
+          en: 'We meet the kids, check clothes, water bottles and mood. The day starts calmly.',
+          et: 'Võtame lapsed vastu, kontrollime riided, veepudelid ja enesetunde. Päev algab rahulikult.',
         },
       },
       {
-        time: '10:00',
+        time: '09:30-10:00',
         title: { ru: 'Разминка и безопасность', en: 'Warm-up and safety', et: 'Soojendus ja ohutus' },
         text: {
           ru: 'Повторяем правила, делаем разминку, распределяем группы.',
@@ -324,48 +574,66 @@ export const defaultContent: SiteContent = {
         },
       },
       {
-        time: '10:45',
+        time: '10:00-12:00',
         title: { ru: 'Вода', en: 'Water session', et: 'Veesessioon' },
         text: {
-          ru: 'SUP, баланс, первые попытки, игры и упражнения по уровню ребёнка.',
-          en: 'SUP, balance, first attempts, games and exercises matched to each child.',
-          et: 'SUP, tasakaal, esimesed katsed, mängud ja harjutused lapse taseme järgi.',
+          ru: 'Теория безопасности, гидрокостюмы, жилеты, SUP, баланс и первые водные задания.',
+          en: 'Safety theory, wetsuits, life jackets, SUP, balance and first water tasks.',
+          et: 'Ohutusteooria, kalipsod, päästevestid, SUP, tasakaal ja esimesed veeülesanded.',
         },
       },
       {
-        time: '12:30',
+        time: '12:00-13:00',
         title: { ru: 'Обед', en: 'Lunch', et: 'Lõuna' },
         text: {
-          ru: 'Горячий обед и пауза без спешки. Дети успевают отдохнуть.',
-          en: 'Warm lunch and a calm break so kids can rest.',
-          et: 'Soe lõuna ja rahulik paus, et lapsed jõuaksid puhata.',
+          ru: 'Порционный обед от Tark Catering. Учитываем особенности питания, которые указаны при регистрации.',
+          en: 'Individual lunch from Tark Catering. Dietary needs noted at registration are taken into account.',
+          et: 'Portsjonilõuna Tark Cateringilt. Arvestame registreerimisel märgitud toitumissoove.',
         },
       },
       {
-        time: '13:30',
-        title: { ru: 'Проект дня', en: 'Day project', et: 'Päeva projekt' },
+        time: '13:00-13:30',
+        title: { ru: 'Отдых после обеда', en: 'Rest after lunch', et: 'Puhkus pärast lõunat' },
         text: {
-          ru: 'Кино, походные задания, командные игры или творческая часть смены.',
-          en: 'Film work, hiking tasks, team games or the creative part of the week.',
-          et: 'Filmitöö, matkaülesanded, tiimimängud või vahetuse loov osa.',
+          ru: 'Настольные игры, спокойное общение, пауза перед второй активной частью.',
+          en: 'Board games, calm social time and a break before the second active part.',
+          et: 'Lauamängud, rahulik suhtlus ja paus enne teist aktiivset osa.',
         },
       },
       {
-        time: '15:00',
-        title: { ru: 'Вторая активность', en: 'Second activity', et: 'Teine tegevus' },
+        time: '13:30-15:30',
+        title: { ru: 'Активная программа', en: 'Active program', et: 'Aktiivne programm' },
         text: {
-          ru: 'Пляжные игры, техника, эстафеты и спокойная работа с прогрессом.',
-          en: 'Beach games, technique, relays and steady progress.',
-          et: 'Rannamängud, tehnika, teatevõistlused ja rahulik areng.',
+          ru: 'Виндсерфинг, SUP, кайт-знакомство, походные задания, кино, мастерские или пляжные игры по погоде.',
+          en: 'Windsurfing, SUP, kite intro, hiking tasks, cinema, workshops or beach games depending on weather.',
+          et: 'Purjelaud, SUP, lohetutvustus, matkaülesanded, kino, töötoad või rannamängud vastavalt ilmale.',
+        },
+      },
+      {
+        time: '15:30-15:45',
+        title: { ru: 'Полдник', en: 'Snack', et: 'Vahepala' },
+        text: {
+          ru: 'Чай, перекус, вода и короткий отдых.',
+          en: 'Tea, snack, water and a short rest.',
+          et: 'Tee, vahepala, vesi ja lühike puhkus.',
+        },
+      },
+      {
+        time: '15:45-16:30',
+        title: { ru: 'Спокойный финал дня', en: 'Calm end of the day', et: 'Rahulik päeva lõpp' },
+        text: {
+          ru: 'Игры, творчество, обсуждение дня и лёгкие задания, чтобы дети не уходили перегруженными.',
+          en: 'Games, creativity, day recap and light tasks so kids do not leave overloaded.',
+          et: 'Mängud, loovus, päeva kokkuvõte ja kerged ülesanded, et lapsed ei läheks ülekoormatuna koju.',
         },
       },
       {
         time: '16:30',
         title: { ru: 'Родители забирают детей', en: 'Pick-up', et: 'Vanemad tulevad järgi' },
         text: {
-          ru: 'Коротко рассказываем, как прошёл день и что было на воде.',
-          en: 'We briefly share how the day went and what happened on the water.',
-          et: 'Räägime lühidalt, kuidas päev läks ja mis vees toimus.',
+          ru: 'Программа заканчивается. До 17:00 дети могут спокойно дождаться родителей у станции.',
+          en: 'The program ends. Until 17:00 kids can calmly wait for parents at the station.',
+          et: 'Programm lõpeb. Kuni 17:00 saavad lapsed jaamas rahulikult vanemaid oodata.',
         },
       },
     ],
@@ -410,9 +678,9 @@ export const defaultContent: SiteContent = {
       },
     ],
     included: {
-      ru: 'Включено: инструкторы, оборудование, гидрокостюм, спасательный жилет, обед, полдник и вся программа дня.',
-      en: 'Included: instructors, equipment, wetsuit, life jacket, lunch, snack and the full day program.',
-      et: 'Hinna sees: juhendajad, varustus, kalipso, päästevest, lõuna, vahepala ja kogu päevaprogramm.',
+      ru: 'Включено: инструкторы, оборудование, гидрокостюм, спасательный жилет, обед, полдник, программа дня, игры, мастерские и сертификат.',
+      en: 'Included: instructors, equipment, wetsuit, life jacket, lunch, snack, day program, games, workshops and certificate.',
+      et: 'Hinna sees: juhendajad, varustus, kalipso, päästevest, lõuna, vahepala, päevaprogramm, mängud, töötoad ja sertifikaat.',
     },
   },
   gallery: {
@@ -458,9 +726,9 @@ export const defaultContent: SiteContent = {
       {
         q: { ru: 'Какой возраст подходит?', en: 'What age is right?', et: 'Mis vanus sobib?' },
         a: {
-          ru: 'Основной возраст 7-14 лет. Если ребёнок младше, лучше заранее написать нам.',
-          en: 'The main age range is 7-14. If your child is younger, please write to us first.',
-          et: 'Põhivanus on 7-14 aastat. Kui laps on noorem, kirjutage meile enne.',
+          ru: 'Основной возраст 7-12 лет. До 14 лет можно по согласованию, если ребёнку подходит темп программы.',
+          en: 'The main age range is 7-12. Up to 14 is possible by agreement if the program pace fits the child.',
+          et: 'Põhivanus on 7-12 aastat. Kuni 14 on kokkuleppel võimalik, kui programmi tempo lapsele sobib.',
         },
       },
       {
@@ -507,8 +775,8 @@ export const defaultContent: SiteContent = {
       en: 'Write to us or fill in the form. We will help choose the week, program and answer safety questions.',
       et: 'Kirjutage meile või täitke vorm. Aitame valida vahetuse, programmi ja vastame ohutuse küsimustele.',
     },
-    primary: { ru: 'Записаться', en: 'Register', et: 'Registreeri' },
-    secondary: { ru: 'Написать в Telegram', en: 'Write on Telegram', et: 'Kirjuta Telegramis' },
+    primary: { ru: 'Записать ребёнка', en: 'Register my child', et: 'Registreeri laps' },
+    secondary: { ru: 'Задать вопрос', en: 'Ask a question', et: 'Küsi küsimus' },
   },
   footer: {
     text: {

@@ -203,12 +203,47 @@ function ContentTab() {
         </Grid>
       </EditorSection>
 
+      <EditorSection title="Почему родители выбирают">
+        <Grid>
+          <TextField label="eyebrow" value={content.why.eyebrow[lang]} onChange={value => patch(c => { c.why.eyebrow[lang] = value })} />
+          <TextField label="title" value={content.why.title[lang]} onChange={value => patch(c => { c.why.title[lang] = value })} />
+          <AreaField label="text" value={content.why.text[lang]} onChange={value => patch(c => { c.why.text[lang] = value })} />
+        </Grid>
+        {content.why.points.map((point, index) => (
+          <div key={index} style={subCard}>
+            <strong style={smallTitle}>Доверие {index + 1}</strong>
+            <Grid columns={3}>
+              <TextField label="value" value={point.value[lang]} onChange={value => patch(c => { c.why.points[index].value[lang] = value })} />
+              <TextField label="label" value={point.label[lang]} onChange={value => patch(c => { c.why.points[index].label[lang] = value })} />
+              <AreaField label="text" value={point.text[lang]} onChange={value => patch(c => { c.why.points[index].text[lang] = value })} />
+            </Grid>
+          </div>
+        ))}
+      </EditorSection>
+
       <EditorSection title="Безопасность / доверие">
         <Grid>
           <TextField label="eyebrow" value={content.safety.eyebrow[lang]} onChange={value => patch(c => { c.safety.eyebrow[lang] = value })} />
           <TextField label="title" value={content.safety.title[lang]} onChange={value => patch(c => { c.safety.title[lang] = value })} />
           <ListField label="cards, по строке" value={content.safety.points[lang]} onChange={value => patch(c => { c.safety.points[lang] = value })} />
         </Grid>
+      </EditorSection>
+
+      <EditorSection title="Что входит в лагерь">
+        <Grid>
+          <TextField label="eyebrow" value={content.included.eyebrow[lang]} onChange={value => patch(c => { c.included.eyebrow[lang] = value })} />
+          <TextField label="title" value={content.included.title[lang]} onChange={value => patch(c => { c.included.title[lang] = value })} />
+          <AreaField label="text" value={content.included.text[lang]} onChange={value => patch(c => { c.included.text[lang] = value })} />
+        </Grid>
+        {content.included.items.map((item, index) => (
+          <div key={index} style={subCard}>
+            <strong style={smallTitle}>Пункт {index + 1}</strong>
+            <Grid>
+              <TextField label="title" value={item.title[lang]} onChange={value => patch(c => { c.included.items[index].title[lang] = value })} />
+              <AreaField label="text" value={item.text[lang]} onChange={value => patch(c => { c.included.items[index].text[lang] = value })} />
+            </Grid>
+          </div>
+        ))}
       </EditorSection>
 
       <EditorSection title="Наши программы / 3 программы">
@@ -225,7 +260,38 @@ function ContentTab() {
               <TextField label="title" value={program.title[lang]} onChange={value => patch(c => { c.programs.items[index].title[lang] = value })} />
               <AreaField label="text" value={program.text[lang]} onChange={value => patch(c => { c.programs.items[index].text[lang] = value })} />
               <ListField label="bullets" value={program.bullets[lang]} onChange={value => patch(c => { c.programs.items[index].bullets[lang] = value })} />
+              <ListField label="dates" value={program.dates} onChange={value => patch(c => { c.programs.items[index].dates = value })} />
+              <TextField label="modal title" value={program.detailsTitle[lang]} onChange={value => patch(c => { c.programs.items[index].detailsTitle[lang] = value })} />
+              <AreaField label="modal intro" value={program.detailsIntro[lang]} onChange={value => patch(c => { c.programs.items[index].detailsIntro[lang] = value })} />
+              <ListField label="result" value={program.result[lang]} onChange={value => patch(c => { c.programs.items[index].result[lang] = value })} />
             </Grid>
+            <strong style={smallTitle}>Ведущий / команда</strong>
+            {program.leader && (
+              <Grid>
+                <TextField label="initials" value={program.leader.initials} onChange={value => patch(c => { if (c.programs.items[index].leader) c.programs.items[index].leader.initials = value })} />
+                <TextField label="name" value={program.leader.name[lang]} onChange={value => patch(c => { if (c.programs.items[index].leader) c.programs.items[index].leader.name[lang] = value })} />
+                <TextField label="role" value={program.leader.role[lang]} onChange={value => patch(c => { if (c.programs.items[index].leader) c.programs.items[index].leader.role[lang] = value })} />
+                <AreaField label="bio" value={program.leader.bio[lang]} onChange={value => patch(c => { if (c.programs.items[index].leader) c.programs.items[index].leader.bio[lang] = value })} />
+              </Grid>
+            )}
+            <strong style={smallTitle}>Блоки в модалке</strong>
+            <button style={{ ...button('#14a7a3'), marginBottom: 12 }} onClick={() => patch(c => {
+              c.programs.items[index].details.push({
+                title: { ru: '', en: '', et: '' },
+                items: { ru: [], en: [], et: [] },
+              })
+            })}>
+              Добавить блок в модалку
+            </button>
+            {program.details.map((detail, detailIndex) => (
+              <div key={detailIndex} style={subCard}>
+                <Grid>
+                  <TextField label="detail title" value={detail.title[lang]} onChange={value => patch(c => { c.programs.items[index].details[detailIndex].title[lang] = value })} />
+                  <ListField label="items" value={detail.items[lang]} onChange={value => patch(c => { c.programs.items[index].details[detailIndex].items[lang] = value })} />
+                </Grid>
+                <button style={button('#fee2e2', '#b91c1c')} onClick={() => patch(c => { c.programs.items[index].details.splice(detailIndex, 1) })}>Удалить блок</button>
+              </div>
+            ))}
           </div>
         ))}
       </EditorSection>
@@ -338,11 +404,13 @@ function NumbersTab() {
     price_4day: settings.price_4day || '235€',
     price_5day: settings.price_5day || '265€',
     group_size: settings.group_size || '12-16',
-    age_range: settings.age_range || '7-14',
-    day_hours: settings.day_hours || '09:30-16:30',
+    age_range: settings.age_range || '7-12',
+    day_hours: settings.day_hours || '09:00-16:30',
     phone: settings.phone || '+372 55512872',
     email: settings.email || 'info@timetosurf.ee',
     cta_link: settings.cta_link || '',
+    hero_video: settings.hero_video || '/hero-video.mp4',
+    next_session_date: settings.next_session_date || '15.06.2026',
     telegram_link: settings.telegram_link || 'https://t.me/Andrei_Time_to_Surf',
     instagram_link: settings.instagram_link || 'https://www.instagram.com/timetosurf.ee',
     facebook_link: settings.facebook_link || 'https://www.facebook.com/timetosurf.ee',
@@ -360,6 +428,8 @@ function NumbersTab() {
           ['group_size', 'Размер группы'],
           ['age_range', 'Возраст'],
           ['day_hours', 'Время дня'],
+          ['next_session_date', 'Ближайшая смена'],
+          ['hero_video', 'Видео в hero'],
           ['phone', 'Телефон'],
           ['email', 'Email'],
           ['cta_link', 'Ссылка записи'],
@@ -469,6 +539,7 @@ function SessionsTab() {
             <TextField label="Руководители" value={editing.leaders || ''} onChange={value => setEditing({ ...editing, leaders: value })} />
             <NumberField label="Мест осталось" value={editing.spots_left ?? ''} onChange={value => setEditing({ ...editing, spots_left: value })} />
             <NumberField label="Всего мест" value={editing.capacity ?? ''} onChange={value => setEditing({ ...editing, capacity: value })} />
+            <NumberField label="Порядок" value={editing.sort_order ?? sessions.length + 1} onChange={value => setEditing({ ...editing, sort_order: Number(value) || 0 })} />
             <Field label="Тип">
               <select style={input} value={editing.detail || 'surf'} onChange={e => setEditing({ ...editing, detail: e.target.value })}>
                 <option value="surf">Серфинг лагерь</option>
@@ -512,6 +583,7 @@ function GalleryTab() {
   const [url, setUrl] = useState('')
   const [section, setSection] = useState('moments')
   const [sortOrder, setSortOrder] = useState('0')
+  const [editing, setEditing] = useState<Photo | null>(null)
   const [msg, setMsg] = useState('')
 
   const load = async () => {
@@ -551,6 +623,17 @@ function GalleryTab() {
     load()
   }
 
+  const saveEdit = async () => {
+    if (!editing) return
+    await fetch('/api/gallery', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(editing),
+    })
+    setEditing(null)
+    load()
+  }
+
   return (
     <Panel title="Фото / Галерея" subtitle="Старые фото удалены из проекта. Здесь можно добавить все новые фото из public или управлять каждым URL вручную.">
       {msg && <Notice text={msg} />}
@@ -570,12 +653,31 @@ function GalleryTab() {
         </Field>
       </Grid>
       <button style={{ ...button('#14a7a3'), margin: '4px 0 18px' }} onClick={seed}>Добавить все фото из public</button>
+      {editing && (
+        <section style={{ ...card, marginBottom: 18, borderColor: '#14a7a3' }}>
+          <Grid columns={3}>
+            <TextField label="Путь или URL" value={editing.url} onChange={value => setEditing({ ...editing, url: value })} />
+            <Field label="Раздел">
+              <select style={input} value={editing.section} onChange={e => setEditing({ ...editing, section: e.target.value })}>
+                <option value="moments">Моменты</option>
+                <option value="water">Вода</option>
+                <option value="team">Команда</option>
+                <option value="hero">Hero</option>
+              </select>
+            </Field>
+            <NumberField label="Порядок" value={editing.sort_order} onChange={value => setEditing({ ...editing, sort_order: Number(value) || 0 })} />
+          </Grid>
+          <button style={button()} onClick={saveEdit}>Сохранить фото</button>
+          <button style={{ ...button('#eef4f7', '#07395d'), marginLeft: 8 }} onClick={() => setEditing(null)}>Отмена</button>
+        </section>
+      )}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: 10 }}>
         {photos.map(photo => (
           <article key={photo.id} style={{ position: 'relative', overflow: 'hidden', borderRadius: 8, background: 'white', border: '1px solid #e1ebf0' }}>
             <img src={photo.url} alt="" style={{ width: '100%', height: 92, objectFit: 'cover' }} />
             <button style={{ position: 'absolute', top: 6, right: 6, ...button('rgba(185,28,28,.9)') }} onClick={() => remove(photo.id)}>x</button>
             <p style={{ margin: 0, padding: 7, fontSize: 11, color: '#62798b', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{photo.url}</p>
+            <button style={{ ...button('#eef4f7', '#07395d'), width: '100%', borderRadius: 0 }} onClick={() => setEditing(photo)}>Изменить</button>
           </article>
         ))}
       </div>
@@ -586,7 +688,7 @@ function GalleryTab() {
 function ReviewsTab() {
   const [reviews, setReviews] = useState<Review[]>([])
   const [filter, setFilter] = useState('pending')
-  const [editing, setEditing] = useState<Review | null>(null)
+  const [editing, setEditing] = useState<Partial<Review> | null>(null)
 
   const load = async () => {
     try {
@@ -601,7 +703,7 @@ function ReviewsTab() {
 
   const save = async () => {
     if (!editing) return
-    await fetch('/api/reviews/admin', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(editing) })
+    await fetch('/api/reviews/admin', { method: editing.id ? 'PATCH' : 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(editing) })
     setEditing(null)
     load()
   }
@@ -629,17 +731,20 @@ function ReviewsTab() {
             {item === 'pending' ? 'На проверке' : item === 'approved' ? 'Опубликованные' : 'Все'}
           </button>
         ))}
+        <button style={button('#14a7a3')} onClick={() => setEditing({ name: '', text: '', program: '', rating: 5, approved: true })}>
+          Добавить отзыв
+        </button>
       </div>
       {editing && (
         <section style={{ ...card, marginBottom: 16, borderColor: '#14a7a3' }}>
           <Grid>
-            <TextField label="Имя" value={editing.name} onChange={value => setEditing({ ...editing, name: value })} />
+            <TextField label="Имя" value={editing.name || ''} onChange={value => setEditing({ ...editing, name: value })} />
             <TextField label="Программа" value={editing.program || ''} onChange={value => setEditing({ ...editing, program: value })} />
-            <NumberField label="Рейтинг" value={editing.rating} onChange={value => setEditing({ ...editing, rating: Number(value) || 5 })} />
-            <AreaField label="Текст" value={editing.text} onChange={value => setEditing({ ...editing, text: value })} />
+            <NumberField label="Рейтинг" value={editing.rating || 5} onChange={value => setEditing({ ...editing, rating: Number(value) || 5 })} />
+            <AreaField label="Текст" value={editing.text || ''} onChange={value => setEditing({ ...editing, text: value })} />
           </Grid>
           <label style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 12, fontWeight: 800 }}>
-            <input type="checkbox" checked={editing.approved} onChange={e => setEditing({ ...editing, approved: e.target.checked })} />
+            <input type="checkbox" checked={Boolean(editing.approved)} onChange={e => setEditing({ ...editing, approved: e.target.checked })} />
             Опубликован
           </label>
           <button style={button()} onClick={save}>Сохранить отзыв</button>

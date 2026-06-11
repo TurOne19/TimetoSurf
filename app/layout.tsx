@@ -4,7 +4,7 @@ import './globals.css'
 
 const fallbackTitle = 'Детский серфинг-лагерь Time to Surf в Таллине | Лето 2026'
 const fallbackDescription =
-  'Time to Surf: детский серфинг-лагерь у моря в Таллине. Водные виды спорта, безопасность, инструкторы, питание и активное лето для детей 7-14 лет.'
+  'Time to Surf: детский серфинг-лагерь у моря в Таллине. Водные виды спорта, безопасность, инструкторы, питание и активное лето для детей 7-12 лет.'
 
 export const viewport: Viewport = { width: 'device-width', initialScale: 1 }
 
@@ -34,10 +34,16 @@ export async function generateMetadata(): Promise<Metadata> {
       'детский лагерь Таллин',
       'серфинг лагерь дети',
       'летний лагерь Таллин',
+      'детский спортивный лагерь',
+      'лагерь у моря Таллин',
       'Stroomi rand',
       'Time to Surf',
       'surf camp Tallinn',
       'lastelaager Tallinn',
+      'surfilaager lastele',
+      'suvelaager Tallinn',
+      'spordilaager Tallinn',
+      'kids summer camp Tallinn',
     ],
     openGraph: {
       title,
@@ -97,6 +103,36 @@ const schemaOrg = {
         priceCurrency: 'EUR',
         availability: 'https://schema.org/LimitedAvailability',
       },
+    },
+    {
+      '@type': 'FAQPage',
+      '@id': 'https://camp.timetosurf.ee/#faq',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: 'Нужен ли опыт серфинга?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Нет. Лагерь подходит новичкам: дети начинают с простых упражнений, правил безопасности и SUP.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Что входит в стоимость?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'В стоимость входят программа, инструкторы, оборудование, гидрокостюм, спасательный жилет, обед, полдник и сертификат.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Что если плохая погода?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Если на воде небезопасно, активность переносится на берег: игры, мастерские, теория и командные задания.',
+          },
+        },
+      ],
     },
   ],
 }

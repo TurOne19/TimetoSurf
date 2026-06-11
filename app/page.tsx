@@ -24,15 +24,15 @@ type Session = {
 type GalleryPhoto = { id?: number; url: string; section: string; sort_order?: number }
 
 const fallbackSessions: Session[] = [
-  { dates: '15.06 - 19.06.2026', type_ru: 'Серфинг + кино', type_en: 'Surf + cinema', type_et: 'Surf + kino', color: '#0b5f86', leaders: 'Наташа К. + Даша', hot: true, detail: 'kino', spots_left: 4, capacity: 16 },
-  { dates: '29.06 - 03.07.2026', type_ru: 'Серфинг + кино', type_en: 'Surf + cinema', type_et: 'Surf + kino', color: '#0b5f86', leaders: 'Наташа К. + Даша', hot: false, detail: 'kino', spots_left: 8, capacity: 16 },
+  { dates: '15.06 - 19.06.2026', type_ru: 'Серфинг + кино', type_en: 'Surf + cinema', type_et: 'Surf + kino', color: '#ff7b5c', leaders: 'Наташа К. + Даша', hot: true, detail: 'kino', spots_left: 4, capacity: 16 },
+  { dates: '29.06 - 03.07.2026', type_ru: 'Серфинг + кино', type_en: 'Surf + cinema', type_et: 'Surf + kino', color: '#ff7b5c', leaders: 'Наташа К. + Даша', hot: false, detail: 'kino', spots_left: 8, capacity: 16 },
   { dates: '06.07 - 10.07.2026', type_ru: 'Серфинг лагерь', type_en: 'Surf camp', type_et: 'Surfilaager', color: '#0e7490', leaders: 'Надежда + Григорий', hot: false, detail: 'surf', spots_left: 6, capacity: 16 },
-  { dates: '13.07 - 17.07.2026', type_ru: 'Серфинг + поход', type_en: 'Surf + hike', type_et: 'Surf + matk', color: '#16856f', leaders: 'Виталий + Григорий', hot: false, detail: 'hike', spots_left: 7, capacity: 16 },
+  { dates: '13.07 - 17.07.2026', type_ru: 'Серфинг + поход', type_en: 'Surf + hike', type_et: 'Surf + matk', color: '#16856f', leaders: 'Виталий + Григорий + Артём', hot: false, detail: 'hike', spots_left: 7, capacity: 16 },
   { dates: '20.07 - 24.07.2026', type_ru: 'Серфинг лагерь', type_en: 'Surf camp', type_et: 'Surfilaager', color: '#0e7490', leaders: 'Надежда + Ксения', hot: false, detail: 'surf', spots_left: 9, capacity: 16 },
-  { dates: '27.07 - 30.07.2026', type_ru: 'Серфинг 4 дня', type_en: 'Surf 4 days', type_et: 'Surf 4 päeva', color: '#0e7490', leaders: 'Команда Time to Surf', hot: false, detail: 'surf', spots_left: 5, capacity: 16 },
-  { dates: '03.08 - 07.08.2026', type_ru: 'Серфинг лагерь', type_en: 'Surf camp', type_et: 'Surfilaager', color: '#0e7490', leaders: 'Даша + команда', hot: false, detail: 'surf', spots_left: 10, capacity: 16 },
+  { dates: '27.07 - 30.07.2026', type_ru: 'Серфинг 4 дня', type_en: 'Surf 4 days', type_et: 'Surf 4 päeva', color: '#0e7490', leaders: 'Ольга Боброва + Артём', hot: false, detail: 'surf', spots_left: 5, capacity: 16 },
+  { dates: '03.08 - 07.08.2026', type_ru: 'Серфинг лагерь', type_en: 'Surf camp', type_et: 'Surfilaager', color: '#0e7490', leaders: 'Даша + Артём', hot: false, detail: 'surf', spots_left: 10, capacity: 16 },
   { dates: '10.08 - 14.08.2026', type_ru: 'Серфинг лагерь', type_en: 'Surf camp', type_et: 'Surfilaager', color: '#0e7490', leaders: 'Надежда + команда', hot: false, detail: 'surf', spots_left: 10, capacity: 16 },
-  { dates: '17.08 - 21.08.2026', type_ru: 'Серфинг + поход', type_en: 'Surf + hike', type_et: 'Surf + matk', color: '#16856f', leaders: 'Виталий + команда', hot: false, detail: 'hike', spots_left: 8, capacity: 16 },
+  { dates: '17.08 - 21.08.2026', type_ru: 'Серфинг + поход', type_en: 'Surf + hike', type_et: 'Surf + matk', color: '#16856f', leaders: 'Виталий + Артём', hot: false, detail: 'hike', spots_left: 8, capacity: 16 },
 ]
 
 const fallbackReviews: Review[] = [
@@ -78,6 +78,7 @@ export default function Home() {
   const [reviews, setReviews] = useState<Review[]>(fallbackReviews)
   const [gallery, setGallery] = useState<GalleryPhoto[]>([])
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
+  const [programModal, setProgramModal] = useState<string | null>(null)
   const [openFaq, setOpenFaq] = useState(0)
   const [reviewForm, setReviewForm] = useState({ name: '', text: '', program: '', rating: 5 })
   const [reviewSent, setReviewSent] = useState(false)
@@ -86,6 +87,9 @@ export default function Home() {
   const t = (value: Parameters<typeof getText>[0]) => getText(value, lang)
   const list = (value: Parameters<typeof getList>[0]) => getList(value, lang)
   const regLink = settings.cta_link || DEFAULT_REG
+  const questionLink = settings.telegram_link || 'https://t.me/Andrei_Time_to_Surf'
+  const selectedProgram = useMemo(() => content.programs.items.find(program => program.key === programModal), [content.programs.items, programModal])
+  const ageLabel = lang === 'ru' ? `${settings.age_range || '7-12'} лет` : lang === 'en' ? `Ages ${settings.age_range || '7-12'}` : `${settings.age_range || '7-12'} aastat`
 
   useReveal()
 
@@ -111,8 +115,17 @@ export default function Home() {
   }, [gallery])
 
   useEffect(() => {
-    document.body.style.overflow = menuOpen || lightboxIndex !== null ? 'hidden' : ''
-  }, [menuOpen, lightboxIndex])
+    document.body.style.overflow = menuOpen || lightboxIndex !== null || programModal !== null ? 'hidden' : ''
+  }, [menuOpen, lightboxIndex, programModal])
+
+  useEffect(() => {
+    if (!programModal) return
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setProgramModal(null)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [programModal])
 
   useEffect(() => {
     if (lightboxIndex === null) return
@@ -167,7 +180,9 @@ export default function Home() {
         <nav className={menuOpen ? 'open' : ''}>
           {[
             ['about', content.nav.about],
+            ['why', content.nav.why],
             ['safety', content.nav.safety],
+            ['included', content.nav.included],
             ['programs', content.nav.programs],
             ['day', content.nav.day],
             ['sessions', content.nav.sessions],
@@ -195,7 +210,9 @@ export default function Home() {
       <main id="top">
         <section className="hero section-hero">
           <div className="hero-media">
-            <img src={photos[0]} alt="Time to Surf camp" />
+            <video autoPlay muted loop playsInline preload="metadata" poster={photos[0]}>
+              <source src={settings.hero_video || '/hero-video.mp4'} type="video/mp4" />
+            </video>
           </div>
           <div className="hero-shade" />
           <div className="hero-content reveal">
@@ -206,16 +223,16 @@ export default function Home() {
               <a className="btn btn-sun" href={regLink} target="_blank">
                 {t(content.hero.primary)}
               </a>
-              <button className="btn btn-glass" onClick={() => go('programs')}>
+              <a className="btn btn-glass" href={questionLink} target="_blank">
                 {t(content.hero.secondary)}
-              </button>
+              </a>
             </div>
             <div className="hero-facts">
-              <span>{list(content.hero.facts)[0]}</span>
-              <span>{list(content.hero.facts)[1]}</span>
-              <span>
-                {settings.group_size || '12-16'} {list(content.hero.facts)[2]}
-              </span>
+              <span>{ageLabel}</span>
+              <span>{settings.price_5day || list(content.hero.facts)[1]}</span>
+              <span>{settings.day_hours || '09:00-16:30'}</span>
+              <span>{settings.group_size || '12-16'} {lang === 'ru' ? 'детей в группе' : lang === 'en' ? 'kids per group' : 'last grupis'}</span>
+              <span>{list(content.hero.facts)[2]}</span>
             </div>
           </div>
           <div className="hero-strip">
@@ -244,6 +261,32 @@ export default function Home() {
           </div>
         </section>
 
+        <section className="section why-section" id="why">
+          <div className="wrap why-layout">
+            <div className="why-photo reveal">
+              <img src={photos[5] || photos[0]} alt="Дети и инструкторы Time to Surf на пляже Stroomi" loading="lazy" />
+              <div>
+                <strong>{settings.group_size || '12-16'}</strong>
+                <span>{lang === 'ru' ? 'детей в группе' : lang === 'en' ? 'kids per group' : 'last grupis'}</span>
+              </div>
+            </div>
+            <div className="reveal">
+              <p className="eyebrow light">{t(content.why.eyebrow)}</p>
+              <h2>{t(content.why.title)}</h2>
+              <p className="why-text">{t(content.why.text)}</p>
+              <div className="why-stats">
+                {content.why.points.map((point, index) => (
+                  <article key={`${index}-${t(point.label)}`}>
+                    <strong>{t(point.value)}</strong>
+                    <span>{t(point.label)}</span>
+                    <p>{t(point.text)}</p>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
         <section className="section safety-soft" id="safety">
           <div className="wrap">
             <div className="section-head reveal">
@@ -255,6 +298,25 @@ export default function Home() {
                 <article key={point} className="trust-card">
                   <span>{String(index + 1).padStart(2, '0')}</span>
                   <p>{point}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="section included-section" id="included">
+          <div className="wrap included-layout">
+            <div className="section-head reveal">
+              <p className="eyebrow dark">{t(content.included.eyebrow)}</p>
+              <h2>{t(content.included.title)}</h2>
+              <p>{t(content.included.text)}</p>
+            </div>
+            <div className="included-grid reveal">
+              {content.included.items.map((item, index) => (
+                <article key={`${index}-${t(item.title)}`}>
+                  <span>{String(index + 1).padStart(2, '0')}</span>
+                  <h3>{t(item.title)}</h3>
+                  <p>{t(item.text)}</p>
                 </article>
               ))}
             </div>
@@ -280,6 +342,12 @@ export default function Home() {
                         <li key={item}>{item}</li>
                       ))}
                     </ul>
+                    <div className="program-actions">
+                      <button className="program-more" onClick={() => setProgramModal(program.key)}>
+                        {lang === 'ru' ? 'Подробнее' : lang === 'en' ? 'Details' : 'Loe lähemalt'}
+                      </button>
+                      <small>{program.dates.slice(0, 2).join(' · ')}</small>
+                    </div>
                   </div>
                 </article>
               ))}
@@ -322,6 +390,9 @@ export default function Home() {
                   <span>{sessionName(session)}</span>
                   <small>{session.leaders}</small>
                   <b>{spotsLabel(session)}</b>
+                  <button className="session-more" onClick={() => setProgramModal(session.detail === 'pohod' ? 'hike' : session.detail)}>
+                    {lang === 'ru' ? 'Подробнее' : lang === 'en' ? 'Details' : 'Loe lähemalt'}
+                  </button>
                 </article>
               ))}
             </div>
@@ -512,6 +583,78 @@ export default function Home() {
                 <img src={photo} alt="" />
               </button>
             ))}
+          </div>
+        </div>
+      )}
+
+      {selectedProgram && (
+        <div className="program-modal" role="dialog" aria-modal="true" aria-labelledby="program-modal-title" onClick={() => setProgramModal(null)}>
+          <div className="program-modal-box" onClick={event => event.stopPropagation()}>
+            <button className="program-modal-close" onClick={() => setProgramModal(null)}>
+              {lang === 'ru' ? 'Закрыть' : lang === 'en' ? 'Close' : 'Sulge'}
+            </button>
+            <div className="program-modal-hero">
+              <img src={selectedProgram.photo} alt="" />
+              <div>
+                <p>{t(selectedProgram.kicker)}</p>
+                <h2 id="program-modal-title">{t(selectedProgram.title)}</h2>
+                <span>{t(selectedProgram.detailsIntro)}</span>
+              </div>
+            </div>
+            <div className="program-modal-meta">
+              <span>{ageLabel}</span>
+              <span>{settings.price_5day || '265€'}</span>
+              <span>{settings.group_size || '12-16'} {lang === 'ru' ? 'детей' : lang === 'en' ? 'kids' : 'last'}</span>
+            </div>
+            <div className="program-modal-body">
+              <section>
+                <h3>{t(selectedProgram.detailsTitle)}</h3>
+                <div className="program-detail-grid">
+                  {selectedProgram.details.map((section, index) => (
+                    <article key={`${index}-${t(section.title)}`}>
+                      <h4>{t(section.title)}</h4>
+                      <ul>
+                        {list(section.items).map(item => (
+                          <li key={item}>{item}</li>
+                        ))}
+                      </ul>
+                    </article>
+                  ))}
+                </div>
+              </section>
+              <aside>
+                <div className="program-dates">
+                  <h4>{lang === 'ru' ? 'Даты смен' : lang === 'en' ? 'Dates' : 'Vahetuste kuupäevad'}</h4>
+                  {selectedProgram.dates.map(date => (
+                    <span key={date}>{date}</span>
+                  ))}
+                </div>
+                <div className="program-result">
+                  <h4>{lang === 'ru' ? 'Результат для ребёнка' : lang === 'en' ? 'Result for the child' : 'Tulemus lapsele'}</h4>
+                  <ul>
+                    {list(selectedProgram.result).map(item => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+                {selectedProgram.leader && (
+                  <div className="program-leader">
+                    <div>{selectedProgram.leader.initials}</div>
+                    <strong>{t(selectedProgram.leader.name)}</strong>
+                    <span>{t(selectedProgram.leader.role)}</span>
+                    <p>{t(selectedProgram.leader.bio)}</p>
+                  </div>
+                )}
+              </aside>
+            </div>
+            <div className="program-modal-actions">
+              <a className="btn btn-sun" href={regLink} target="_blank">
+                {t(content.hero.primary)}
+              </a>
+              <a className="btn btn-ocean" href={questionLink} target="_blank">
+                {t(content.hero.secondary)}
+              </a>
+            </div>
           </div>
         </div>
       )}
