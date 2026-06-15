@@ -475,6 +475,7 @@ export default function Home() {
     .hero-pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:34px}
     .pill{font-size:12px;font-weight:600;color:rgba(255,255,255,.85);padding:6px 14px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:50px;backdrop-filter:blur(4px);transition:background 200ms,border-color 200ms,transform 200ms var(--ease);cursor:default}
     .pill:hover{background:rgba(255,255,255,.22);border-color:var(--teal-lt);transform:translateY(-1px)}
+    .pill-hot{background:rgba(245,166,35,.18);border-color:rgba(245,166,35,.5);color:white}
     .hero-acts{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:40px}
 
     /* HERO CARD */
@@ -1002,21 +1003,21 @@ export default function Home() {
               <div>
                 <div className="hero-ey rv">
                   <div className="hero-dot"/>
-                  <span className="hero-ey-t">{c('Таллин · Пляж Штромка · Лето 2026','Tallinn · Stroomi Beach · Summer 2026','Tallinn · Stroomi rand · Suvi 2026')}</span>
+                  <span className="hero-ey-t">{c('Детский серфинг-лагерь · Stroomi rand / Tallinn · Лето 2026','Kids surf camp · Stroomi Beach / Tallinn · Summer 2026','Laste surfilaager · Stroomi rand / Tallinn · Suvi 2026')}</span>
                 </div>
                 <h1 className="hero-h1 rv" style={{transitionDelay:'60ms'}}>
-                  {c('Детский','Kids','Laste')}<br/><em>{c('серфинг-лагерь','Surf Camp','surfilaager')}</em><br/>{c('на море','by the Sea','mere ääres')}
+                  {c('Лето, море и','Summer, sea and','Suvi, meri ja')}<br/><em>{c('серфинг для детей','surfing for kids','surf lastele')}</em><br/>{c('7-14 лет','ages 7-14','7-14 aastat')}
                 </h1>
                 <p className="hero-desc rv" style={{transitionDelay:'110ms'}}>
-                  {c('5 дней серфинга, друзей и настоящих приключений. Ребёнок будет на воде, не в телефоне — с профессиональными инструкторами и в безопасности.','5 days of surfing, new friends and real adventure. Your child will be on the water, not on a phone — with certified instructors, safe and happy.','5 päeva surfamist, uusi sõpru ja päris seiklusi. Laps on vees, mitte telefonis — koos sertifitseeritud instruktoritega.')}
+                  {c('5 дней на Stroomi rand: вода, спорт, друзья и свобода без телефона. Малые группы 12-16 детей, жилеты и гидрокостюмы, инструкторы рядом. Лето 2026, от 190€, места ограничены.','5 days at Stroomi Beach: water, sport, friends and phone-free freedom. Small groups of 12-16 kids, life jackets, wetsuits and instructors close by. Summer 2026, from 190€, limited spots.','5 päeva Stroomi rannas: vesi, sport, sõbrad ja telefonivaba vabadus. Väikesed grupid 12-16 last, päästevestid, märjaksüidid ja instruktorid kõrval. Suvi 2026, alates 190€, kohad piiratud.')}
                 </p>
                 <div className="hero-pills rv" style={{transitionDelay:'150ms'}}>
-                  <span className="pill">🧒 {c('Возраст 7–14 лет','Age 7–14','Vanus 7–14')}</span>
-                  <span className="pill">💰 {c(`от ${siteSettings.price_3day||'190€'}`,`from ${siteSettings.price_3day||'190€'}`,`alates ${siteSettings.price_3day||'190€'}`)}</span>
-                  <span className="pill">🍽️ {c('Питание включено','Meals included','Toitlustus sees')}</span>
-                  <span className="pill">🛟 {c('Жилеты и гидрокостюмы','Life jackets & wetsuits','Päästevested sees')}</span>
-                  <span className="pill">📍 Stroomi, Tallinn</span>
-                </div>
+                  <span className="pill">{c('7-14 лет','Ages 7-14','7-14 aastat')}</span>
+                  <span className="pill">Stroomi rand, Tallinn</span>
+                  <span className="pill">{c('лето 2026','Summer 2026','Suvi 2026')}</span>
+                  <span className="pill">{c(`от ${siteSettings.price_3day||'190€'}`,`from ${siteSettings.price_3day||'190€'}`,`alates ${siteSettings.price_3day||'190€'}`)}</span>
+                  <span className="pill">{c('безопасность на воде','water safety','veeohutus')}</span>
+                  <span className="pill pill-hot">{c('места ограничены','limited spots','kohad piiratud')}</span></div>
                 <div className="hero-acts rv" style={{transitionDelay:'190ms'}}>
                   <a href={REG} target="_blank" className="btn btn-sun" style={{padding:'16px 40px',fontSize:16,fontWeight:800}}>{c('Записать ребёнка','Register my child','Registreeri laps')} →</a>
                   <a href="https://t.me/Andrei_Time_to_Surf" target="_blank" className="btn btn-ghost" style={{padding:'16px 28px',fontSize:15}}>{c('Задать вопрос','Ask a question','Küsi küsimus')}</a>
@@ -1073,31 +1074,96 @@ export default function Home() {
         <div className="hero-wave"/>
       </section>
 
-      {/* TRUST */}
-      <section className="trust">
+      {/* WHY */}
+      <section className="why">
         <div className="wrap">
-          <div className="trust-g sg">
+          <div className="why-h">
+            <div className="rv">
+              <div className="tag tag-teal">{c('Почему родители выбирают нас','Why parents choose us','Miks vanemad valivad meid')}</div>
+              <h2 className="sec-h sec-h-lt">{c('Time to Surf —','Time to Surf —','Time to Surf —')}<br/><em>{c('не просто лагерь','more than a camp','rohkem kui laager')}</em></h2>
+            </div>
+            <div className="rv" style={{transitionDelay:'80ms'}}>
+              <p className="sec-sub" style={{color:'rgba(255,255,255,.42)'}}>
+                {c('Ребёнок активно проводит лето, пробует водные виды спорта, становится увереннее и находит новых друзей. А родители знают, что он под присмотром.','The child has an active summer, tries water sports, grows in confidence and makes new friends. Parents know they are supervised.','Laps veedab suve aktiivselt, proovib veespordialasid ja leiab uusi sõpru. Vanemad teavad, et laps on järelevalve all.')}
+              </p>
+            </div>
+          </div>
+          <div className="why-g sg">
             {[
-              {n:'15+', l:c('лет на воде','years on the water','aastat vee peal'), color:'var(--ocean)'},
-              {n:'1000+', l:c('детей прошли лагерь','kids attended camp','last läbinud laagri'), color:'var(--teal)'},
-              {n:'12–16', l:c('детей в группе','kids per group','last grupis'), color:'var(--ocean)'},
-              {n:'9', l:c('смен за лето','sessions per summer','vahetust suvel'), color:'var(--teal)'},
-            ].map((t,i) => (
-              <div key={t.l} className="trust-it" style={{animation:`countUp 600ms var(--ease) ${i*120}ms both`}}>
-                <div className="trust-n" style={{color:t.color}}>{t.n}</div>
-                <div className="trust-l">{t.l}</div>
+              {n:'01', t:c('Меньше телефона, больше моря','Less screen, more sea','Vähem telefoni, rohkem merd'), d:c('5 дней на воде, ветру и солнце. Гаджеты остаются на берегу — ребёнок занят делом.','5 days on the water, wind and sun. Screens stay on shore — the child is busy doing real things.','5 päeva vees, tuules ja päikeses. Ekraanid jäävad kaldale.')},
+              {n:'02', t:c('Под контролем — всегда','Always supervised','Alati järelevalve all'), d:c('Профессиональные инструктора, группы 12–16 детей, жилеты и гидрокостюмы — никто не остаётся без внимания.','Certified instructors, groups of 12–16, life jackets and wetsuits — no one goes unnoticed.','Sertifitseeritud instruktorid, grupid 12–16 last, päästevested – ükski laps ei jää tähelepanuta.')},
+              {n:'03', t:c('Уверенность на воде и в жизни','Confidence in water and in life','Enesekindlus vees ja elus'), d:c('Встать на доску — маленькая победа, которую ребёнок запомнит навсегда. Прогресс виден уже на второй день.','Standing on a board is a small victory the child will never forget. Progress shows already on day two.','Laual seismine on väike võit, mida laps igavesti mäletab. Areng on näha juba teisel päeval.')},
+              {n:'04', t:c('Новые друзья на всё лето','New friends for the whole summer','Uued sõbrad kogu suveks'), d:c('Маленькие группы — значит все друг друга знают. Дружба из лагеря продолжается после.','Small groups mean everyone knows each other. Friendships from camp continue after.','Väikesed rühmad – kõik tunnevad üksteist. Laagrisõprus kestab edasi.')},
+              {n:'05', t:c('Питание, костюмы, оборудование — всё наше','Meals, suits, gear — all included','Toitlustus, ülikonnad, varustus – kõik meie'), d:c('Родителям не нужно ничего закупать. Гидрокостюм, жилет, инвентарь, еда — всё включено в цену.','Parents don\'t need to buy anything. Wetsuit, life jacket, gear, food — all included in the price.','Vanematel pole vaja midagi osta. Märjaksüit, päästevest, inventar, toit – kõik hinnas.')},
+              {n:'06', t:c('Настоящий опыт, не турлагерь','Real experience, not a tourist camp','Päris kogemus, mitte turismilager'), d:c('Мы не просто присматриваем за детьми. Каждый день — программа, цели, новые навыки и живые эмоции.','We don\'t just babysit. Each day has a programme, goals, new skills and real emotions.','Me ei ole lihtsalt laste järele vaatamas. Igal päeval on programm, eesmärgid, uued oskused.')},
+            ].map(w => (
+              <div key={w.n} className="why-it">
+                <div className="why-n">{w.n}</div>
+                <div className="why-t">{w.t}</div>
+                <div className="why-d">{w.d}</div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* WAVE DIVIDER */}
-      <div className="wave-divider" style={{background:'var(--sand-lt)',marginBottom:-2}}>
-        <svg viewBox="0 0 1200 60" preserveAspectRatio="none" style={{height:60,fill:'var(--white)'}}>
-          <path d="M0,30 C200,60 400,0 600,30 C800,60 1000,10 1200,30 L1200,60 L0,60 Z" style={{animation:'waveAnim 6s ease-in-out infinite'}}/>
-        </svg>
-      </div>
+
+      {/* SAFETY */}
+      <section className="safety">
+        <div className="wrap">
+          <div className="safety-g">
+            <div className="rv">
+              <div className="tag tag-pale">{c('Безопасность','Safety','Ohutus')}</div>
+              <h2 className="sec-h sec-h-lt" style={{marginBottom:12}}>
+                {c('Родителям','Parents','Vanematele')}<br/><em>{c('спокойно','can relax','on rahulik')}</em>
+              </h2>
+              <p className="sec-sub" style={{color:'rgba(255,255,255,.42)',marginBottom:8}}>
+                {c('Безопасность - это не пункт в программе. Это основа всего, что мы делаем. Дети учатся не бояться воды, а понимать её.','Safety is not a programme item. It\'s the foundation of everything we do. Kids learn to understand water, not fear it.','Ohutus ei ole lihtsalt programmipunkt. See on alus kõigele, mida teeme.')}
+              </p>
+              <div className="safety-items">
+                {[
+                  {icon:'🛟', t:c('Жилеты и гидрокостюмы всегда','Life jackets and wetsuits always','Päästevested alati'), d:c('Каждый ребёнок в воде только в жилете и гидрокостюме. Без исключений.','Every child in the water only with a life jacket and wetsuit. No exceptions.','Iga laps vees ainult päästevesti ja märjaksüidiga.')},
+                  {icon:'👥', t:c('Группы 12-16 детей','Groups of 12-16 kids','Grupid 12-16 last'), d:c('Каждый инструктор видит каждого ребёнка. Никто не остаётся без внимания.','Every instructor sees every child. No one goes unnoticed.','Iga instruktor näeb iga last.')},
+                  {icon:'📚', t:c('Теория безопасности перед водой','Safety theory before water','Ohutusteooroia enne vett'), d:c('Перед каждым заходом - правила, разбор ситуаций и объяснение опасностей.','Before every session - rules, scenario analysis and hazard explanation.','Enne iga sessiooni - reeglid, stsenaariumid ja ohuanalüüs.')},
+                  {icon:'🌊', t:c('Учим читать воду и ветер','We teach reading water and wind','Õpetame lugema vett ja tuult'), d:c('Дети понимают ветер, погоду и как это влияет на безопасность на воде.','Kids learn wind, weather and how it affects water safety.','Lapsed mõistavad tuult ja ilma ning nende mõju ohutusele.')},
+                ].map((s,i) => (
+                  <div key={i} className="safety-it">
+                    <div className="safety-icon">{s.icon}</div>
+                    <div>
+                      <div className="safety-t">{s.t}</div>
+                      <div className="safety-d">{s.d}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="safety-photos sg">
+              {[
+                {src:'/DSC02691-150x150.jpeg', alt:'Safety'},
+                {src:'/IMG_7773-150x150.jpeg', alt:'Kids in water'},
+                {src:'/IMG_7812-150x150.jpeg', alt:'Group'},
+                {src:'/DSC02699-150x150.jpeg', alt:'Instructor'},
+              ].map((p,i) => {
+                const globalIdx = GALLERY_SECTIONS.flatMap(s=>s.imgs).indexOf(p.src)
+                return (
+                  <div key={i} style={{borderRadius:12,overflow:'hidden',aspectRatio:'4/3',cursor:'zoom-in',position:'relative'}}
+                    onClick={() => setGalleryLightbox({src:p.src,idx:globalIdx>=0?globalIdx:0,pool:'gallery'})}>
+                    <img src={p.src} alt={p.alt} className="safety-photo" style={{cursor:'zoom-in'}}/>
+                    <div style={{position:'absolute',inset:0,background:'rgba(0,0,0,0)',transition:'background 200ms',display:'flex',alignItems:'center',justifyContent:'center'}}
+                      onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background='rgba(0,0,0,.18)'}}
+                      onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background='rgba(0,0,0,0)'}}>
+                      <span style={{opacity:0,color:'white',fontSize:24,transition:'opacity 200ms'}}
+                        onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.opacity='1'}}
+                        onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.opacity='0'}}>⊕</span>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+      </section>
+
 
       {/* FORMATS */}
       <section className="formats" id="formats">
@@ -1108,16 +1174,37 @@ export default function Home() {
             <p className="sec-sub" style={{margin:'0 auto'}}>{c('Серфинг - основа каждой программы. Всё остальное - особенный опыт, который не повторить.','Surfing is the core of every programme. The rest is a unique experience that can\'t be repeated.','Surfamine on iga programmi alus. Ülejäänud on ainulaadne kogemus.')}</p>
           </div>
           <div className="fg sg">
-            {/* Placeholder card — photo & name TBD */}
-            <div className="fcard fcard-placeholder">
-              <div className="fcard-banner fcard-banner-empty">
-                <div className="fcard-banner-ph">
-                  <svg width="48" height="48" viewBox="0 0 48 48" fill="none"><rect x="6" y="10" width="36" height="28" rx="4" stroke="rgba(255,255,255,.25)" strokeWidth="2" strokeDasharray="4 3"/><circle cx="18" cy="22" r="4" stroke="rgba(255,255,255,.25)" strokeWidth="2"/><path d="M6 34l10-8 8 6 6-5 12 7" stroke="rgba(255,255,255,.25)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                  <div style={{fontSize:11,color:'rgba(255,255,255,.28)',marginTop:10,letterSpacing:'.08em',textTransform:'uppercase',fontWeight:600}}>{c('Скоро','Coming soon','Tulemas')}</div>
+            <div className="fcard fcard-cinema">
+              <div className="fcard-banner">
+                <img src="/surf-cinema-program.jpg" alt={c('Серфинг + Кино','Surf + Cinema','Surf + Kino')} className="fb-img" />
+                <div className="fcard-blbl">{c('Серфинг · Творчество','Surfing · Creativity','Surfamine · Loovus')}</div>
+                <div className="fcard-bt">{c('Серфинг + Кино','Surf + Cinema','Surf + Kino')}</div>
+              </div>
+              <div className="fcard-body">
+                <p className="fcard-desc">{c('Утром - серфинг и вода. После обеда - настоящая киностудия. Дети берут интервью, снимают репортажи и монтируют короткий фильм, который останется на память.','Morning is surfing and water. After lunch - a real film studio. Kids interview, shoot reports and edit a short film to keep as a memory.','Hommikul surf ja vesi. Pärast lõunat - päris kinostuudio. Lapsed teevad intervjuusid, filmivad reportaaže ja monteerivad lühifilmi.')}</p>
+                <div className="fcard-list">
+                  {[
+                    c('SUP-серфинг, бодиборд, ОФП каждый день','SUP surfing, bodyboard and fitness every day','SUP-surf, bodyboard ja ÜKE iga päev'),
+                    c('Роли: ведущий, оператор, монтажер, сценарист','Roles: host, camera operator, editor, screenwriter','Rollid: saatejuht, operaator, monteerija, stsenarist'),
+                    c('Финальный показ фильма для родителей','Final film screening for parents','Lõplik filmilinastus vanematele'),
+                    c('Ведущая: Наталья Карасева - ТВ-журналист, 20+ лет','Lead: Natalia Karaseva - TV journalist, 20+ years','Juhendaja: Natalia Karaseva - teleajakirjanik, 20+ aastat'),
+                  ].map((it,j) => (
+                    <div key={j} className="fcard-it">
+                      <div className="fcard-ck">
+                        <svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1 4l2 2 4-4" stroke="var(--teal)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                      </div>
+                      <span>{it}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
-              <div className="fcard-body" style={{opacity:.5}}>
-                <p className="fcard-desc" style={{fontStyle:'italic'}}>{c('Новый формат — скоро будет объявлен. Следите за обновлениями.','New format coming soon. Stay tuned.','Uus formaat tulemas.')}</p>
+              <div className="fcard-foot">
+                <div className="fcard-btns">
+                  <button className="fcard-more" onClick={() => setProgramModal('kino')}>
+                    {c('Подробнее','Details','Loe lähemalt')}
+                  </button>
+                  <a href={REG} target="_blank" className="btn btn-teal btn-sm">{c('Записаться','Register','Registreeru')}</a>
+                </div>
               </div>
             </div>
             {[
@@ -1183,61 +1270,62 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SAFETY */}
-      <section className="safety">
+
+      {/* SCHEDULE */}
+      <section className="sched" id="program">
         <div className="wrap">
-          <div className="safety-g">
-            <div className="rv">
-              <div className="tag tag-pale">{c('Безопасность','Safety','Ohutus')}</div>
-              <h2 className="sec-h sec-h-lt" style={{marginBottom:12}}>
-                {c('Родителям','Parents','Vanematele')}<br/><em>{c('спокойно','can relax','on rahulik')}</em>
-              </h2>
-              <p className="sec-sub" style={{color:'rgba(255,255,255,.42)',marginBottom:8}}>
-                {c('Безопасность - это не пункт в программе. Это основа всего, что мы делаем. Дети учатся не бояться воды, а понимать её.','Safety is not a programme item. It\'s the foundation of everything we do. Kids learn to understand water, not fear it.','Ohutus ei ole lihtsalt programmipunkt. See on alus kõigele, mida teeme.')}
-              </p>
-              <div className="safety-items">
-                {[
-                  {icon:'🛟', t:c('Жилеты и гидрокостюмы всегда','Life jackets and wetsuits always','Päästevested alati'), d:c('Каждый ребёнок в воде только в жилете и гидрокостюме. Без исключений.','Every child in the water only with a life jacket and wetsuit. No exceptions.','Iga laps vees ainult päästevesti ja märjaksüidiga.')},
-                  {icon:'👥', t:c('Группы 12-16 детей','Groups of 12-16 kids','Grupid 12-16 last'), d:c('Каждый инструктор видит каждого ребёнка. Никто не остаётся без внимания.','Every instructor sees every child. No one goes unnoticed.','Iga instruktor näeb iga last.')},
-                  {icon:'📚', t:c('Теория безопасности перед водой','Safety theory before water','Ohutusteooroia enne vett'), d:c('Перед каждым заходом - правила, разбор ситуаций и объяснение опасностей.','Before every session - rules, scenario analysis and hazard explanation.','Enne iga sessiooni - reeglid, stsenaariumid ja ohuanalüüs.')},
-                  {icon:'🌊', t:c('Учим читать воду и ветер','We teach reading water and wind','Õpetame lugema vett ja tuult'), d:c('Дети понимают ветер, погоду и как это влияет на безопасность на воде.','Kids learn wind, weather and how it affects water safety.','Lapsed mõistavad tuult ja ilma ning nende mõju ohutusele.')},
-                ].map((s,i) => (
-                  <div key={i} className="safety-it">
-                    <div className="safety-icon">{s.icon}</div>
-                    <div>
-                      <div className="safety-t">{s.t}</div>
-                      <div className="safety-d">{s.d}</div>
-                    </div>
-                  </div>
-                ))}
+          <div className="sched-h rv">
+            <div className="tag tag-pale">{c('Программа дня','Day programme','Päevaprogramm')}</div>
+            <h2 className="sec-h sec-h-lt">{c('Как проходит день','How the day goes','Kuidas päev kulgeb')}</h2>
+          </div>
+          <div className="sched-g sg">
+            {[
+              {time:'09:00 - 09:30', name:c('Сбор детей','Arrival','Kogunemine'), desc:c('Встреча детей, знакомство, настрой на день','Meeting kids, introductions, setting the mood','Laste vastuvõtt, tutvumine')},
+              {time:'09:30 - 10:00', name:c('Разминка','Warm-up','Soojendus'), desc:c('Активные тренировки и командные игры на берегу','Active training and team games on shore','Aktiivsed treeningud ja meeskonnmängud')},
+              {time:'10:00 - 12:00', name:c('Водный блок','Water block','Vesiplokk'), desc:c('Теория безопасности, гидрокостюмы, SUP и виндсерфинг','Safety theory, wetsuits, SUP and windsurfing','Ohutusteooroia, märjaksüidid, SUP')},
+              {time:'12:00 - 13:00', name:c('Обед','Lunch','Lõuna'), desc:c('Индивидуальные порции с учётом аллергий. Питание от Tark Catering 🍽','Individual portions, allergies noted - Tark Catering','Individuaalsed portsjonid - Tark Catering')},
+              {time:'13:00 - 13:30', name:c('Отдых после обеда','After-lunch rest','Puhkus pärast lõunat'), desc:c('Спокойные и настольные игры, свободное общение','Quiet games, free time, conversations','Vaiksed mängud, vaba suhtlemine')},
+              {time:'13:30 - 15:30', name:c('Активная программа','Active programme','Aktiivne programm'), desc:c('Виндсёрфинг, кайт, SUP, поход, хайкинг или пляжные игры - зависит от погоды','Windsurfing, kite, SUP, hiking or beach games - depends on weather','Purjelaud, kait, SUP, matk või rannamängud')},
+              {time:'15:30 - 15:45', name:c('Чаепитие ☕','Tea time ☕','Tee aeg ☕'), desc:c('Перерыв, отдых, свободное общение','Break, rest, free conversation','Paus, puhkus, vaba suhtlemine')},
+              {time:'15:45 - 16:30', name:c('Спокойный блок','Calm block','Rahulik plokk'), desc:c('Игры, творчество, интеллектуальные задания','Games, creativity, intellectual tasks','Mängud, loovus, intellektuaalsed ülesanded')},
+              {time:'16:30', name:c('До завтра! 👋','See you tomorrow! 👋','Homseni! 👋'), desc:c('Конец программы, ожидание родителей','Programme ends, parents pick up','Programm lõpeb, vanemad tulevad järele')},
+            ].map(s => (
+              <div key={s.time} className="sched-it">
+                <div className="sched-time">{s.time}</div>
+                <div className="sched-name">{s.name}</div>
+                <div className="sched-desc">{s.desc}</div>
               </div>
-            </div>
-            <div className="safety-photos sg">
-              {[
-                {src:'/DSC02691-150x150.jpeg', alt:'Safety'},
-                {src:'/IMG_7773-150x150.jpeg', alt:'Kids in water'},
-                {src:'/IMG_7812-150x150.jpeg', alt:'Group'},
-                {src:'/DSC02699-150x150.jpeg', alt:'Instructor'},
-              ].map((p,i) => {
-                const globalIdx = GALLERY_SECTIONS.flatMap(s=>s.imgs).indexOf(p.src)
-                return (
-                  <div key={i} style={{borderRadius:12,overflow:'hidden',aspectRatio:'4/3',cursor:'zoom-in',position:'relative'}}
-                    onClick={() => setGalleryLightbox({src:p.src,idx:globalIdx>=0?globalIdx:0,pool:'gallery'})}>
-                    <img src={p.src} alt={p.alt} className="safety-photo" style={{cursor:'zoom-in'}}/>
-                    <div style={{position:'absolute',inset:0,background:'rgba(0,0,0,0)',transition:'background 200ms',display:'flex',alignItems:'center',justifyContent:'center'}}
-                      onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background='rgba(0,0,0,.18)'}}
-                      onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background='rgba(0,0,0,0)'}}>
-                      <span style={{opacity:0,color:'white',fontSize:24,transition:'opacity 200ms'}}
-                        onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.opacity='1'}}
-                        onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.opacity='0'}}>⊕</span>
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
+            ))}
           </div>
         </div>
       </section>
+
+
+      {/* DATES */}
+      <section className="dates" id="dates">
+        <div className="wrap">
+          <div className="dhead rv">
+            <div className="tag tag-muted">{c('Все смены','All sessions','Kõik vahetused')}</div>
+            <h2 className="sec-h" style={{marginBottom:12}}>{c('Расписание лета 2026','Summer 2026 schedule','Suve 2026 ajakava')}</h2>
+            <p className="sec-sub" style={{margin:'0 auto'}}>{c('Выберите смену и записывайтесь - места ограничены, группы маленькие.','Choose your session and register - spots are limited, groups are small.','Valige vahetus ja registreeruge - kohti on piiratud.')}</p>
+          </div>
+          <div className="dg sg">
+            {DATES.map((d,i) => (
+              <div key={i} className={`dc${d.hot?' hot':''}`}>
+                {d.hot && <div className="dc-badge">{c('Мест мало!','Few spots!','Kohti vähe!')}</div>}
+                <div className="dc-dates">{d.dates}</div>
+                <div className="dc-type" style={{color:d.color}}>{d.type}</div>
+                <div className="dc-leaders">{d.leaders}</div>
+                <div className="dc-acts">
+                  <a href={REG} target="_blank" className="dc-cta">{c('Записаться →','Register →','Registreeru →')}</a>
+                  <button className="dc-more" onClick={() => setProgramModal(d.detail)}>{c('Подробнее','Details','Loe lähemalt')}</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
 
       {/* PRICING */}
       <section className="pricing" id="pricing">
@@ -1282,121 +1370,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* WHY */}
-      <section className="why">
-        <div className="wrap">
-          <div className="why-h">
-            <div className="rv">
-              <div className="tag tag-teal">{c('Почему родители выбирают нас','Why parents choose us','Miks vanemad valivad meid')}</div>
-              <h2 className="sec-h sec-h-lt">{c('Time to Surf —','Time to Surf —','Time to Surf —')}<br/><em>{c('не просто лагерь','more than a camp','rohkem kui laager')}</em></h2>
-            </div>
-            <div className="rv" style={{transitionDelay:'80ms'}}>
-              <p className="sec-sub" style={{color:'rgba(255,255,255,.42)'}}>
-                {c('Ребёнок активно проводит лето, пробует водные виды спорта, становится увереннее и находит новых друзей. А родители знают, что он под присмотром.','The child has an active summer, tries water sports, grows in confidence and makes new friends. Parents know they are supervised.','Laps veedab suve aktiivselt, proovib veespordialasid ja leiab uusi sõpru. Vanemad teavad, et laps on järelevalve all.')}
-              </p>
-            </div>
-          </div>
-          <div className="why-g sg">
-            {[
-              {n:'01', t:c('Меньше телефона, больше моря','Less screen, more sea','Vähem telefoni, rohkem merd'), d:c('5 дней на воде, ветру и солнце. Гаджеты остаются на берегу — ребёнок занят делом.','5 days on the water, wind and sun. Screens stay on shore — the child is busy doing real things.','5 päeva vees, tuules ja päikeses. Ekraanid jäävad kaldale.')},
-              {n:'02', t:c('Под контролем — всегда','Always supervised','Alati järelevalve all'), d:c('Профессиональные инструктора, группы 12–16 детей, жилеты и гидрокостюмы — никто не остаётся без внимания.','Certified instructors, groups of 12–16, life jackets and wetsuits — no one goes unnoticed.','Sertifitseeritud instruktorid, grupid 12–16 last, päästevested – ükski laps ei jää tähelepanuta.')},
-              {n:'03', t:c('Уверенность на воде и в жизни','Confidence in water and in life','Enesekindlus vees ja elus'), d:c('Встать на доску — маленькая победа, которую ребёнок запомнит навсегда. Прогресс виден уже на второй день.','Standing on a board is a small victory the child will never forget. Progress shows already on day two.','Laual seismine on väike võit, mida laps igavesti mäletab. Areng on näha juba teisel päeval.')},
-              {n:'04', t:c('Новые друзья на всё лето','New friends for the whole summer','Uued sõbrad kogu suveks'), d:c('Маленькие группы — значит все друг друга знают. Дружба из лагеря продолжается после.','Small groups mean everyone knows each other. Friendships from camp continue after.','Väikesed rühmad – kõik tunnevad üksteist. Laagrisõprus kestab edasi.')},
-              {n:'05', t:c('Питание, костюмы, оборудование — всё наше','Meals, suits, gear — all included','Toitlustus, ülikonnad, varustus – kõik meie'), d:c('Родителям не нужно ничего закупать. Гидрокостюм, жилет, инвентарь, еда — всё включено в цену.','Parents don\'t need to buy anything. Wetsuit, life jacket, gear, food — all included in the price.','Vanematel pole vaja midagi osta. Märjaksüit, päästevest, inventar, toit – kõik hinnas.')},
-              {n:'06', t:c('Настоящий опыт, не турлагерь','Real experience, not a tourist camp','Päris kogemus, mitte turismilager'), d:c('Мы не просто присматриваем за детьми. Каждый день — программа, цели, новые навыки и живые эмоции.','We don\'t just babysit. Each day has a programme, goals, new skills and real emotions.','Me ei ole lihtsalt laste järele vaatamas. Igal päeval on programm, eesmärgid, uued oskused.')},
-            ].map(w => (
-              <div key={w.n} className="why-it">
-                <div className="why-n">{w.n}</div>
-                <div className="why-t">{w.t}</div>
-                <div className="why-d">{w.d}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* TEAM */}
-      <section className="team" id="team">
-        <div className="wrap">
-          <div className="team-h">
-            <div className="rv">
-              <div className="tag tag-teal">{c('Наша команда','Our team','Meie meeskond')}</div>
-              <h2 className="sec-h">{c('Люди, которым','People you','Inimesed, kellele')}<br/><em>{c('вы доверяете','can trust','usaldate')}</em></h2>
-            </div>
-            <div className="rv" style={{transitionDelay:'80ms'}}>
-              <p className="sec-sub">{c('Каждый инструктор - живой человек со своей историей. Ваш ребёнок в надёжных руках.','Every instructor is a real person with their own story. Your child is in safe hands.','Iga instruktor on ehtne inimene oma looga. Teie laps on heades kätes.')}</p>
-            </div>
-          </div>
-          <div className="team-g sg">
-            {[
-              {initials:'НК', name:c('Наталья Карасёва','Natalia Karaseva','Natalia Karaseva'), role:c('Ведущая - Серфинг + Кино','Cinema programme lead','Kino-programmi juht'), bio:c('Тележурналист с 20-летним стажем в двух странах, автор подкаста «Cozy with Tasha», создатель документальных проектов. Учит детей видеть историю в каждом кадре и не бояться камеры.','TV journalist with 20+ years in two countries, podcast "Cozy with Tasha". Teaches kids to see a story in every frame.','Teleajakirjanik 20+ aastat kahes riigis, taskuhäälingu «Cozy with Tasha» autor, dokumentaalfilmide looja. Õpetab lapsi nägema lugu igas kaadris ja mitte kartma kaamerat.')},
-              {initials:'ВХ', name:c('Виталий Холстинин','Vitaliy Kholstinin','Vitaliy Kholstinin'), role:c('Ведущий - Серфинг + Поход','Hiking programme lead','Matkaprogrammi juht'), bio:c('Предприниматель, хайкер, основатель Join The Hike. Прошёл Höga Kusten (140 км, UNESCO) и Land of Giants (120 км). Живёт тем, что преподаёт.','Entrepreneur, hiker, founder of Join The Hike. Completed Höga Kusten (140km, UNESCO) and Land of Giants (120km).','Ettevõtja, matkaja, Join The Hike asutaja. Läbinud Höga Kusten (140 km, UNESCO) ja Land of Giants (120 km). Elab seda, mida õpetab.')},
-              {initials:'НГ', name:c('Надежда + Григорий','Nadezhda + Grigory','Nadezhda + Grigory'), role:c('Инструктора по серфингу','Surf instructors','Surfiinstruktorid'), bio:c('Сертифицированные инструктора с многолетним опытом работы с детьми на Балтийском море. Умеют мотивировать и поддерживать - от первого шага на доске до уверенного катания.','Certified surf instructors with years of experience with children on the Baltic Sea. They know how to motivate and support at every stage.','Sertifitseeritud surfiinstruktorid, kes on aastaid töötanud lastega Läänemere ääres. Oskavad motiveerida ja toetada – esimesest sammust laual kuni enesekindla sõitmiseni.')},
-            ].map((t,i) => (
-              <div key={i} className="tc">
-                <div className="tc-av-p">{t.initials}</div>
-                <div className="tc-name">{t.name}</div>
-                <div className="tc-role">{t.role}</div>
-                <p className="tc-bio">{t.bio}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* DATES */}
-      <section className="dates" id="dates">
-        <div className="wrap">
-          <div className="dhead rv">
-            <div className="tag tag-muted">{c('Все смены','All sessions','Kõik vahetused')}</div>
-            <h2 className="sec-h" style={{marginBottom:12}}>{c('Расписание лета 2026','Summer 2026 schedule','Suve 2026 ajakava')}</h2>
-            <p className="sec-sub" style={{margin:'0 auto'}}>{c('Выберите смену и записывайтесь - места ограничены, группы маленькие.','Choose your session and register - spots are limited, groups are small.','Valige vahetus ja registreeruge - kohti on piiratud.')}</p>
-          </div>
-          <div className="dg sg">
-            {DATES.map((d,i) => (
-              <div key={i} className={`dc${d.hot?' hot':''}`}>
-                {d.hot && <div className="dc-badge">{c('Мест мало!','Few spots!','Kohti vähe!')}</div>}
-                <div className="dc-dates">{d.dates}</div>
-                <div className="dc-type" style={{color:d.color}}>{d.type}</div>
-                <div className="dc-leaders">{d.leaders}</div>
-                <div className="dc-acts">
-                  <a href={REG} target="_blank" className="dc-cta">{c('Записаться →','Register →','Registreeru →')}</a>
-                  <button className="dc-more" onClick={() => setProgramModal(d.detail)}>{c('Подробнее','Details','Loe lähemalt')}</button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* SCHEDULE */}
-      <section className="sched" id="program">
-        <div className="wrap">
-          <div className="sched-h rv">
-            <div className="tag tag-pale">{c('Программа дня','Day programme','Päevaprogramm')}</div>
-            <h2 className="sec-h sec-h-lt">{c('Как проходит день','How the day goes','Kuidas päev kulgeb')}</h2>
-          </div>
-          <div className="sched-g sg">
-            {[
-              {time:'09:00 - 09:30', name:c('Сбор детей','Arrival','Kogunemine'), desc:c('Встреча детей, знакомство, настрой на день','Meeting kids, introductions, setting the mood','Laste vastuvõtt, tutvumine')},
-              {time:'09:30 - 10:00', name:c('Разминка','Warm-up','Soojendus'), desc:c('Активные тренировки и командные игры на берегу','Active training and team games on shore','Aktiivsed treeningud ja meeskonnmängud')},
-              {time:'10:00 - 12:00', name:c('Водный блок','Water block','Vesiplokk'), desc:c('Теория безопасности, гидрокостюмы, SUP и виндсерфинг','Safety theory, wetsuits, SUP and windsurfing','Ohutusteooroia, märjaksüidid, SUP')},
-              {time:'12:00 - 13:00', name:c('Обед','Lunch','Lõuna'), desc:c('Индивидуальные порции с учётом аллергий. Питание от Tark Catering 🍽','Individual portions, allergies noted - Tark Catering','Individuaalsed portsjonid - Tark Catering')},
-              {time:'13:00 - 13:30', name:c('Отдых после обеда','After-lunch rest','Puhkus pärast lõunat'), desc:c('Спокойные и настольные игры, свободное общение','Quiet games, free time, conversations','Vaiksed mängud, vaba suhtlemine')},
-              {time:'13:30 - 15:30', name:c('Активная программа','Active programme','Aktiivne programm'), desc:c('Виндсёрфинг, кайт, SUP, поход, хайкинг или пляжные игры - зависит от погоды','Windsurfing, kite, SUP, hiking or beach games - depends on weather','Purjelaud, kait, SUP, matk või rannamängud')},
-              {time:'15:30 - 15:45', name:c('Чаепитие ☕','Tea time ☕','Tee aeg ☕'), desc:c('Перерыв, отдых, свободное общение','Break, rest, free conversation','Paus, puhkus, vaba suhtlemine')},
-              {time:'15:45 - 16:30', name:c('Спокойный блок','Calm block','Rahulik plokk'), desc:c('Игры, творчество, интеллектуальные задания','Games, creativity, intellectual tasks','Mängud, loovus, intellektuaalsed ülesanded')},
-              {time:'16:30', name:c('До завтра! 👋','See you tomorrow! 👋','Homseni! 👋'), desc:c('Конец программы, ожидание родителей','Programme ends, parents pick up','Programm lõpeb, vanemad tulevad järele')},
-            ].map(s => (
-              <div key={s.time} className="sched-it">
-                <div className="sched-time">{s.time}</div>
-                <div className="sched-name">{s.name}</div>
-                <div className="sched-desc">{s.desc}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* GALLERY */}
       <section className="gallery" id="gallery">
