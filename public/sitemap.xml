@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://camp.timetosurf.ee/</loc>
+    <lastmod>2026-06-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://camp.timetosurf.ee/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://camp.timetosurf.ee/"/>
+    <xhtml:link rel="alternate" hreflang="et" href="https://camp.timetosurf.ee/"/>
+  </url>
+</urlset>
