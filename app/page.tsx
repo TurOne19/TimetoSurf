@@ -110,10 +110,10 @@ export default function Home() {
   const HERO_PHOTOS = dbGallery.filter(p => p.section === 'hero').map(p => p.url).length > 0
     ? dbGallery.filter(p => p.section === 'hero').map(p => p.url)
     : [
-    '/DSC03180.jpg',
-    '/DSC03177.jpg',
-    '/DSC03142.jpg',
-    '/DSC03057.jpg',
+    '/photo-output-2-1024x1024__1_.jpeg',
+    '/IMG_7917-1024x768.jpeg',
+    '/IMG_6615-821x1024.jpeg',
+    '/IMG_8779-1-768x1024.jpeg',
   ]
 
   // All gallery photos organized in sections
@@ -121,72 +121,55 @@ export default function Home() {
     {
       label: c('На воде', 'On the Water', 'Vees'),
       imgs: [
-        '/DSC03057.jpg',
-        '/DSC03039.jpg',
-        '/DSC03014.jpg',
-        '/DSC02922.jpg',
-        '/DSC02878.jpg',
-        '/DSC02873.jpg',
-        '/DSC02866.jpg',
-        '/DSC02861.jpg',
-        '/DSC02860.jpg',
-        '/IMG_6865.JPG',
-        '/IMG_6845.JPG',
-        '/IMG_6814.JPG',
+        '/DSC02601-150x150.jpeg',
+        '/DSC02691-150x150.jpeg',
+        '/DSC02699-150x150.jpeg',
+        '/DSC02878-150x150.jpeg',
+        '/DSC02883-150x150.jpeg',
+        '/DSC02899-150x150.jpeg',
+        '/IMG_7757-150x150.jpeg',
+        '/IMG_7758-150x150.jpeg',
+        '/IMG_7773-150x150.jpeg',
+        '/IMG_7752-150x150.jpeg',
+        '/IMG_7796-150x150.jpeg',
+        '/IMG_7787-150x150.jpeg',
       ]
     },
     {
       label: c('Команда и атмосфера', 'Team & Vibes', 'Meeskond ja atmosfäär'),
       imgs: [
-        '/DSC02952.jpg',
-        '/DSC02945.jpg',
-        '/DSC03136.jpg',
-        '/DSC03142.jpg',
-        '/DSC03177.jpg',
-        '/DSC03180.jpg',
-        '/IMG_8191.JPG',
-        '/IMG_6804.JPG',
-        '/IMG_6794.JPG',
-        '/IMG_6791.JPG',
-        '/IMG_6773.JPG',
+        '/217650841_4107074432694657_6267790752617918985_n.jpg',
+        '/IMG_0806-150x150.jpeg',
+        '/IMG_0843-150x150.jpeg',
+        '/IMG_0850-150x150.jpeg',
+        '/IMG_0857-150x150.jpeg',
+        '/IMG_7805-150x150.jpeg',
+        '/IMG_7807-150x150.jpeg',
+        '/IMG_7809-150x150.jpeg',
+        '/IMG_7812-150x150.jpeg',
+        '/IMG_7659-150x150.jpeg',
+        '/IMG_7046-150x150.jpg',
       ]
     },
     {
       label: c('Моменты', 'Moments', 'Hetked'),
       imgs: [
-        '/DSC02979.jpg',
-        '/DSC02967.jpg',
-        '/DSC02835.jpg',
-        '/DSC02827.jpg',
-        '/DSC02825.jpg',
-        '/DSC02550.jpg',
-        '/DSC02502.jpg',
-        '/DSC02445.jpg',
-        '/DSC02384.jpg',
-        '/DSC02376.jpg',
-        '/DSC02333.jpg',
-        '/DSC02326.jpg',
-        '/DSC02314.jpg',
-        '/DSC02287.jpg',
-        '/DSC02286.jpg',
-        '/DSC02107.jpg',
-        '/DSC02068.jpg',
-        '/IMG_6768.JPG',
-        '/IMG_6751.JPG',
-        '/IMG_6750.JPG',
-        '/IMG_6746.JPG',
-        '/IMG_6745.JPG',
-        '/IMG_6737.JPG',
-        '/IMG_6716.JPG',
-        '/IMG_6704.JPG',
-        '/IMG_6516.JPG',
-        '/IMG_6492.JPG',
-        '/IMG_6490.JPG',
-        '/IMG_6438.JPG',
-        '/IMG_6388.JPG',
-        '/IMG_6382.JPG',
-        '/IMG_6371.JPG',
-        '/IMG_6362.JPG',
+        '/IMG_9281-150x150.jpeg',
+        '/IMG_9284-150x150.jpeg',
+        '/IMG_9294-150x150.jpeg',
+        '/IMG_9302-150x150.jpeg',
+        '/IMG_9532-150x150.jpeg',
+        '/IMG_9585-150x150.jpeg',
+        '/IMG_6342-150x150.jpg',
+        '/IMG_6351-150x150.jpg',
+        '/IMG_6359-2-150x150.jpg',
+        '/IMG_6613-150x150.jpeg',
+        '/IMG_6614-150x150.jpeg',
+        '/photo_2026-04-18-10_00_40-150x150.jpeg',
+        '/photo_2026-04-18-10_00_44-150x150.jpeg',
+        '/photo_2026-04-18-10_00_46-150x150.jpeg',
+        '/IMG_8779-1-768x1024.jpeg',
+        '/photo-output-2-1024x1024__1_.jpeg',
       ]
     },
   ]
@@ -267,8 +250,8 @@ export default function Home() {
   const PROGRAM_DATA: Record<string, {title:string,sub:string,photo:string,price:string,age:string,dates:string[],sections:{title:string,items:string[]}[],leader:{initials:string,name:string,bio:string}}> = {
     kino: {
       title: c('Серфинг + Кино','Surf + Cinema','Surf + Kino'),
-      sub: c('Дети пробуют SUP и серфинг, а во второй части дня снимают короткий фильм: репортажи, интервью, роли, кадры с воды и финальная премьера.','Kids try SUP and surfing, then make a short film: reports, interviews, roles, water shots and a final screening.','Lapsed proovivad SUP-i ja surfamist ning teevad lühifilmi: reportaažid, intervjuud, rollid, veekaadrid ja lõpu-esitlus.'),
-      photo: '/DSC03039.jpg',
+      sub: c('Лагерь, где дети не просто отдыхают - а становятся героями своего фильма. 5 дней приключений.','A camp where kids don\'t just rest - they become heroes of their own film. 5 days of adventure.','Laager, kus lapsed ei puhka lihtsalt - nad saavad oma filmi kangelasteks. 5 paeva seiklusi.'),
+      photo: '/IMG_7917-1024x768.jpeg',
       price: '265€', age: c('7-12 лет','7-12 years','7-12 aastat'),
       dates: ['15.06 - 19.06.2026', '29.06 - 03.07.2026'],
       sections: [
@@ -306,7 +289,7 @@ export default function Home() {
     pohod: {
       title: c('Серфинг + Поход','Surf + Hike','Surf + Matk'),
       sub: c('Приключенческая программа, где ребёнок открывает мир серфинга и учится жить в природе.','An adventure programme where the child discovers surfing and learns to live in nature.','Seiklusprogramm, kus laps avastab surfimaailma ja opib looduses elama.'),
-      photo: '/IMG_6814.JPG',
+      photo: '/photo_2026-04-18-10_00_46-150x150.jpeg',
       price: '265€', age: c('7-14 лет','7-14 years','7-14 aastat'),
       dates: ['13.07 - 17.07.2026', '17.08 - 21.08.2026'],
       sections: [
@@ -321,7 +304,7 @@ export default function Home() {
           c('Навыки поведения в лесу','Forest survival skills','Metsas kaitumise oskused'),
           c('Сборка палатки и организация лагеря','Setting up a tent and organising camp','Telgi punjstitamine ja laagri korraldamine'),
           c('Разведение костра и базовые навыки выживания','Making a fire and basic survival skills','Loke tegemine ja ellujaamise pohioskused'),
-          c('Финал - мини-поход, где дети применяют карту, компас и командные решения','Finale - a mini-hike where kids use map, compass and team decisions','Finaal - minimatk, kus lapsed kasutavad kaarti, kompassi ja tiimiotsuseid'),
+          c('Финал - настоящий мини-поход с применением всех навыков','Finale - a real mini-hike applying all skills','Finaal - paris minimatk koigi oskustega'),
         ]},
         { title: c('Что получает ребёнок','What the child gains','Mida laps saab'), items: [
           c('Уверенность на воде и в природе','Confidence in water and in nature','Enesekindlus vees ja looduses'),
@@ -339,7 +322,7 @@ export default function Home() {
     surf: {
       title: c('Серфинг лагерь','Surf Camp','Surfilaager'),
       sub: c('Классическая программа для тех, кто впервые открывает мир серфинга. Разные виды водного спорта, безопасность и командные игры.','The classic programme for those discovering surfing for the first time. Different water sports, safety and team games.','Klassikaline programm neile, kes avastab surfimaailma esimest korda. Erinevad veespordialad, ohutus ja meeskonnamangud.'),
-      photo: '/DSC03180.jpg',
+      photo: '/DSC02878-150x150.jpeg',
       price: '265€', age: c('7-12 лет','7-12 years','7-12 aastat'),
       dates: ['06.07', '20.07', '27.07', '03.08', '10.08'],
       sections: [
@@ -414,22 +397,6 @@ export default function Home() {
     *{box-sizing:border-box;margin:0;padding:0}
     html{scroll-behavior:smooth}
     body{font-family:'Manrope',system-ui,sans-serif;color:var(--text);background:var(--white);-webkit-font-smoothing:antialiased;overflow-x:hidden;line-height:1.6}
-    main{display:flex;flex-direction:column}
-    .hero{order:1}
-    .why{order:2}
-    .trust{order:3}
-    .wave-divider{order:3}
-    .team{order:4}
-    .safety{order:5}
-    .formats{order:6}
-    .sched{order:7}
-    .dates{order:8}
-    .pricing{order:9}
-    .gallery{order:10}
-    .reviews{order:11}
-    .faq{order:12}
-    .loc{order:13}
-    .cta{order:14}
     img{display:block;max-width:100%} a{text-decoration:none} button{font-family:inherit;cursor:pointer}
     ::-webkit-scrollbar{width:4px} ::-webkit-scrollbar-track{background:var(--sand-lt)} ::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
 
@@ -540,23 +507,14 @@ export default function Home() {
     .hero-bar-l{font-size:9px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:3px}
     .hero-bar-v{font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:700;color:rgba(255,255,255,.82);line-height:1.2}
 
-    .trust{background:linear-gradient(135deg,var(--sand-lt) 0%,#ffffff 52%,rgba(10,172,172,.09) 100%);border-bottom:1px solid var(--bwarm);padding:88px 0}
-    .trust-head{display:grid;grid-template-columns:.9fr 1.1fr;gap:54px;align-items:end;margin-bottom:34px}
-    .trust-head .sec-sub{max-width:620px;color:var(--mid)}
-    .trust-layout{display:grid;grid-template-columns:1.2fr .8fr;gap:28px;align-items:stretch}
-    .trust-g{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-    .trust-it{min-height:190px;padding:22px;border:1.5px solid var(--bwarm);border-radius:16px;background:white;box-shadow:0 16px 45px rgba(11,61,107,.07);transition:transform 240ms var(--ease),box-shadow 240ms var(--ease),border-color 200ms;cursor:default}
-    .trust-it:hover{transform:translateY(-5px);box-shadow:0 26px 64px rgba(11,61,107,.14);border-color:var(--teal)}
-    .trust-n{font-family:'Plus Jakarta Sans',sans-serif;font-size:46px;font-weight:800;color:var(--ocean);line-height:1;letter-spacing:-.04em;margin-bottom:6px;transition:transform 300ms var(--ease),color 200ms}
-    .trust-it:hover .trust-n{transform:scale(1.05);color:var(--teal)}
-    .trust-l{font-size:11px;font-weight:800;color:var(--ocean);letter-spacing:.09em;text-transform:uppercase;margin-bottom:12px}
-    .trust-it p{font-size:13px;color:var(--mid);line-height:1.65;margin:0}
-    .trust-photos{display:grid;grid-template-rows:1.2fr .9fr .9fr;gap:10px}
-    .trust-photos button{position:relative;overflow:hidden;border:0;border-radius:16px;background:var(--ocean);min-height:126px;text-align:left}
-    .trust-photos img{width:100%;height:100%;object-fit:cover;transition:transform 360ms var(--ease),filter 220ms;display:block}
-    .trust-photos button:hover img{transform:scale(1.05);filter:brightness(1.08)}
-    .trust-photos button::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.58),transparent 62%)}
-    .trust-photos span{position:absolute;z-index:1;left:16px;right:16px;bottom:14px;color:white;font-size:13px;font-weight:800;letter-spacing:.02em}
+    .trust{background:var(--sand-lt);border-bottom:1px solid var(--bwarm)}
+    .trust-g{display:grid;grid-template-columns:repeat(4,1fr)}
+    .trust-it{padding:44px 28px;text-align:center;border-right:1px solid var(--bwarm);transition:background 240ms var(--ease),transform 240ms var(--ease);cursor:default}
+    .trust-it:hover{background:var(--sand2);transform:translateY(-3px)}
+    .trust-it:last-child{border-right:none}
+    .trust-n{font-family:'Plus Jakarta Sans',sans-serif;font-size:52px;font-weight:800;color:var(--ocean);line-height:1;letter-spacing:-.04em;margin-bottom:6px;transition:transform 300ms var(--ease),color 200ms}
+    .trust-it:hover .trust-n{transform:scale(1.08);color:var(--teal)}
+    .trust-l{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.07em;text-transform:uppercase}
 
     /* FORMATS */
     .formats{background:var(--white);padding:96px 0}
@@ -701,19 +659,15 @@ export default function Home() {
 
     /* LIGHTBOX */
     @keyframes lbIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
-    .lb-overlay{position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.95);display:flex;align-items:center;justify-content:center;padding:46px 18px 126px;animation:lbIn 220ms ease}
-    .lb-overlay>img{width:auto;height:auto;max-width:88vw;max-height:calc(100vh - 190px);min-width:min(500px,80vw);object-fit:contain;border-radius:8px;cursor:default;user-select:none;display:block}
+    .lb-overlay{position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.95);display:flex;align-items:center;justify-content:center;animation:lbIn 220ms ease}
+    .lb-overlay img{width:auto;height:auto;max-width:88vw;max-height:86vh;min-width:min(500px,80vw);object-fit:contain;border-radius:8px;cursor:default;user-select:none;display:block}
     .lb-close{position:absolute;top:18px;right:22px;background:rgba(255,255,255,.12);border:none;color:white;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;transition:background 160ms;z-index:1}
     .lb-close:hover{background:rgba(255,255,255,.28)}
     .lb-prev,.lb-next{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.12);border:none;color:white;width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;transition:background 160ms;z-index:1;user-select:none}
     .lb-prev{left:18px}
     .lb-next{right:18px}
     .lb-prev:hover,.lb-next:hover{background:rgba(255,255,255,.28)}
-    .lb-counter{position:absolute;bottom:92px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.5);font-size:12px;font-weight:600;letter-spacing:.08em}
-    .lb-strip{position:absolute;left:18px;right:18px;bottom:16px;display:flex;gap:8px;overflow-x:auto;padding:4px 0 10px}
-    .lb-strip button{flex:0 0 74px;height:58px;border:2px solid transparent;border-radius:8px;background:transparent;padding:0;overflow:hidden;opacity:.52;transition:opacity 160ms,border-color 160ms,transform 160ms}
-    .lb-strip button.active{opacity:1;border-color:var(--sun);transform:translateY(-2px)}
-    .lb-strip img{width:100%;height:100%;object-fit:cover;display:block}
+    .lb-counter{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.5);font-size:12px;font-weight:600;letter-spacing:.08em}
 
     /* PROGRAM MODAL */
     .pm-overlay{position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.72);display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;animation:lbIn 220ms ease}
@@ -826,9 +780,9 @@ export default function Home() {
       .wrap{padding:0 28px} .nav-i{padding:0 28px}
       .hero-grid{grid-template-columns:1fr;gap:32px}
       .hero-bar-g{grid-template-columns:repeat(2,1fr)}
-      .trust-head,.trust-layout{grid-template-columns:1fr;gap:28px}
       .trust-g{grid-template-columns:repeat(2,1fr)}
-      .trust-photos{grid-template-columns:repeat(3,1fr);grid-template-rows:none}
+      .trust-it:nth-child(2){border-right:none}
+      .trust-it:nth-child(n+3){border-top:1px solid var(--bwarm)}
       .fg{grid-template-columns:1fr 1fr}
       .safety-g{grid-template-columns:1fr;gap:32px}
       .why-h{grid-template-columns:1fr;gap:14px}
@@ -852,8 +806,6 @@ export default function Home() {
       .mob-btn{display:block}
       .hero-h1{font-size:clamp(32px,9vw,50px)}
       .hero-grid{grid-template-columns:1fr!important;padding:40px 0 96px}
-      .trust-g{grid-template-columns:1fr}
-      .trust-photos{grid-template-columns:1fr;grid-template-rows:none}
       .fg{grid-template-columns:1fr}
       .why-g{grid-template-columns:1fr}
       .why-it{border-right:none!important}
@@ -922,18 +874,6 @@ export default function Home() {
             <img src={galleryLightbox.src} alt="" onClick={e => e.stopPropagation()} />
             <button className="lb-next" onClick={e => { e.stopPropagation(); const ni = (galleryLightbox.idx + 1) % pool.length; setGalleryLightbox({src:pool[ni],idx:ni,pool:galleryLightbox.pool}) }}>›</button>
             <div className="lb-counter">{galleryLightbox.idx + 1} / {pool.length}</div>
-            <div className="lb-strip" onClick={e => e.stopPropagation()}>
-              {pool.map((src, i) => (
-                <button
-                  key={`${src}-${i}`}
-                  className={i === galleryLightbox.idx ? 'active' : ''}
-                  onClick={() => setGalleryLightbox({ src, idx: i, pool: galleryLightbox.pool })}
-                  aria-label={`Photo ${i + 1}`}
-                >
-                  <img src={src} alt="" />
-                </button>
-              ))}
-            </div>
           </div>
         )
       })()}
@@ -1068,10 +1008,10 @@ export default function Home() {
                   {c('Детский','Kids','Laste')}<br/><em>{c('серфинг-лагерь','Surf Camp','surfilaager')}</em><br/>{c('на море','by the Sea','mere ääres')}
                 </h1>
                 <p className="hero-desc rv" style={{transitionDelay:'110ms'}}>
-                  {c('Дети пробуют SUP, виндсерфинг и игры на воде, учатся правилам безопасности, двигаются весь день и проводят лето не в телефоне. Инструкторы рядом на воде и на берегу.','Kids try SUP, windsurfing and water games, learn safety rules, move all day and spend summer away from screens. Instructors stay nearby on water and shore.','Lapsed proovivad SUP-i, purjelauda ja veemänge, õpivad ohutusreegleid, liiguvad terve päeva ja veedavad suve mitte telefonis. Juhendajad on vees ja kaldal kõrval.')}
+                  {c('5 дней серфинга, друзей и настоящих приключений. Ребёнок будет на воде, не в телефоне — с профессиональными инструкторами и в безопасности.','5 days of surfing, new friends and real adventure. Your child will be on the water, not on a phone — with certified instructors, safe and happy.','5 päeva surfamist, uusi sõpru ja päris seiklusi. Laps on vees, mitte telefonis — koos sertifitseeritud instruktoritega.')}
                 </p>
                 <div className="hero-pills rv" style={{transitionDelay:'150ms'}}>
-                  <span className="pill">🧒 {c('7–12 лет · до 14 по согласованию','7–12 · up to 14 by agreement','7–12 · kuni 14 kokkuleppel')}</span>
+                  <span className="pill">🧒 {c('Возраст 7–14 лет','Age 7–14','Vanus 7–14')}</span>
                   <span className="pill">💰 {c(`от ${siteSettings.price_3day||'190€'}`,`from ${siteSettings.price_3day||'190€'}`,`alates ${siteSettings.price_3day||'190€'}`)}</span>
                   <span className="pill">🍽️ {c('Питание включено','Meals included','Toitlustus sees')}</span>
                   <span className="pill">🛟 {c('Жилеты и гидрокостюмы','Life jackets & wetsuits','Päästevested sees')}</span>
@@ -1116,7 +1056,7 @@ export default function Home() {
                 </div>
                 <div className="hcard-stats">
                   {[
-                    {n:'15+', l:c('лет опыта','yrs experience','aastat kogemust')},
+                    {n:'7+', l:c('лет опыта','yrs experience','aastat kogemust')},
                     {n:siteSettings.price_5day||'265€', l:c('5 дней','5 days','5 päeva')},
                     {n:'9', l:c('смен летом','sessions/summer','vahetust suvel')},
                   ].map(s => (
@@ -1136,40 +1076,18 @@ export default function Home() {
       {/* TRUST */}
       <section className="trust">
         <div className="wrap">
-          <div className="trust-head rv">
-            <div>
-              <div className="tag tag-teal">{c('Доверие','Trust','Usaldus')}</div>
-              <h2 className="sec-h">{c('Родителям спокойно:','Parents can relax:','Vanematel on rahulik:')}<br/><em>{c('дети под присмотром','kids are supervised','lapsed on järelevalve all')}</em></h2>
-            </div>
-            <p className="sec-sub">
-              {c('На воде дети только в жилетах и гидрокостюмах. Инструкторы рядом, группы маленькие, день понятный. Родитель видит не красивую легенду, а конкретную систему безопасности.', 'Kids are on the water only in life jackets and wetsuits. Instructors stay nearby, groups are small and the day is clear. Parents see a real safety system, not vague promises.', 'Vees on lapsed ainult päästevesti ja kalipsoga. Juhendajad on kõrval, grupid on väikesed ja päev on selge. Vanem näeb päris ohutussüsteemi.')}
-            </p>
-          </div>
-          <div className="trust-layout">
-            <div className="trust-g sg">
-              {[
-                {n:'15+', l:c('лет опыта на воде','years of water experience','aastat veekogemust'), d:c('Команда работает с морем, ветром и детьми, а не просто арендует пляж.','The team works with sea, wind and kids, not just a beach rental.','Tiim töötab mere, tuule ja lastega, mitte lihtsalt rannarendiga.')},
-                {n:'12–16', l:c('детей в группе','kids per group','last grupis'), d:c('Малые группы помогают видеть каждого ребёнка и вовремя помогать.','Small groups help instructors see every child and help in time.','Väikesed grupid aitavad näha iga last ja õigel ajal aidata.')},
-                {n:'100%', l:c('жилеты на воде','life jackets on water','päästevestid vees'), d:c('Без жилета ребёнок не выходит на воду. Гидрокостюмы тоже включены.','No child enters the water without a life jacket. Wetsuits are included too.','Ükski laps ei lähe vette ilma päästevestita. Kalipsod on samuti sees.')},
-                {n:'09:00', l:c('старт дня','day starts','päev algab'), d:c('Дети не болтаются сами по себе: сбор, разминка, вода, обед, активности, спокойный финал.','Kids are not left on their own: arrival, warm-up, water, lunch, activities, calm finish.','Lapsed ei ole omapead: kogunemine, soojendus, vesi, lõuna, tegevused, rahulik lõpp.')},
-                {n:'5', l:c('дней без телефона','days away from phones','päeva telefonist eemal'), d:c('Фокус на воде, друзьях, движении и новых навыках.','Focus on water, friends, movement and new skills.','Fookus on veel, sõpradel, liikumisel ja uutel oskustel.')},
-                {n:'TTS', l:c('реальная школа','real school','päris kool'), d:c('Используем реальные фото, базу Time to Surf и инструкторов, которые работают с детьми.','We use real photos, the Time to Surf base and instructors who work with kids.','Kasutame päris fotosid, Time to Surfi baasi ja lastega töötavaid juhendajaid.')},
-              ].map((t,i) => (
-                <div key={t.l} className="trust-it" style={{animation:`countUp 600ms var(--ease) ${i*80}ms both`}}>
-                  <div className="trust-n">{t.n}</div>
-                  <div className="trust-l">{t.l}</div>
-                  <p>{t.d}</p>
-                </div>
-              ))}
-            </div>
-            <div className="trust-photos sg">
-              {['/DSC03136.jpg','/DSC02952.jpg','/DSC03057.jpg'].map((src, i) => (
-                <button key={src} onClick={() => setGalleryLightbox({src, idx: Math.max(0, GALLERY_IMGS.indexOf(src)), pool:'gallery'})}>
-                  <img src={src} alt={c('Реальные фото команды и детей Time to Surf','Real photos of Time to Surf team and kids','Time to Surfi tiimi ja laste päris fotod')} loading="lazy" />
-                  <span>{[c('Инструкторы рядом','Instructors nearby','Juhendajad kõrval'), c('Малые группы','Small groups','Väikesed grupid'), c('Вода под контролем','Water under control','Vesi kontrolli all')][i]}</span>
-                </button>
-              ))}
-            </div>
+          <div className="trust-g sg">
+            {[
+              {n:'15+', l:c('лет на воде','years on the water','aastat vee peal'), color:'var(--ocean)'},
+              {n:'1000+', l:c('детей прошли лагерь','kids attended camp','last läbinud laagri'), color:'var(--teal)'},
+              {n:'12–16', l:c('детей в группе','kids per group','last grupis'), color:'var(--ocean)'},
+              {n:'9', l:c('смен за лето','sessions per summer','vahetust suvel'), color:'var(--teal)'},
+            ].map((t,i) => (
+              <div key={t.l} className="trust-it" style={{animation:`countUp 600ms var(--ease) ${i*120}ms both`}}>
+                <div className="trust-n" style={{color:t.color}}>{t.n}</div>
+                <div className="trust-l">{t.l}</div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -1205,10 +1123,10 @@ export default function Home() {
             {[
               {
                 key:'pohod',
-                bg:null, photo:'/IMG_6814.JPG',
+                bg:null, photo:'/photo_2026-04-18-10_00_46-150x150.jpeg',
                 lbl:c('Серфинг + Приключение','Surfing + Adventure','Surfamine + Seiklus'),
                 title:c('Серфинг + Поход','Surf + Hike','Surf + Matk'),
-                desc:c('Вода плюс природа: SUP, виндсерфинг по погоде, карта, компас, палатка, костёр и финальный мини-поход.','Water plus nature: SUP, windsurfing when weather allows, map, compass, tent, fire and a final mini-hike.','Vesi ja loodus: SUP, sobiva ilmaga purjelaud, kaart, kompass, telk, lõke ja lõpu-minimatk.'),
+                desc:c('Серфинг на воде и настоящие приключения в природе: ориентирование, разведение костра, палатка. Финал - мини-поход с применением всех навыков.','Surfing on water and real nature adventures: navigation, fire, tent. The finale is a mini-hike using all skills.','Surfamine vees ja päris loodusseiklused. Finaal - minimatk kõigi oskustega.'),
                 items:[
                   c('Виндсерфинг, SUP, кайт каждый день','Windsurfing, SUP, kite every day','Purjelaud, SUP, kait iga päev'),
                   c('Ориентирование по карте и компасу','Map and compass navigation','Kaardi ja kompassi navigeerimine'),
@@ -1219,7 +1137,7 @@ export default function Home() {
               },
               {
                 key:'surf',
-                bg:null, photo:'/DSC03180.jpg',
+                bg:null, photo:'/DSC02878-150x150.jpeg',
                 lbl:c('Классика · Лучший старт','Classic · Best start','Klassika · Parim algus'),
                 title:c('Серфинг лагерь','Surf Camp','Surfilaager'),
                 desc:c('Классическая программа для тех, кто впервые открывает мир серфинга. Разные виды водного спорта, безопасность и командные игры - идеально для старта.','Classic programme for first-timers. Different water sports, safety training and team games - perfect for a first experience.','Klassikaline programm esmakordseks tutvumiseks surfimaailmaga.'),
@@ -1296,10 +1214,10 @@ export default function Home() {
             </div>
             <div className="safety-photos sg">
               {[
-                {src:'/DSC03057.jpg', alt:'Safety'},
-                {src:'/DSC02878.jpg', alt:'Kids in water'},
-                {src:'/DSC02952.jpg', alt:'Group'},
-                {src:'/DSC03136.jpg', alt:'Instructor'},
+                {src:'/DSC02691-150x150.jpeg', alt:'Safety'},
+                {src:'/IMG_7773-150x150.jpeg', alt:'Kids in water'},
+                {src:'/IMG_7812-150x150.jpeg', alt:'Group'},
+                {src:'/DSC02699-150x150.jpeg', alt:'Instructor'},
               ].map((p,i) => {
                 const globalIdx = GALLERY_SECTIONS.flatMap(s=>s.imgs).indexOf(p.src)
                 return (
