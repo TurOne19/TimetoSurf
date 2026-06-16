@@ -69,9 +69,9 @@ const defaultMetadata: Metadata = {
   category: 'sports camp',
   other: {
     'geo.region': 'EE-37',
-    'geo.placename': 'Tallinn, Stroomi rand',
-    'geo.position': '59.4316;24.6836',
-    ICBM: '59.4316, 24.6836',
+    'geo.placename': 'Time to Surf Stroomi, Tallinn',
+    'geo.position': '59.4363311;24.6806022',
+    ICBM: '59.4363311, 24.6806022',
     'og:locality': 'Tallinn',
     'og:country-name': 'Estonia',
   },
@@ -132,14 +132,14 @@ const schemaOrg = {
         'Детский летний серфинг лагерь Time to Surf на пляже Stroomi rand в Таллине. Kids summer camp Tallinn, surfilaager lastele, suvelaager Tallinn.',
       address: {
         '@type': 'PostalAddress',
-        streetAddress: 'Stroomi rand',
+        streetAddress: 'Time to Surf Stroomi, Stroomi rand',
         addressLocality: 'Tallinn',
         addressCountry: 'EE',
       },
       geo: {
         '@type': 'GeoCoordinates',
-        latitude: 59.4316,
-        longitude: 24.6836,
+        latitude: 59.4363311,
+        longitude: 24.6806022,
       },
       areaServed: ['Tallinn', 'Estonia', 'Stroomi rand', 'Põhja-Tallinn'],
       sameAs: [
@@ -161,7 +161,7 @@ const schemaOrg = {
       image: [`${siteUrl}/optimized/dsc02825.webp`],
       location: {
         '@type': 'Place',
-        name: 'Stroomi rand',
+        name: 'Time to Surf Stroomi',
         address: {
           '@type': 'PostalAddress',
           addressLocality: 'Tallinn',
@@ -169,8 +169,8 @@ const schemaOrg = {
         },
         geo: {
           '@type': 'GeoCoordinates',
-          latitude: 59.4316,
-          longitude: 24.6836,
+          latitude: 59.4363311,
+          longitude: 24.6806022,
         },
       },
       organizer: { '@id': `${siteUrl}/#organization` },
