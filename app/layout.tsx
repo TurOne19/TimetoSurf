@@ -6,7 +6,7 @@ const regUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSf-HIXlcSpWy0v0MfJ7HpFN
 
 export const viewport: Viewport = { width: 'device-width', initialScale: 1 }
 
-export const metadata: Metadata = {
+const defaultMetadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
     default: 'Детский лагерь в Таллине у моря | Time to Surf - Stroomi rand 2026',
@@ -75,6 +75,44 @@ export const metadata: Metadata = {
     'og:locality': 'Tallinn',
     'og:country-name': 'Estonia',
   },
+}
+
+async function getSeoSettings() {
+  try {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    if (!url || !key) return {}
+    const res = await fetch(`${url}/rest/v1/site_settings?select=key,value&key=in.(seo_title,seo_description,og_title,og_description,registration_url,phone)`, {
+      headers: { apikey: key, Authorization: `Bearer ${key}` },
+      next: { revalidate: 60 },
+    })
+    if (!res.ok) return {}
+    const rows = await res.json()
+    const out: Record<string, string> = {}
+    if (Array.isArray(rows)) rows.forEach((r) => { if (r?.key) out[r.key] = r.value || '' })
+    return out
+  } catch {
+    return {}
+  }
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const seo = await getSeoSettings()
+  return {
+    ...defaultMetadata,
+    title: seo.seo_title || defaultMetadata.title,
+    description: seo.seo_description || defaultMetadata.description,
+    openGraph: {
+      ...defaultMetadata.openGraph,
+      title: seo.og_title || seo.seo_title || defaultMetadata.openGraph?.title,
+      description: seo.og_description || seo.seo_description || defaultMetadata.openGraph?.description,
+    },
+    twitter: {
+      ...defaultMetadata.twitter,
+      title: seo.og_title || seo.seo_title || defaultMetadata.twitter?.title,
+      description: seo.og_description || seo.seo_description || defaultMetadata.twitter?.description,
+    },
+  }
 }
 
 const schemaOrg = {

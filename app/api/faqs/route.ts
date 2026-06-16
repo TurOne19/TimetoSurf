@@ -4,25 +4,32 @@ export const dynamic = 'force-dynamic'
 
 export async function GET() {
   const { data, error } = await supabase
-    .from('camp_sessions')
+    .from('faqs')
     .select('*')
     .order('sort_order', { ascending: true })
 
   if (error) return Response.json({ error: error.message }, { status: 500 })
-  return Response.json(data)
+  return Response.json(data || [])
 }
 
 export async function POST(req: Request) {
   const body = await req.json()
-  const { dates, type_ru, type_en, type_et, color, leaders, hot, sold_out, detail, sort_order } = body
+  const { question_ru, answer_ru, question_en, answer_en, question_et, answer_et, sort_order, active } = body
 
-  if (!dates || !type_ru) {
-    return Response.json({ error: 'Missing required fields' }, { status: 400 })
-  }
+  if (!question_ru || !answer_ru) return Response.json({ error: 'Missing required fields' }, { status: 400 })
 
   const { data, error } = await supabase
-    .from('camp_sessions')
-    .insert([{ dates, type_ru, type_en: type_en || type_ru, type_et: type_et || type_ru, color: color || '#1A6BAA', leaders: leaders || '', hot: hot || false, sold_out: sold_out || false, detail: detail || 'surf', sort_order: sort_order || 0 }])
+    .from('faqs')
+    .insert([{
+      question_ru,
+      answer_ru,
+      question_en: question_en || question_ru,
+      answer_en: answer_en || answer_ru,
+      question_et: question_et || question_ru,
+      answer_et: answer_et || answer_ru,
+      sort_order: sort_order || 0,
+      active: active !== false,
+    }])
     .select()
     .single()
 
@@ -37,8 +44,8 @@ export async function PATCH(req: Request) {
   if (!id) return Response.json({ error: 'Missing id' }, { status: 400 })
 
   const { error } = await supabase
-    .from('camp_sessions')
-    .update(updates)
+    .from('faqs')
+    .update({ ...updates, updated_at: new Date().toISOString() })
     .eq('id', id)
 
   if (error) return Response.json({ error: error.message }, { status: 500 })
@@ -52,7 +59,7 @@ export async function DELETE(req: Request) {
   if (!id) return Response.json({ error: 'Missing id' }, { status: 400 })
 
   const { error } = await supabase
-    .from('camp_sessions')
+    .from('faqs')
     .delete()
     .eq('id', id)
 

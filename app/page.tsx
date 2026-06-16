@@ -17,6 +17,16 @@ function useReveal(deps: unknown[] = []) {
 }
 
 interface Review { id: number; name: string; text: string; program?: string; rating: number }
+interface FaqRow {
+  id: number
+  question_ru: string
+  answer_ru: string
+  question_en?: string
+  answer_en?: string
+  question_et?: string
+  answer_et?: string
+  active?: boolean
+}
 
 function ScrollProgress() {
   const [prog, setProg] = useState(0)
@@ -72,9 +82,14 @@ export default function Home() {
   const [programModal, setProgramModal] = useState<string | null>(null)
   const [dbSessions, setDbSessions] = useState<any[]>([])
   const [siteSettings, setSiteSettings] = useState<Record<string,string>>({})
-  const [dbGallery, setDbGallery] = useState<{id:number,url:string,section:string}[]>([])
+  const [dbGallery, setDbGallery] = useState<{id:number,url:string,section:string,media_type?:string,poster_url?:string,title?:string}[]>([])
+  const [dbFaqs, setDbFaqs] = useState<FaqRow[]>([])
 
   const c = (ru: string, en: string, et: string) => lang === 'ru' ? ru : lang === 'en' ? en : et
+  const regUrl = siteSettings.registration_url || REG
+  const questionUrl = siteSettings.question_url || 'https://t.me/Andrei_Time_to_Surf'
+  const phone = siteSettings.phone || '+37255512872'
+  const telegram = siteSettings.telegram || '@Andrei_Time_to_Surf'
 
   useReveal([reviews])
 
@@ -104,6 +119,7 @@ export default function Home() {
     fetch('/api/sessions').then(r => r.json()).then(d => { if (Array.isArray(d) && d.length > 0) setDbSessions(d) }).catch(() => {})
     fetch('/api/settings').then(r => r.json()).then(d => { if (d && typeof d === 'object') setSiteSettings(d) }).catch(() => {})
     fetch('/api/gallery').then(r => r.json()).then(d => { if (Array.isArray(d) && d.length > 0) setDbGallery(d) }).catch(() => {})
+    fetch('/api/faqs').then(r => r.json()).then(d => { if (Array.isArray(d) && d.length > 0) setDbFaqs(d) }).catch(() => {})
   }, [])
 
   const HERO_PHOTOS = [
@@ -139,9 +155,9 @@ export default function Home() {
 
   const GALLERY_SECTIONS = dbGallery.length > 0
     ? [
-        { label: c('На воде', 'On the Water', 'Vees'), imgs: dbGallery.filter(p => p.section === 'water').map(p => p.url) },
-        { label: c('Команда и атмосфера', 'Team & Vibes', 'Meeskond ja atmosfäär'), imgs: dbGallery.filter(p => p.section === 'team').map(p => p.url) },
-        { label: c('Моменты', 'Moments', 'Hetked'), imgs: dbGallery.filter(p => p.section === 'moments').map(p => p.url) },
+        { label: c('На воде', 'On the Water', 'Vees'), imgs: dbGallery.filter(p => p.section === 'water' && p.media_type !== 'video').map(p => p.url) },
+        { label: c('Команда и атмосфера', 'Team & Vibes', 'Meeskond ja atmosfäär'), imgs: dbGallery.filter(p => p.section === 'team' && p.media_type !== 'video').map(p => p.url) },
+        { label: c('Моменты', 'Moments', 'Hetked'), imgs: dbGallery.filter(p => p.section === 'moments' && p.media_type !== 'video').map(p => p.url) },
       ].filter(s => s.imgs.length > 0)
     : STATIC_GALLERY_SECTIONS
 
@@ -156,6 +172,16 @@ export default function Home() {
     '/IMG_6780.mp4',
     '/IMG_6857.mp4',
   ]
+  const VIDEO_POSTERS = [
+    '/optimized/img_6362.webp',
+    '/optimized/img_6438.webp',
+    '/optimized/img_6751.webp',
+    '/optimized/img_6865.webp',
+    '/optimized/dsc02878.webp',
+    '/optimized/dsc03180.webp',
+  ]
+  const DB_VIDEOS = dbGallery.filter(p => p.media_type === 'video').map(p => ({ src: p.url, poster: p.poster_url || '/optimized/dsc02825.webp' }))
+  const GALLERY_VIDEO_ITEMS = DB_VIDEOS.length > 0 ? DB_VIDEOS : GALLERY_VIDEOS.map((src, i) => ({ src, poster: VIDEO_POSTERS[i % VIDEO_POSTERS.length] }))
   const COMPACT_GALLERY = Array.from(new Set([...HERO_PHOTOS, ...GALLERY_IMGS])).slice(0, 14)
   const lightboxPools: Record<LightboxPool, string[]> = {
     hero: HERO_PHOTOS,
@@ -200,19 +226,19 @@ export default function Home() {
   }
 
   const STATIC_DATES = [
-    { dates: '15.06 - 19.06.2026', type: c('СЕРФИНГ + КИНО','SURF + CINEMA','SURF + KINO'), color: '#7C3AED', leaders: c('Наташа К. + Даша','Natasha K. + Dasha','Natasha K. + Dasha'), hot: true, detail: 'kino' },
-    { dates: '29.06 - 03.07.2026', type: c('СЕРФИНГ + КИНО','SURF + CINEMA','SURF + KINO'), color: '#7C3AED', leaders: c('Наташа К. + Даша','Natasha K. + Dasha','Natasha K. + Dasha'), hot: false, detail: 'kino' },
-    { dates: '06.07 - 10.07.2026', type: c('СЕРФИНГ ЛАГЕРЬ','SURF CAMP','SURFI LAAGER'), color: '#1A6BAA', leaders: c('Надежда + Григорий','Nadezhda + Grigory','Nadezhda + Grigory'), hot: false, detail: 'surf' },
-    { dates: '13.07 - 17.07.2026', type: c('СЕРФИНГ + ПОХОД','SURF + HIKE','SURF + MATK'), color: '#16A34A', leaders: c('Виталий + Григорий','Vitaliy + Grigory','Vitaliy + Grigory'), hot: false, detail: 'pohod' },
-    { dates: '20.07 - 24.07.2026', type: c('СЕРФИНГ ЛАГЕРЬ','SURF CAMP','SURFI LAAGER'), color: '#1A6BAA', leaders: c('Надежда + Ксения','Nadezhda + Kseniya','Nadezhda + Kseniya'), hot: false, detail: 'surf' },
-    { dates: '27.07 - 30.07.2026', type: c('СЕРФИНГ (4 ДНЯ)','SURF (4 DAYS)','SURF (4 PAEVA)'), color: '#1A6BAA', leaders: 'TBD', hot: false, detail: 'surf' },
-    { dates: '03.08 - 07.08.2026', type: c('СЕРФИНГ ЛАГЕРЬ','SURF CAMP','SURFI LAAGER'), color: '#1A6BAA', leaders: c('Даша + ...','Dasha + ...','Dasha + ...'), hot: false, detail: 'surf' },
-    { dates: '10.08 - 14.08.2026', type: c('СЕРФИНГ ЛАГЕРЬ','SURF CAMP','SURFI LAAGER'), color: '#1A6BAA', leaders: c('Надежда + ...','Nadezhda + ...','Nadezhda + ...'), hot: false, detail: 'surf' },
-    { dates: '17.08 - 21.08.2026', type: c('СЕРФИНГ + ПОХОД','SURF + HIKE','SURF + MATK'), color: '#16A34A', leaders: c('Виталий + ...','Vitaliy + ...','Vitaliy + ...'), hot: false, detail: 'pohod' },
+    { dates: '15.06 - 19.06.2026', type: c('СЕРФИНГ + КИНО','SURF + CINEMA','SURF + KINO'), color: '#7C3AED', leaders: c('Наташа К. + Даша','Natasha K. + Dasha','Natasha K. + Dasha'), hot: true, sold_out: false, detail: 'kino' },
+    { dates: '29.06 - 03.07.2026', type: c('СЕРФИНГ + КИНО','SURF + CINEMA','SURF + KINO'), color: '#7C3AED', leaders: c('Наташа К. + Даша','Natasha K. + Dasha','Natasha K. + Dasha'), hot: false, sold_out: false, detail: 'kino' },
+    { dates: '06.07 - 10.07.2026', type: c('СЕРФИНГ ЛАГЕРЬ','SURF CAMP','SURFI LAAGER'), color: '#1A6BAA', leaders: c('Надежда + Григорий','Nadezhda + Grigory','Nadezhda + Grigory'), hot: false, sold_out: false, detail: 'surf' },
+    { dates: '13.07 - 17.07.2026', type: c('СЕРФИНГ + ПОХОД','SURF + HIKE','SURF + MATK'), color: '#16A34A', leaders: c('Виталий + Григорий','Vitaliy + Grigory','Vitaliy + Grigory'), hot: false, sold_out: false, detail: 'pohod' },
+    { dates: '20.07 - 24.07.2026', type: c('СЕРФИНГ ЛАГЕРЬ','SURF CAMP','SURFI LAAGER'), color: '#1A6BAA', leaders: c('Надежда + Ксения','Nadezhda + Kseniya','Nadezhda + Kseniya'), hot: false, sold_out: false, detail: 'surf' },
+    { dates: '27.07 - 30.07.2026', type: c('СЕРФИНГ (4 ДНЯ)','SURF (4 DAYS)','SURF (4 PAEVA)'), color: '#1A6BAA', leaders: 'TBD', hot: false, sold_out: false, detail: 'surf' },
+    { dates: '03.08 - 07.08.2026', type: c('СЕРФИНГ ЛАГЕРЬ','SURF CAMP','SURFI LAAGER'), color: '#1A6BAA', leaders: c('Даша + ...','Dasha + ...','Dasha + ...'), hot: false, sold_out: false, detail: 'surf' },
+    { dates: '10.08 - 14.08.2026', type: c('СЕРФИНГ ЛАГЕРЬ','SURF CAMP','SURFI LAAGER'), color: '#1A6BAA', leaders: c('Надежда + ...','Nadezhda + ...','Nadezhda + ...'), hot: false, sold_out: false, detail: 'surf' },
+    { dates: '17.08 - 21.08.2026', type: c('СЕРФИНГ + ПОХОД','SURF + HIKE','SURF + MATK'), color: '#16A34A', leaders: c('Виталий + ...','Vitaliy + ...','Vitaliy + ...'), hot: false, sold_out: false, detail: 'pohod' },
   ]
 
   const DATES = dbSessions.length > 0
-    ? dbSessions.map(d => ({ dates: d.dates, type: c(d.type_ru, d.type_en, d.type_et), color: d.color, leaders: d.leaders, hot: d.hot, detail: d.detail }))
+    ? dbSessions.map(d => ({ dates: d.dates, type: c(d.type_ru, d.type_en, d.type_et), color: d.color, leaders: d.leaders, hot: d.hot, sold_out: d.sold_out, detail: d.detail }))
     : STATIC_DATES
 
   const FAQS = [
@@ -225,6 +251,12 @@ export default function Home() {
     { q: c('Можно на 3-4 дня?','Can we attend 3-4 days?','Kas saab 3-4 päevaks?'), a: c('Да! 3 дня - 190€, 4 дня - 235€. Укажите при регистрации.','Yes! 3 days €190, 4 days €235. Specify at registration.','Jah! 3 päeva 190€, 4 päeva 235€.') },
     { q: c('Как обеспечивается безопасность на воде?','How is water safety ensured?','Kuidas veeohutus tagatakse?'), a: c('Все дети в воде - только в жилете и гидрокостюме. Группы 12-16 человек, постоянный контроль, обязательная теория безопасности перед каждым заходом.','All children in the water only with life jacket and wetsuit. Groups 12-16, constant supervision, mandatory safety theory before every session.','Kõik lapsed vees ainult päästevesti ja märjaksüidiga. Grupid 12-16, pidev järelevalve.') },
   ]
+  const DISPLAY_FAQS = dbFaqs.length > 0
+    ? dbFaqs.filter(f => f.active !== false).map(f => ({
+        q: lang === 'ru' ? f.question_ru : lang === 'en' ? (f.question_en || f.question_ru) : (f.question_et || f.question_ru),
+        a: lang === 'ru' ? f.answer_ru : lang === 'en' ? (f.answer_en || f.answer_ru) : (f.answer_et || f.answer_ru),
+      }))
+    : FAQS
 
   const PROGRAM_DATA: Record<string, {title:string,sub:string,photo:string,price:string,age:string,dates:string[],sections:{title:string,items:string[]}[],leader:{initials:string,name:string,bio:string}}> = {
     kino: {
@@ -917,6 +949,8 @@ export default function Home() {
     .dc:hover{transform:translateY(-8px) rotate(-.4deg);box-shadow:0 34px 85px rgba(11,61,107,.18)}
     .dc-dates{font-size:20px;position:relative;z-index:1}
     .dc-type,.dc-leaders,.dc-acts,.dc-badge{position:relative;z-index:1}
+    .dc-sold{position:relative;z-index:1;display:inline-flex;margin-bottom:10px;border-radius:999px;background:#061828;color:white;padding:4px 10px;font-size:9px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+    .dc:has(.dc-sold){opacity:.78}
     .dc-more{background:#061828;color:white;border-color:#061828}
     .dc-more:hover{background:var(--teal);border-color:var(--teal)}
 
@@ -933,7 +967,9 @@ export default function Home() {
     .gallery-mini{cursor:zoom-in}
     .gallery-video-card video,.gallery-mini img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 420ms var(--ease),filter 220ms}
     .gallery-mini::after,.gallery-video-card::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.45),transparent 58%);pointer-events:none}
+    .gallery-video-card::after{display:none}
     .gallery-mini:hover img,.gallery-video-card:hover video{transform:scale(1.05);filter:saturate(1.08)}
+    .gallery-video-card .gallery-label{top:12px;bottom:auto;pointer-events:none}
     .gallery-strip{grid-column:1/2;display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
     .gallery-thumb{position:relative;border:0;background:rgba(255,255,255,.08);border-radius:16px;overflow:hidden;aspect-ratio:1.28/1;cursor:zoom-in;border:1px solid rgba(255,255,255,.12);padding:0}
     .gallery-thumb img{width:100%;height:100%;object-fit:cover;transition:transform 320ms var(--ease),filter 180ms}
@@ -941,7 +977,8 @@ export default function Home() {
     .gallery-thumb:hover img{transform:scale(1.08);filter:saturate(1.12)}
     .gallery-video-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
     .gallery-video-chip{border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.13);background:rgba(255,255,255,.08);aspect-ratio:1.35/1}
-    .gallery-video-chip video{width:100%;height:100%;object-fit:cover;display:block}
+    .gallery-video-chip video,.gallery-video-card video{width:100%;height:100%;object-fit:cover;display:block;border-radius:20px}
+    .gallery-video-chip video{border-radius:16px}
 
     @media(max-width:960px){
       .sched::before{display:none}
@@ -1180,8 +1217,8 @@ export default function Home() {
                   <span className="pill">{c('безопасность на воде','water safety','veeohutus')}</span>
                   <span className="pill pill-hot">{c('места ограничены','limited spots','kohad piiratud')}</span></div>
                 <div className="hero-acts rv" style={{transitionDelay:'190ms'}}>
-                  <a href={REG} target="_blank" className="btn btn-sun" style={{padding:'16px 40px',fontSize:16,fontWeight:800}}>{c('Записать ребёнка','Register my child','Registreeri laps')} {'->'}</a>
-                  <a href="https://t.me/Andrei_Time_to_Surf" target="_blank" className="btn btn-ghost" style={{padding:'16px 28px',fontSize:15}}>{c('Задать вопрос','Ask a question','Küsi küsimus')}</a>
+                  <a href={regUrl} target="_blank" className="btn btn-sun" style={{padding:'16px 40px',fontSize:16,fontWeight:800}}>{c('Записать ребёнка','Register my child','Registreeri laps')} {'->'}</a>
+                  <a href={questionUrl} target="_blank" className="btn btn-ghost" style={{padding:'16px 28px',fontSize:15}}>{c('Задать вопрос','Ask a question','Küsi küsimus')}</a>
                 </div>
                 <div className="rv" style={{transitionDelay:'230ms',display:'flex',alignItems:'center',gap:10,marginTop:4}}>
                   <div style={{display:'flex',gap:4}}>
@@ -1399,6 +1436,7 @@ export default function Home() {
           <div className="dg sg">
             {DATES.map((d,i) => (
               <div key={i} className={`dc dc-${d.detail}${d.hot?' hot':''}`}>
+                {d.sold_out && <div className="dc-sold">{c('Укомплектована','Full','Täis')}</div>}
                 {d.hot && <div className="dc-badge">{c('Мест мало!','Few spots!','Kohti vähe!')}</div>}
                 <div className="dc-dates">{d.dates}</div>
                 <div className="dc-type" style={{color:d.color}}>{d.type}</div>
@@ -1432,7 +1470,7 @@ export default function Home() {
                 <div className={`pc-days ${p.feat?'pc-days-feat':'pc-days-std'}`}>{p.label}</div>
                 <div className={`pc-price ${p.feat?'pc-price-feat':'pc-price-std'}`}>{p.price}</div>
                 <div className={`pc-note ${p.feat?'pc-note-feat':'pc-note-std'}`}>{p.note}</div>
-                <a className={`pc-btn ${p.feat?'pc-btn-feat':'pc-btn-std'}`} href={REG} target="_blank" rel="noopener noreferrer">{c('Записать ребёнка','Register my child','Registreeri laps')}</a>
+                <a className={`pc-btn ${p.feat?'pc-btn-feat':'pc-btn-std'}`} href={regUrl} target="_blank" rel="noopener noreferrer">{c('Записать ребёнка','Register my child','Registreeri laps')}</a>
               </div>
             ))}
           </div>
@@ -1477,9 +1515,9 @@ export default function Home() {
               </div>
             </div>
             <div className="gallery-side">
-              {GALLERY_VIDEOS.slice(0,2).map(src => (
-                <div key={src} className="gallery-video-card">
-                  <video src={src} muted loop playsInline preload="metadata" controls aria-label="Time to Surf camp video" />
+              {GALLERY_VIDEO_ITEMS.slice(0,2).map(v => (
+                <div key={v.src} className="gallery-video-card">
+                  <video src={v.src} poster={v.poster} muted loop playsInline preload="metadata" controls aria-label="Time to Surf camp video" />
                   <div className="gallery-label">{c('Видео','Video','Video')}</div>
                 </div>
               ))}
@@ -1498,14 +1536,14 @@ export default function Home() {
               })}
             </div>
             <div className="gallery-video-row">
-              {GALLERY_VIDEOS.slice(2,5).map(src => (
-                <div key={src} className="gallery-video-chip">
-                  <video src={src} muted loop playsInline preload="metadata" controls aria-label="Time to Surf camp video" />
+              {GALLERY_VIDEO_ITEMS.slice(2,5).map(v => (
+                <div key={v.src} className="gallery-video-chip">
+                  <video src={v.src} poster={v.poster} muted loop playsInline preload="metadata" controls aria-label="Time to Surf camp video" />
                 </div>
               ))}
             </div>
           </div>
-          <div className="gallery-more rv">{c(GALLERY_IMGS.length + ' фото + ' + GALLERY_VIDEOS.length + ' видео в подборке', GALLERY_IMGS.length + ' photos + ' + GALLERY_VIDEOS.length + ' videos in the set', GALLERY_IMGS.length + ' fotot + ' + GALLERY_VIDEOS.length + ' videot valikus')}</div>
+          <div className="gallery-more rv">{c(GALLERY_IMGS.length + ' фото + ' + GALLERY_VIDEO_ITEMS.length + ' видео в подборке', GALLERY_IMGS.length + ' photos + ' + GALLERY_VIDEO_ITEMS.length + ' videos in the set', GALLERY_IMGS.length + ' fotot + ' + GALLERY_VIDEO_ITEMS.length + ' videot valikus')}</div>
         </div>
       </section>
 
@@ -1581,7 +1619,7 @@ export default function Home() {
             <h2 className="sec-h" style={{marginBottom:12}}>{c('Частые вопросы','Frequently asked','Korduma kippuvad')}</h2>
           </div>
           <div className="faq-list">
-            {FAQS.map((f,i) => (
+            {DISPLAY_FAQS.map((f,i) => (
               <div key={i} className={`faq-it${openFaq===i?' open':''}`}>
                 <button className="faq-q" onClick={() => setOpenFaq(openFaq===i ? null : i)}>
                   <span className="faq-qt">{f.q}</span>
@@ -1639,10 +1677,10 @@ export default function Home() {
             </h2>
             <p className="cta-p">{c(`Мы работаем в малых группах - ${siteSettings.group_size||'12-16'} детей - чтобы каждый ребёнок получил внимание инструктора. Ближайшая смена: ${siteSettings.next_session_date_full||siteSettings.next_session_date||'15 июня 2026'}.`,`Small groups of ${siteSettings.group_size||'12-16'} children - every child gets personal instructor attention. Next session: ${siteSettings.next_session_date_full||siteSettings.next_session_date||'June 15, 2026'}.`,`Väikesed rühmad ${siteSettings.group_size||'12-16'} last - iga laps saab instruktori tähelepanu. Järgmine vahetus: ${siteSettings.next_session_date_full||siteSettings.next_session_date||'15. juuni 2026'}.`)}</p>
             <div className="cta-btns">
-              <a href={REG} target="_blank" className="btn btn-sun" style={{padding:'16px 40px',fontSize:16,fontWeight:800}}>{c('Записать ребёнка','Register my child','Registreeri laps')} {'->'}</a>
-              <a href="https://t.me/Andrei_Time_to_Surf" target="_blank" className="btn btn-ghost" style={{padding:'16px 28px',fontSize:15}}>{c('Задать вопрос','Ask a question','Küsi küsimus')}</a>
+              <a href={regUrl} target="_blank" className="btn btn-sun" style={{padding:'16px 40px',fontSize:16,fontWeight:800}}>{c('Записать ребёнка','Register my child','Registreeri laps')} {'->'}</a>
+              <a href={questionUrl} target="_blank" className="btn btn-ghost" style={{padding:'16px 28px',fontSize:15}}>{c('Задать вопрос','Ask a question','Küsi küsimus')}</a>
             </div>
-            <div className="cta-sub">{c('Или звоните:','Or call us:','Või helista:')} <a href="tel:+37255512872">+372 55512872</a> - Telegram: <a href="https://t.me/Andrei_Time_to_Surf" target="_blank">@Andrei_Time_to_Surf</a></div>
+            <div className="cta-sub">{c('Или звоните:','Or call us:','Või helista:')} <a href={`tel:${phone.replace(/\s/g,'')}`}>{phone}</a> - Telegram: <a href={questionUrl} target="_blank">{telegram}</a></div>
           </div>
         </div>
       </section>

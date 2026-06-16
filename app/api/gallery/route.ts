@@ -15,13 +15,13 @@ export async function GET() {
 
 export async function POST(req: Request) {
   const body = await req.json()
-  const { url, section, sort_order } = body
+  const { url, section, sort_order, media_type, poster_url, title } = body
 
   if (!url) return Response.json({ error: 'Missing url' }, { status: 400 })
 
   const { data, error } = await supabase
     .from('gallery_photos')
-    .insert([{ url, section: section || 'moments', sort_order: sort_order || 0 }])
+    .insert([{ url, section: section || 'moments', sort_order: sort_order || 0, media_type: media_type || 'image', poster_url: poster_url || null, title: title || null }])
     .select()
     .single()
 

@@ -1,519 +1,180 @@
 'use client'
-import { useState, useEffect } from 'react'
 
-interface Review {
-  id: number; name: string; text: string; program?: string
-  rating: number; approved: boolean; created_at: string
-}
-interface Session {
-  id: number; dates: string; type_ru: string; type_en: string; type_et: string
-  color: string; leaders: string; hot: boolean; detail: string; sort_order: number
-}
-interface GalleryPhoto {
-  id: number; url: string; section: string; sort_order: number
-}
-interface Settings {
-  spots_taken?: string; spots_total?: string; next_session_date?: string; next_session_date_full?: string; group_size?: string
-  price_3day?: string; price_4day?: string; price_5day?: string; schedule_year_label?: string
-}
+import { useEffect, useState } from 'react'
+
+type Tab = 'reviews' | 'sessions' | 'media' | 'pricing' | 'content' | 'faq' | 'seo'
+
+interface Review { id:number; name:string; text:string; program?:string; rating:number; approved:boolean; created_at:string }
+interface Session { id:number; dates:string; type_ru:string; type_en:string; type_et:string; color:string; leaders:string; hot:boolean; sold_out?:boolean; detail:string; sort_order:number }
+interface MediaItem { id:number; url:string; section:string; sort_order:number; media_type?:string; poster_url?:string; title?:string }
+interface ContentItem { key:string; label:string; group_name:string; value_ru:string; value_en:string; value_et:string; sort_order:number }
+interface FaqItem { id:number; question_ru:string; answer_ru:string; question_en:string; answer_en:string; question_et:string; answer_et:string; sort_order:number; active:boolean }
 
 const ADMIN_PASSWORD = 'surf2026admin'
 
-const COLOR_OPTIONS = [
-  { label: 'Синий (Серфинг)', value: '#1A6BAA' },
-  { label: 'Фиолетовый (Кино)', value: '#7C3AED' },
-  { label: 'Зелёный (Поход)', value: '#16A34A' },
-  { label: 'Бирюзовый', value: '#0AACAC' },
-  { label: 'Оранжевый', value: '#F5A623' },
-]
-
-const SECTION_OPTIONS = [
-  { value: 'hero', label: 'Главные фото (верх страницы)' },
-  { value: 'water', label: 'На воде' },
-  { value: 'team', label: 'Команда и атмосфера' },
-  { value: 'moments', label: 'Моменты' },
-]
-
 const S = {
-  btn: (bg = '#0B3D6B', color = 'white') => ({
-    padding: '9px 18px', background: bg, color, border: 'none',
-    borderRadius: 8, cursor: 'pointer', fontWeight: 600, fontSize: 13,
-    transition: 'opacity .15s'
-  } as React.CSSProperties),
-  input: {
-    width: '100%', padding: '10px 14px', border: '1.5px solid #D4E6F1',
-    borderRadius: 8, fontSize: 14, fontFamily: 'inherit', outline: 'none',
-    boxSizing: 'border-box'
-  } as React.CSSProperties,
-  card: {
-    background: 'white', borderRadius: 12, padding: 20,
-    boxShadow: '0 2px 8px rgba(0,0,0,.06)', marginBottom: 12
-  } as React.CSSProperties,
-  label: { fontSize: 12, fontWeight: 700, color: '#344E63', marginBottom: 4, display: 'block' } as React.CSSProperties,
-  tab: (active: boolean) => ({
-    padding: '10px 18px', borderRadius: 8, border: 'none', cursor: 'pointer',
-    fontWeight: 600, fontSize: 13,
-    background: active ? 'white' : 'transparent',
-    color: active ? '#0B3D6B' : 'rgba(255,255,255,.7)',
-    transition: 'all .15s'
-  } as React.CSSProperties),
+  btn: (bg = '#0B3D6B', color = 'white') => ({ padding:'10px 16px', background:bg, color, border:'none', borderRadius:10, cursor:'pointer', fontWeight:800, fontSize:13 } as React.CSSProperties),
+  input: { width:'100%', padding:'11px 13px', border:'1.5px solid #D4E6F1', borderRadius:10, fontSize:14, fontFamily:'inherit', outline:'none', boxSizing:'border-box' } as React.CSSProperties,
+  area: { width:'100%', minHeight:82, padding:'11px 13px', border:'1.5px solid #D4E6F1', borderRadius:10, fontSize:14, fontFamily:'inherit', outline:'none', boxSizing:'border-box', resize:'vertical' } as React.CSSProperties,
+  card: { background:'white', borderRadius:16, padding:20, boxShadow:'0 10px 30px rgba(11,61,107,.08)', marginBottom:14 } as React.CSSProperties,
+  label: { fontSize:12, fontWeight:800, color:'#344E63', marginBottom:5, display:'block' } as React.CSSProperties,
 }
 
+const tabs: [Tab,string][] = [
+  ['reviews','Отзывы'],
+  ['sessions','Смены'],
+  ['media','Фото / видео'],
+  ['pricing','Цены'],
+  ['content','Тексты'],
+  ['faq','FAQ'],
+  ['seo','SEO / CTA'],
+]
+
+const mediaSections = [
+  ['hero','Hero / верх сайта'],
+  ['water','Галерея - вода'],
+  ['team','Галерея - команда'],
+  ['moments','Галерея - моменты'],
+  ['video','Галерея - видео'],
+  ['safety','Безопасность'],
+  ['trust','Почему родители выбирают нас'],
+]
+
+const contentSeed: ContentItem[] = [
+  { key:'hero_eyebrow', label:'Hero - верхняя строка', group_name:'Hero', value_ru:'Детский серфинг-лагерь - Stroomi rand / Tallinn - Лето 2026', value_en:'Kids surf camp - Stroomi Beach / Tallinn - Summer 2026', value_et:'Laste surfilaager - Stroomi rand / Tallinn - Suvi 2026', sort_order:1 },
+  { key:'hero_title', label:'Hero - заголовок', group_name:'Hero', value_ru:'Лето, море и серфинг для детей 7-14 лет', value_en:'Summer, sea and surfing for kids ages 7-14', value_et:'Suvi, meri ja surf lastele 7-14 aastat', sort_order:2 },
+  { key:'hero_text', label:'Hero - описание', group_name:'Hero', value_ru:'5 дней на Stroomi rand: вода, спорт, друзья и свобода без телефона. Малые группы 12-16 детей, жилеты и гидрокостюмы, инструкторы рядом. Лето 2026, от 190€, места ограничены.', value_en:'5 days at Stroomi Beach: water, sport, friends and phone-free freedom. Small groups of 12-16 kids, life jackets, wetsuits and instructors close by. Summer 2026, from 190€, limited spots.', value_et:'5 päeva Stroomi rannas: vesi, sport, sõbrad ja telefonivaba vabadus. Väikesed grupid 12-16 last, päästevestid, märjaksüidid ja instruktorid kõrval. Suvi 2026, alates 190€, kohad piiratud.', sort_order:3 },
+  { key:'safety_title', label:'Безопасность - заголовок', group_name:'Безопасность', value_ru:'Родителям спокойно', value_en:'Parents can relax', value_et:'Vanematele on rahulik', sort_order:10 },
+  { key:'formats_title', label:'Программы - заголовок', group_name:'Программы', value_ru:'Три уникальные программы', value_en:'Three unique programmes', value_et:'Kolm ainulaadset programmi', sort_order:20 },
+  { key:'day_title', label:'Программа дня - заголовок', group_name:'Программа дня', value_ru:'Как проходит день', value_en:'How the day goes', value_et:'Kuidas päev kulgeb', sort_order:30 },
+  { key:'dates_title', label:'Смены - заголовок', group_name:'Смены', value_ru:'Расписание лета 2026', value_en:'Summer 2026 schedule', value_et:'Suve 2026 ajakava', sort_order:40 },
+  { key:'gallery_title', label:'Галерея - заголовок', group_name:'Галерея', value_ru:'Фото и видео со смен', value_en:'Photos and videos from camp', value_et:'Fotod ja videod laagrist', sort_order:50 },
+  { key:'cta_title', label:'CTA - заголовок', group_name:'CTA', value_ru:'Места ограничены. Записывайтесь сейчас.', value_en:'Spots are limited. Register now.', value_et:'Kohti on piiratud. Registreeruge kohe.', sort_order:60 },
+]
+
 export default function AdminPage() {
-  const [authed, setAuthed] = useState(false)
-  const [pwInput, setPwInput] = useState('')
-  const [pwError, setPwError] = useState(false)
-  const [tab, setTab] = useState<'reviews'|'sessions'|'gallery'|'pricing'|'settings'>('reviews')
+  const [authed,setAuthed] = useState(false)
+  const [pw,setPw] = useState('')
+  const [tab,setTab] = useState<Tab>('reviews')
 
-  useEffect(() => {
-    if (typeof window !== 'undefined' && sessionStorage.getItem('tts-admin') === ADMIN_PASSWORD) setAuthed(true)
-  }, [])
-
-  const login = () => {
-    if (pwInput === ADMIN_PASSWORD) { sessionStorage.setItem('tts-admin', ADMIN_PASSWORD); setAuthed(true) }
-    else { setPwError(true); setTimeout(() => setPwError(false), 2000) }
-  }
-  const logout = () => { sessionStorage.removeItem('tts-admin'); setAuthed(false) }
+  useEffect(() => { if (sessionStorage.getItem('tts-admin') === ADMIN_PASSWORD) setAuthed(true) }, [])
+  const login = () => { if (pw === ADMIN_PASSWORD) { sessionStorage.setItem('tts-admin', ADMIN_PASSWORD); setAuthed(true) } }
 
   if (!authed) return (
-    <div style={{minHeight:'100vh',background:'#0B3D6B',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'system-ui,sans-serif'}}>
-      <div style={{background:'white',borderRadius:16,padding:'48px 40px',width:360,textAlign:'center',boxShadow:'0 20px 60px rgba(0,0,0,.3)'}}>
-        <div style={{fontSize:48,marginBottom:8}}>🏄</div>
-        <h1 style={{fontSize:22,fontWeight:800,color:'#0B3D6B',marginBottom:4}}>Time to Surf</h1>
-        <p style={{fontSize:13,color:'#888',marginBottom:32}}>Панель администратора</p>
-        <div style={{textAlign:'left',marginBottom:16}}>
-          <label style={S.label}>Пароль</label>
-          <input type="password" value={pwInput} onChange={e=>setPwInput(e.target.value)}
-            onKeyDown={e=>e.key==='Enter'&&login()} placeholder="Введите пароль..."
-            autoFocus
-            style={{...S.input,border:`1.5px solid ${pwError?'#ef4444':'#D4E6F1'}`,fontSize:16}}/>
-          {pwError&&<div style={{color:'#ef4444',fontSize:12,marginTop:6}}>Неверный пароль</div>}
-        </div>
-        <button onClick={login} style={{...S.btn('#0B3D6B'),width:'100%',padding:'12px 0',fontSize:15}}>Войти</button>
+    <main style={{minHeight:'100vh',display:'grid',placeItems:'center',background:'#061828',fontFamily:'system-ui,sans-serif'}}>
+      <div style={{background:'white',borderRadius:22,padding:38,width:360,boxShadow:'0 30px 90px rgba(0,0,0,.35)'}}>
+        <h1 style={{margin:0,color:'#0B3D6B'}}>Time to Surf</h1>
+        <p style={{color:'#6B8AA0',margin:'4px 0 24px'}}>Админка сайта</p>
+        <label style={S.label}>Пароль</label>
+        <input style={{...S.input,fontSize:16}} type="password" value={pw} onChange={e=>setPw(e.target.value)} onKeyDown={e=>e.key==='Enter'&&login()} autoFocus />
+        <button style={{...S.btn('#0B3D6B'),width:'100%',marginTop:14,padding:13}} onClick={login}>Войти</button>
       </div>
-    </div>
+    </main>
   )
 
   return (
-    <div style={{background:'#f8fafc',minHeight:'100vh',fontFamily:'system-ui,sans-serif'}}>
-      <div style={{background:'#0B3D6B',padding:'16px 32px',display:'flex',alignItems:'center',justifyContent:'space-between'}}>
-        <div>
-          <div style={{color:'white',fontSize:18,fontWeight:700}}>🏄 Time to Surf — Админка</div>
-          <div style={{color:'rgba(255,255,255,.45)',fontSize:11,marginTop:1}}>Панель управления сайтом</div>
+    <main style={{minHeight:'100vh',background:'#f6f8fb',fontFamily:'system-ui,sans-serif'}}>
+      <header style={{background:'linear-gradient(135deg,#061828,#0B3D6B)',padding:'18px 28px',color:'white'}}>
+        <div style={{maxWidth:1180,margin:'0 auto',display:'flex',justifyContent:'space-between',gap:16,alignItems:'center'}}>
+          <div><strong style={{fontSize:20}}>Time to Surf - админка</strong><div style={{fontSize:12,opacity:.58}}>Смены, медиа, тексты, FAQ, CTA, SEO</div></div>
+          <div style={{display:'flex',gap:10}}><a href="/" style={{color:'white',opacity:.75,textDecoration:'none',fontSize:13}}>На сайт</a><button style={S.btn('rgba(255,255,255,.15)')} onClick={()=>{sessionStorage.removeItem('tts-admin');setAuthed(false)}}>Выйти</button></div>
         </div>
-        <div style={{display:'flex',gap:12,alignItems:'center'}}>
-          <a href="/" style={{color:'rgba(255,255,255,.6)',fontSize:13,textDecoration:'none'}}>← На сайт</a>
-          <button onClick={logout} style={{...S.btn('rgba(255,255,255,.15)'),fontSize:12}}>Выйти</button>
+      </header>
+      <nav style={{background:'#0B3D6B',padding:'0 28px'}}>
+        <div style={{maxWidth:1180,margin:'0 auto',display:'flex',gap:4,overflowX:'auto'}}>
+          {tabs.map(([id,label]) => <button key={id} onClick={()=>setTab(id)} style={{...S.btn(tab===id?'white':'transparent',tab===id?'#0B3D6B':'rgba(255,255,255,.72)'),borderRadius:'10px 10px 0 0',whiteSpace:'nowrap'}}>{label}</button>)}
         </div>
+      </nav>
+      <div style={{maxWidth:1180,margin:'0 auto',padding:'28px'}}>
+        {tab==='reviews' && <ReviewsTab/>}
+        {tab==='sessions' && <SessionsTab/>}
+        {tab==='media' && <MediaTab/>}
+        {tab==='pricing' && <PricingTab/>}
+        {tab==='content' && <ContentTab/>}
+        {tab==='faq' && <FaqTab/>}
+        {tab==='seo' && <SeoTab/>}
       </div>
-
-      <div style={{background:'#0B3D6B',padding:'0 32px',display:'flex',gap:4,borderTop:'1px solid rgba(255,255,255,.1)'}}>
-        {([['reviews','💬 Отзывы'],['sessions','📅 Смены'],['gallery','📸 Фото'],['pricing','💰 Цены'],['settings','⚙️ Настройки']] as const).map(([id,label])=>(
-          <button key={id} style={S.tab(tab===id)} onClick={()=>setTab(id)}>{label}</button>
-        ))}
-      </div>
-
-      <div style={{maxWidth:920,margin:'0 auto',padding:'32px 24px'}}>
-        {tab==='reviews'&&<ReviewsTab/>}
-        {tab==='sessions'&&<SessionsTab/>}
-        {tab==='gallery'&&<GalleryTab/>}
-        {tab==='pricing'&&<PricingTab/>}
-        {tab==='settings'&&<SettingsTab/>}
-      </div>
-    </div>
+    </main>
   )
 }
 
-function SectionHeader({title,sub}:{title:string;sub:string}) {
-  return <div style={{marginBottom:24}}><h2 style={{fontSize:22,fontWeight:800,color:'#0B3D6B',margin:0}}>{title}</h2><p style={{fontSize:13,color:'#888',marginTop:4}}>{sub}</p></div>
+function Title({children,sub}:{children:string;sub:string}) {
+  return <div style={{marginBottom:22}}><h2 style={{margin:0,color:'#0B3D6B',fontSize:24}}>{children}</h2><p style={{margin:'4px 0 0',color:'#6B8AA0',fontSize:13}}>{sub}</p></div>
 }
-function Spinner() { return <div style={{textAlign:'center',padding:60,color:'#888'}}>Загрузка...</div> }
-function Empty({text}:{text:string}) { return <div style={{textAlign:'center',padding:60,color:'#888',background:'white',borderRadius:12}}>{text}</div> }
-function Toast({text}:{text:string}) {
-  const ok=text.includes('✓')
-  return <div style={{padding:'12px 16px',borderRadius:8,marginBottom:16,background:ok?'#dcfce7':'#fee2e2',color:ok?'#16A34A':'#dc2626',fontWeight:600,fontSize:14}}>{text}</div>
-}
+function Toast({msg}:{msg:string}) { return msg ? <div style={{...S.card,background:'#ecfdf5',color:'#047857',fontWeight:800}}>{msg}</div> : null }
 
-// ── Reviews ──
 function ReviewsTab() {
-  const [reviews,setReviews]=useState<Review[]>([])
-  const [loading,setLoading]=useState(true)
-  const [filter,setFilter]=useState<'pending'|'approved'|'all'>('pending')
-
-  const load=async()=>{setLoading(true);try{const r=await fetch('/api/reviews/admin');const d=await r.json();if(Array.isArray(d))setReviews(d)}catch{}setLoading(false)}
+  const [items,setItems]=useState<Review[]>([])
+  const load=async()=>{const d=await fetch('/api/reviews/admin').then(r=>r.json()).catch(()=>[]); if(Array.isArray(d)) setItems(d)}
   useEffect(()=>{load()},[])
-
   const approve=async(id:number)=>{await fetch('/api/reviews/admin',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,approved:true})});load()}
-  const del=async(id:number)=>{if(!confirm('Удалить?'))return;await fetch('/api/reviews/admin',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({id})});load()}
-
-  const pending=reviews.filter(r=>!r.approved).length
-  const filtered=reviews.filter(r=>filter==='all'?true:filter==='pending'?!r.approved:r.approved)
-
-  return <div>
-    <SectionHeader title="💬 Отзывы" sub="Нажми «Опубликовать» → отзыв появится на сайте. Непубликованные не видны посетителям."/>
-    <div style={{display:'flex',gap:8,marginBottom:20}}>
-      {(['pending','approved','all'] as const).map(f=>(
-        <button key={f} onClick={()=>setFilter(f)} style={{...S.tab(filter===f),background:filter===f?'#0B3D6B':'white',color:filter===f?'white':'#344E63',boxShadow:'0 1px 4px rgba(0,0,0,.08)'}}>
-          {f==='pending'?`Ожидают (${pending})`:f==='approved'?'Опубликованные':'Все'}
-        </button>
-      ))}
-      <button onClick={load} style={{...S.btn('white','#344E63'),marginLeft:'auto',border:'1px solid #D4E6F1'}}>⟳ Обновить</button>
-    </div>
-    {loading?<Spinner/>:filtered.length===0?<Empty text={filter==='pending'?'Нет отзывов на проверке 🎉':'Отзывов нет'}/>:(
-      <div style={{display:'flex',flexDirection:'column',gap:10}}>
-        {filtered.map(r=>(
-          <div key={r.id} style={{...S.card,border:`2px solid ${r.approved?'#D4E6F1':'#F5A623'}`}}>
-            <div style={{display:'flex',gap:8,alignItems:'center',marginBottom:6,flexWrap:'wrap'}}>
-              <span style={{fontWeight:700,color:'#0B3D6B'}}>{r.name}</span>
-              {r.program&&<span style={{fontSize:11,background:'#EEF6FF',color:'#0B3D6B',padding:'2px 8px',borderRadius:20,fontWeight:600}}>{r.program}</span>}
-              <span style={{color:'#F5A623'}}>{'★'.repeat(r.rating)}</span>
-              <span style={{fontSize:11,color:'#aaa'}}>{new Date(r.created_at).toLocaleDateString('ru-RU')}</span>
-            </div>
-            <p style={{fontSize:14,color:'#344E63',lineHeight:1.7,margin:'0 0 12px',wordBreak:'break-word',overflowWrap:'anywhere'}}>"{r.text}"</p>
-            <div style={{display:'flex',gap:8,justifyContent:'flex-end'}}>
-              {!r.approved&&<button onClick={()=>approve(r.id)} style={S.btn('#16A34A')}>✓ Опубликовать</button>}
-              <button onClick={()=>del(r.id)} style={S.btn('#fee2e2','#dc2626')}>✕ Удалить</button>
-            </div>
-          </div>
-        ))}
-      </div>
-    )}
-  </div>
+  const del=async(id:number)=>{if(confirm('Удалить отзыв?')){await fetch('/api/reviews/admin',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({id})});load()}}
+  return <section><Title sub="Модерация отзывов. На сайт попадают только опубликованные.">Отзывы</Title>{items.map(r=><div key={r.id} style={{...S.card,border:`1.5px solid ${r.approved?'#dbeafe':'#F5A623'}`}}><div style={{display:'flex',justifyContent:'space-between',gap:14}}><div><strong>{r.name}</strong> <span style={{color:'#F5A623'}}>{'★'.repeat(r.rating)}</span><p style={{color:'#344E63'}}>{r.text}</p></div><div style={{display:'flex',gap:8,alignItems:'start'}}>{!r.approved&&<button style={S.btn('#16A34A')} onClick={()=>approve(r.id)}>Опубликовать</button>}<button style={S.btn('#fee2e2','#dc2626')} onClick={()=>del(r.id)}>Удалить</button></div></div></div>)}</section>
 }
 
-// ── Sessions ──
 function SessionsTab() {
-  const [sessions,setSessions]=useState<Session[]>([])
-  const [loading,setLoading]=useState(true)
-  const [editing,setEditing]=useState<Session|null>(null)
-  const [adding,setAdding]=useState(false)
-  const blank={dates:'',type_ru:'',type_en:'',type_et:'',color:'#1A6BAA',leaders:'',hot:false,detail:'surf'}
-  const [form,setForm]=useState(blank)
-  const [saving,setSaving]=useState(false)
+  const blank = {dates:'',type_ru:'',type_en:'',type_et:'',color:'#1A6BAA',leaders:'',hot:false,sold_out:false,detail:'surf'}
+  const [items,setItems]=useState<Session[]>([])
+  const [form,setForm]=useState<any>(blank)
+  const [editing,setEditing]=useState<number|null>(null)
   const [msg,setMsg]=useState('')
-
-  const load=async()=>{setLoading(true);try{const r=await fetch('/api/sessions');const d=await r.json();if(Array.isArray(d))setSessions(d)}catch{}setLoading(false)}
+  const load=async()=>{const d=await fetch('/api/sessions').then(r=>r.json()).catch(()=>[]); if(Array.isArray(d)) setItems(d)}
   useEffect(()=>{load()},[])
-
-  const save=async()=>{
-    setSaving(true)
-    try{
-      if(editing){await fetch('/api/sessions',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:editing.id,...form})});setMsg('Смена обновлена ✓')}
-      else{await fetch('/api/sessions',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...form,sort_order:sessions.length+1})});setMsg('Смена добавлена ✓')}
-      setEditing(null);setAdding(false);setForm(blank);load()
-    }catch{setMsg('Ошибка')}
-    setSaving(false);setTimeout(()=>setMsg(''),3000)
-  }
-  const del=async(id:number)=>{if(!confirm('Удалить смену?'))return;await fetch('/api/sessions',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({id})});load()}
-  const startEdit=(s:Session)=>{setEditing(s);setAdding(false);setForm({dates:s.dates,type_ru:s.type_ru,type_en:s.type_en,type_et:s.type_et,color:s.color,leaders:s.leaders,hot:s.hot,detail:s.detail})}
-
-  return <div>
-    <SectionHeader title="📅 Смены лагеря" sub="Расписание на сезон — добавляй, убирай, меняй"/>
-    {msg&&<Toast text={msg}/>}
-    <div style={{display:'flex',gap:8,marginBottom:20}}>
-      <button onClick={()=>{setAdding(true);setEditing(null);setForm(blank)}} style={S.btn('#0AACAC')}>+ Добавить смену</button>
-      <button onClick={load} style={{...S.btn('white','#344E63'),border:'1px solid #D4E6F1'}}>⟳ Обновить</button>
-    </div>
-    {(adding||editing)&&(
-      <div style={{...S.card,border:'2px solid #0AACAC',marginBottom:20}}>
-        <h3 style={{fontSize:15,fontWeight:700,color:'#0B3D6B',marginBottom:16}}>{editing?'✏️ Редактировать смену':'➕ Новая смена'}</h3>
-        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
-          <div><label style={S.label}>Даты *</label><input style={S.input} value={form.dates} onChange={e=>setForm({...form,dates:e.target.value})} placeholder="15.06 - 19.06.2026"/></div>
-          <div><label style={S.label}>Руководители</label><input style={S.input} value={form.leaders} onChange={e=>setForm({...form,leaders:e.target.value})} placeholder="Наташа К. + Даша"/></div>
-          <div><label style={S.label}>Название RU *</label><input style={S.input} value={form.type_ru} onChange={e=>setForm({...form,type_ru:e.target.value})} placeholder="СЕРФИНГ ЛАГЕРЬ"/></div>
-          <div><label style={S.label}>Название EN</label><input style={S.input} value={form.type_en} onChange={e=>setForm({...form,type_en:e.target.value})} placeholder="SURF CAMP"/></div>
-          <div><label style={S.label}>Название ET</label><input style={S.input} value={form.type_et} onChange={e=>setForm({...form,type_et:e.target.value})} placeholder="SURFI LAAGER"/></div>
-          <div><label style={S.label}>Цвет карточки</label>
-            <select style={S.input} value={form.color} onChange={e=>setForm({...form,color:e.target.value})}>
-              {COLOR_OPTIONS.map(o=><option key={o.value} value={o.value}>{o.label}</option>)}
-            </select>
-          </div>
-          <div><label style={S.label}>Тип программы</label>
-            <select style={S.input} value={form.detail} onChange={e=>setForm({...form,detail:e.target.value})}>
-              <option value="surf">Серфинг лагерь</option>
-              <option value="kino">Серфинг + Кино</option>
-              <option value="pohod">Серфинг + Поход</option>
-            </select>
-          </div>
-          <div style={{display:'flex',alignItems:'center',gap:8,paddingTop:20}}>
-            <input type="checkbox" checked={form.hot} onChange={e=>setForm({...form,hot:e.target.checked})} id="hot" style={{width:18,height:18}}/>
-            <label htmlFor="hot" style={{fontSize:14,color:'#344E63',cursor:'pointer'}}>🔥 Горящая смена</label>
-          </div>
-        </div>
-        <div style={{display:'flex',gap:8,marginTop:16}}>
-          <button onClick={save} disabled={saving} style={S.btn('#0B3D6B')}>{saving?'Сохранение...':'✓ Сохранить'}</button>
-          <button onClick={()=>{setEditing(null);setAdding(false)}} style={S.btn('white','#344E63')}>Отмена</button>
-        </div>
-      </div>
-    )}
-    {loading?<Spinner/>:(
-      <div style={{display:'flex',flexDirection:'column',gap:8}}>
-        {sessions.map(s=>(
-          <div key={s.id} style={{...S.card,display:'flex',alignItems:'center',gap:12}}>
-            <div style={{width:8,height:44,borderRadius:4,background:s.color,flexShrink:0}}/>
-            <div style={{flex:1}}>
-              <div style={{fontWeight:700,fontSize:14,color:'#0B3D6B'}}>{s.dates}</div>
-              <div style={{fontSize:12,color:'#344E63',marginTop:2}}>{s.type_ru} {s.hot&&'🔥'} · {s.leaders}</div>
-            </div>
-            <div style={{display:'flex',gap:6}}>
-              <button onClick={()=>startEdit(s)} style={S.btn('#EEF6FF','#0B3D6B')}>✏️ Изменить</button>
-              <button onClick={()=>del(s.id)} style={S.btn('#fee2e2','#dc2626')}>✕</button>
-            </div>
-          </div>
-        ))}
-        {sessions.length===0&&<Empty text="Смен нет. Добавьте первую!"/>}
-      </div>
-    )}
-  </div>
+  const save=async()=>{const body={...form,id:editing,sort_order:items.length+1}; await fetch('/api/sessions',{method:editing?'PATCH':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}); setForm(blank); setEditing(null); setMsg('Смена сохранена'); load(); setTimeout(()=>setMsg(''),2500)}
+  const edit=(s:Session)=>{setEditing(s.id);setForm({dates:s.dates,type_ru:s.type_ru,type_en:s.type_en,type_et:s.type_et,color:s.color,leaders:s.leaders,hot:s.hot,sold_out:!!s.sold_out,detail:s.detail})}
+  const del=async(id:number)=>{if(confirm('Удалить смену?')){await fetch('/api/sessions',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({id})});load()}}
+  return <section><Title sub="Даты, тип программы, руководители, цвет, метка 'мест мало' и статус 'укомплектована'.">Смены</Title><Toast msg={msg}/><div style={S.card}><div style={{display:'grid',gridTemplateColumns:'repeat(2,1fr)',gap:12}}><Field label="Даты" v={form.dates} set={v=>setForm({...form,dates:v})}/><Field label="Руководители" v={form.leaders} set={v=>setForm({...form,leaders:v})}/><Field label="Название RU" v={form.type_ru} set={v=>setForm({...form,type_ru:v})}/><Field label="Название EN" v={form.type_en} set={v=>setForm({...form,type_en:v})}/><Field label="Название ET" v={form.type_et} set={v=>setForm({...form,type_et:v})}/><div><label style={S.label}>Тип</label><select style={S.input} value={form.detail} onChange={e=>setForm({...form,detail:e.target.value})}><option value="surf">Серфинг</option><option value="kino">Серфинг + Кино</option><option value="pohod">Серфинг + Поход</option></select></div><Field label="Цвет" v={form.color} set={v=>setForm({...form,color:v})}/><div style={{display:'flex',gap:18,alignItems:'center',paddingTop:24}}><label><input type="checkbox" checked={form.hot} onChange={e=>setForm({...form,hot:e.target.checked})}/> Мест мало</label><label><input type="checkbox" checked={form.sold_out} onChange={e=>setForm({...form,sold_out:e.target.checked})}/> Укомплектована</label></div></div><button style={{...S.btn('#0B3D6B'),marginTop:14}} onClick={save}>{editing?'Сохранить':'Добавить смену'}</button></div>{items.map(s=><div key={s.id} style={{...S.card,display:'flex',alignItems:'center',gap:12}}><div style={{width:8,height:50,borderRadius:8,background:s.color}}/><div style={{flex:1}}><strong>{s.dates}</strong><div style={{fontSize:13,color:'#6B8AA0'}}>{s.type_ru} · {s.leaders} {s.hot?'· мест мало':''} {s.sold_out?'· укомплектована':''}</div></div><button style={S.btn('#e0f2fe','#0B3D6B')} onClick={()=>edit(s)}>Изменить</button><button style={S.btn('#fee2e2','#dc2626')} onClick={()=>del(s.id)}>Удалить</button></div>)}</section>
 }
 
-// ── Gallery ──
-const STATIC_PHOTOS = [
-  { url: '/DSC02601-150x150.jpeg', section: 'water' },
-  { url: '/DSC02691-150x150.jpeg', section: 'water' },
-  { url: '/DSC02699-150x150.jpeg', section: 'water' },
-  { url: '/DSC02878-150x150.jpeg', section: 'water' },
-  { url: '/DSC02883-150x150.jpeg', section: 'water' },
-  { url: '/DSC02899-150x150.jpeg', section: 'water' },
-  { url: '/IMG_7757-150x150.jpeg', section: 'water' },
-  { url: '/IMG_7758-150x150.jpeg', section: 'water' },
-  { url: '/IMG_7773-150x150.jpeg', section: 'water' },
-  { url: '/IMG_7752-150x150.jpeg', section: 'water' },
-  { url: '/IMG_7796-150x150.jpeg', section: 'water' },
-  { url: '/IMG_7787-150x150.jpeg', section: 'water' },
-  { url: '/217650841_4107074432694657_6267790752617918985_n.jpg', section: 'team' },
-  { url: '/IMG_0806-150x150.jpeg', section: 'team' },
-  { url: '/IMG_0843-150x150.jpeg', section: 'team' },
-  { url: '/IMG_0850-150x150.jpeg', section: 'team' },
-  { url: '/IMG_0857-150x150.jpeg', section: 'team' },
-  { url: '/IMG_7805-150x150.jpeg', section: 'team' },
-  { url: '/IMG_7807-150x150.jpeg', section: 'team' },
-  { url: '/IMG_7809-150x150.jpeg', section: 'team' },
-  { url: '/IMG_7812-150x150.jpeg', section: 'team' },
-  { url: '/IMG_7659-150x150.jpeg', section: 'team' },
-  { url: '/IMG_7046-150x150.jpg', section: 'team' },
-  { url: '/IMG_9281-150x150.jpeg', section: 'moments' },
-  { url: '/IMG_9284-150x150.jpeg', section: 'moments' },
-  { url: '/IMG_9294-150x150.jpeg', section: 'moments' },
-  { url: '/IMG_9302-150x150.jpeg', section: 'moments' },
-  { url: '/IMG_9532-150x150.jpeg', section: 'moments' },
-  { url: '/IMG_9585-150x150.jpeg', section: 'moments' },
-  { url: '/IMG_6342-150x150.jpg', section: 'moments' },
-  { url: '/IMG_6351-150x150.jpg', section: 'moments' },
-  { url: '/IMG_6359-2-150x150.jpg', section: 'moments' },
-  { url: '/IMG_6613-150x150.jpeg', section: 'moments' },
-  { url: '/IMG_6614-150x150.jpeg', section: 'moments' },
-  { url: '/photo_2026-04-18-10_00_40-150x150.jpeg', section: 'moments' },
-  { url: '/photo_2026-04-18-10_00_44-150x150.jpeg', section: 'moments' },
-  { url: '/photo_2026-04-18-10_00_46-150x150.jpeg', section: 'moments' },
-  { url: '/photo-output-2-1024x1024__1_.jpeg', section: 'hero' },
-  { url: '/IMG_7917-1024x768.jpeg', section: 'hero' },
-  { url: '/IMG_6615-821x1024.jpeg', section: 'hero' },
-  { url: '/IMG_8779-1-768x1024.jpeg', section: 'hero' },
-]
-
-function GalleryTab() {
-  const [photos,setPhotos]=useState<GalleryPhoto[]>([])
-  const [loading,setLoading]=useState(true)
-  const [newUrl,setNewUrl]=useState('')
-  const [newSection,setNewSection]=useState('moments')
-  const [adding,setAdding]=useState(false)
-  const [seeding,setSeeding]=useState(false)
+function MediaTab() {
+  const [items,setItems]=useState<MediaItem[]>([])
+  const [form,setForm]=useState({url:'',section:'water',media_type:'image',poster_url:'',title:''})
   const [msg,setMsg]=useState('')
-
-  const load=async()=>{setLoading(true);try{const r=await fetch('/api/gallery');const d=await r.json();if(Array.isArray(d))setPhotos(d)}catch{}setLoading(false)}
+  const load=async()=>{const d=await fetch('/api/gallery').then(r=>r.json()).catch(()=>[]); if(Array.isArray(d)) setItems(d)}
   useEffect(()=>{load()},[])
-
-  const add=async()=>{
-    if(!newUrl.trim())return
-    setAdding(true)
-    try{await fetch('/api/gallery',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:newUrl.trim(),section:newSection})});setNewUrl('');setMsg('Фото добавлено ✓');load()}
-    catch{setMsg('Ошибка')}
-    setAdding(false);setTimeout(()=>setMsg(''),3000)
-  }
-  const del=async(id:number)=>{if(!confirm('Удалить фото?'))return;await fetch('/api/gallery',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({id})});load()}
-
-  const seedStatic=async()=>{
-    if(!confirm(`Перенести ${STATIC_PHOTOS.length} статических фото в базу данных? После этого сайт будет использовать фото из базы.`))return
-    setSeeding(true)
-    let ok=0,fail=0
-    for(const p of STATIC_PHOTOS){
-      try{
-        const r=await fetch('/api/gallery',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:p.url,section:p.section,sort_order:0})})
-        if(r.ok)ok++;else fail++
-      }catch{fail++}
-    }
-    setMsg(`Добавлено: ${ok} фото${fail>0?`, ошибок: ${fail}`:''}`)
-    setSeeding(false)
-    load()
-    setTimeout(()=>setMsg(''),5000)
-  }
-
-  const grouped=SECTION_OPTIONS.map(s=>({...s,photos:photos.filter(p=>p.section===s.value)}))
-
-  return <div>
-    <SectionHeader title="📸 Галерея фото" sub="Управление фотографиями на сайте"/>
-    {msg&&<Toast text={msg}/>}
-
-    {/* Seed button — shown only when DB is empty */}
-    {!loading&&photos.length===0&&(
-      <div style={{...S.card,border:'2px solid #F5A623',background:'#FFFBF0',marginBottom:24}}>
-        <div style={{display:'flex',alignItems:'flex-start',gap:14}}>
-          <div style={{fontSize:28}}>📂</div>
-          <div style={{flex:1}}>
-            <div style={{fontWeight:700,fontSize:14,color:'#92400E',marginBottom:6}}>База данных галереи пустая</div>
-            <p style={{fontSize:13,color:'#78350F',margin:'0 0 14px'}}>
-              На сайте есть <strong>{STATIC_PHOTOS.length} существующих фото</strong> (из папки /public/), но они не добавлены в базу. Нажми кнопку ниже — все фото перенесутся в Supabase и станут управляемыми через эту панель.
-            </p>
-            <button onClick={seedStatic} disabled={seeding} style={{...S.btn('#F5A623','#1C1C1C'),fontSize:13}}>
-              {seeding?'Переносим фото...':'🚀 Перенести все существующие фото в базу'}
-            </button>
-          </div>
-        </div>
-      </div>
-    )}
-
-    {/* Add new photo form */}
-    <div style={{...S.card,border:'2px dashed #0AACAC',marginBottom:24}}>
-      <h3 style={{fontSize:14,fontWeight:700,color:'#0B3D6B',marginBottom:12}}>Добавить фото</h3>
-      <div style={{display:'grid',gridTemplateColumns:'1fr auto auto',gap:8,alignItems:'end'}}>
-        <div>
-          <label style={S.label}>URL или путь к фото</label>
-          <input style={S.input} value={newUrl} onChange={e=>setNewUrl(e.target.value)} placeholder="/имя-файла.jpg или https://..."/>
-        </div>
-        <div>
-          <label style={S.label}>Раздел</label>
-          <select style={S.input} value={newSection} onChange={e=>setNewSection(e.target.value)}>
-            {SECTION_OPTIONS.map(o=><option key={o.value} value={o.value}>{o.label}</option>)}
-          </select>
-        </div>
-        <button onClick={add} disabled={adding||!newUrl.trim()} style={S.btn('#0B3D6B')}>+ Добавить</button>
-      </div>
-      <p style={{fontSize:11,color:'#888',marginTop:8}}>💡 Для локальных файлов: загрузите в папку /public/ и введите /имя-файла.jpg</p>
-    </div>
-
-    {loading?<Spinner/>:(
-      photos.length>0?(
-        grouped.map(group=>group.photos.length>0&&(
-          <div key={group.value} style={{marginBottom:28}}>
-            <h3 style={{fontSize:14,fontWeight:700,color:'#0B3D6B',marginBottom:12}}>{group.label} <span style={{color:'#888',fontWeight:400}}>({group.photos.length})</span></h3>
-            <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(130px,1fr))',gap:10}}>
-              {group.photos.map(p=>(
-                <div key={p.id} style={{position:'relative',borderRadius:8,overflow:'hidden',background:'#EEF6FF'}}>
-                  <img src={p.url} alt="" style={{width:'100%',height:90,objectFit:'cover',display:'block'}} onError={e=>{(e.target as HTMLImageElement).style.opacity='0.2'}}/>
-                  <button onClick={()=>del(p.id)} style={{position:'absolute',top:4,right:4,width:22,height:22,borderRadius:'50%',background:'rgba(220,38,38,.85)',color:'white',border:'none',cursor:'pointer',fontSize:12,fontWeight:700}}>✕</button>
-                  <div style={{padding:'4px 6px',fontSize:10,color:'#344E63',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{p.url}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        ))
-      ):null
-    )}
-  </div>
+  const add=async()=>{if(!form.url)return; await fetch('/api/gallery',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...form,sort_order:items.length+1})}); setForm({...form,url:'',poster_url:'',title:''}); setMsg('Медиа добавлено'); load(); setTimeout(()=>setMsg(''),2500)}
+  const del=async(id:number)=>{if(confirm('Удалить медиа?')){await fetch('/api/gallery',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({id})});load()}}
+  return <section><Title sub="Новый формат галереи: фото и видео. Для видео обязательно ставь poster, чтобы на телефоне не было чёрного экрана.">Фото / видео</Title><Toast msg={msg}/><div style={S.card}><div style={{display:'grid',gridTemplateColumns:'1.2fr .7fr .7fr',gap:12}}><Field label="URL файла" v={form.url} set={v=>setForm({...form,url:v})}/><div><label style={S.label}>Тип</label><select style={S.input} value={form.media_type} onChange={e=>setForm({...form,media_type:e.target.value})}><option value="image">Фото</option><option value="video">Видео</option></select></div><div><label style={S.label}>Секция</label><select style={S.input} value={form.section} onChange={e=>setForm({...form,section:e.target.value})}>{mediaSections.map(([v,l])=><option key={v} value={v}>{l}</option>)}</select></div><Field label="Poster для видео" v={form.poster_url} set={v=>setForm({...form,poster_url:v})}/><Field label="Подпись / alt" v={form.title} set={v=>setForm({...form,title:v})}/></div><button style={{...S.btn('#0B3D6B'),marginTop:14}} onClick={add}>Добавить</button></div><div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(180px,1fr))',gap:12}}>{items.map(m=><div key={m.id} style={{...S.card,padding:10,margin:0}}>{m.media_type==='video'?<video src={m.url} poster={m.poster_url||undefined} controls style={{width:'100%',height:110,objectFit:'cover',borderRadius:10}}/>:<img src={m.url} alt="" style={{width:'100%',height:110,objectFit:'cover',borderRadius:10}}/>}<div style={{fontSize:11,color:'#6B8AA0',marginTop:6,wordBreak:'break-all'}}>{m.media_type||'image'} · {m.section}<br/>{m.url}</div><button style={{...S.btn('#fee2e2','#dc2626'),marginTop:8,width:'100%'}} onClick={()=>del(m.id)}>Удалить</button></div>)}</div></section>
 }
 
-// ── Pricing ──
 function PricingTab() {
-  const [s,setS]=useState<Settings>({})
-  const [loading,setLoading]=useState(true)
-  const [saving,setSaving]=useState(false)
-  const [msg,setMsg]=useState('')
-
-  const load=async()=>{setLoading(true);try{const r=await fetch('/api/settings');const d=await r.json();setS(d)}catch{}setLoading(false)}
-  useEffect(()=>{load()},[])
-
-  const save=async()=>{
-    setSaving(true)
-    try{await fetch('/api/settings',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({settings:{price_3day:s.price_3day||'190€',price_4day:s.price_4day||'235€',price_5day:s.price_5day||'265€'}})});setMsg('Цены обновлены ✓')}
-    catch{setMsg('Ошибка')}
-    setSaving(false);setTimeout(()=>setMsg(''),3000)
-  }
-
-  return <div>
-    <SectionHeader title="💰 Цены" sub="Стоимость участия в лагере"/>
-    {msg&&<Toast text={msg}/>}
-    {loading?<Spinner/>:(
-      <div style={S.card}>
-        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:20,marginBottom:20}}>
-          <div style={{background:'#F0F8FF',borderRadius:12,padding:20}}>
-            <div style={{fontSize:28,marginBottom:6}}>📅</div>
-            <div style={{fontSize:13,fontWeight:700,color:'#344E63',marginBottom:4}}>3 дня — Пробная смена</div>
-            <div style={{fontSize:11,color:'#888',marginBottom:12}}>«Идеально для первого знакомства»</div>
-            <input value={s.price_3day||''} onChange={e=>setS({...s,price_3day:e.target.value})}
-              style={{...S.input,fontWeight:800,fontSize:28,textAlign:'center',color:'#0B3D6B',border:'2px solid #D4E6F1'}} placeholder="190€"/>
-          </div>
-          <div style={{background:'#F0FFF4',borderRadius:12,padding:20}}>
-            <div style={{fontSize:28,marginBottom:6}}>📆</div>
-            <div style={{fontSize:13,fontWeight:700,color:'#344E63',marginBottom:4}}>4 дня</div>
-            <div style={{fontSize:11,color:'#888',marginBottom:12}}>«Расширенная программа»</div>
-            <input value={s.price_4day||''} onChange={e=>setS({...s,price_4day:e.target.value})}
-              style={{...S.input,fontWeight:800,fontSize:28,textAlign:'center',color:'#16A34A',border:'2px solid #bbf7d0'}} placeholder="235€"/>
-          </div>
-          <div style={{background:'#0B3D6B',borderRadius:12,padding:20}}>
-            <div style={{fontSize:28,marginBottom:6}}>🏄</div>
-            <div style={{fontSize:13,fontWeight:700,color:'rgba(255,255,255,.7)',marginBottom:4}}>5 дней — Полная программа</div>
-            <div style={{fontSize:11,color:'rgba(255,255,255,.45)',marginBottom:12}}>«Максимум впечатлений и навыков»</div>
-            <input value={s.price_5day||''} onChange={e=>setS({...s,price_5day:e.target.value})}
-              style={{...S.input,fontWeight:800,fontSize:28,textAlign:'center',color:'white',background:'rgba(255,255,255,.1)',border:'2px solid rgba(255,255,255,.3)'}} placeholder="265€"/>
-          </div>
-        </div>
-        <button onClick={save} disabled={saving} style={S.btn('#0B3D6B')}>{saving?'Сохранение...':'✓ Сохранить цены'}</button>
-        <p style={{fontSize:12,color:'#888',marginTop:10}}>💡 Формат: 190€ или €190. Изменения применятся на сайте после следующей загрузки страницы.</p>
-      </div>
-    )}
-  </div>
+  return <SettingsEditor title="Цены" sub="Цена 3/4/5 дней и счетчики мест." keys={[['price_3day','Цена 3 дня'],['price_4day','Цена 4 дня'],['price_5day','Цена 5 дней'],['spots_taken','Мест занято'],['spots_total','Мест всего'],['group_size','Размер группы']]}/>
 }
 
-// ── Settings ──
-function SettingsTab() {
-  const [s,setS]=useState<Settings>({})
-  const [loading,setLoading]=useState(true)
-  const [saving,setSaving]=useState(false)
-  const [msg,setMsg]=useState('')
-
-  const load=async()=>{setLoading(true);try{const r=await fetch('/api/settings');const d=await r.json();setS(d)}catch{}setLoading(false)}
-  useEffect(()=>{load()},[])
-
-  const save=async()=>{
-    setSaving(true)
-    try{await fetch('/api/settings',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({settings:{spots_taken:s.spots_taken||'4',spots_total:s.spots_total||'16',next_session_date:s.next_session_date||'15.06',next_session_date_full:s.next_session_date_full||'15 июня 2026',group_size:s.group_size||'12-16',schedule_year_label:s.schedule_year_label||'Лето 2026'}})});setMsg('Настройки сохранены ✓')}
-    catch{setMsg('Ошибка')}
-    setSaving(false);setTimeout(()=>setMsg(''),3000)
-  }
-
-  return <div>
-    <SectionHeader title="⚙️ Основные настройки" sub="Места, расписание и текстовые метки"/>
-    {msg&&<Toast text={msg}/>}
-    {loading?<Spinner/>:(
-      <div style={{display:'flex',flexDirection:'column',gap:16}}>
-        <div style={S.card}>
-          <h3 style={{fontSize:14,fontWeight:700,color:'#0B3D6B',marginBottom:4}}>📍 Счётчик мест</h3>
-          <p style={{fontSize:12,color:'#888',marginBottom:16}}>Hero: «<strong>{s.spots_taken||'4'} из {s.spots_total||'16'} мест занято · Ближайшая смена {s.next_session_date||'15.06'}</strong>» · CTA: «<strong>Ближайшая смена: {s.next_session_date_full||'15 июня 2026'}</strong>»</p>
-          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:12}}>
-            <div><label style={S.label}>Мест занято</label><input style={S.input} type="number" value={s.spots_taken||''} onChange={e=>setS({...s,spots_taken:e.target.value})} placeholder="4"/></div>
-            <div><label style={S.label}>Мест всего</label><input style={S.input} type="number" value={s.spots_total||''} onChange={e=>setS({...s,spots_total:e.target.value})} placeholder="16"/></div>
-            <div><label style={S.label}>Дата ближайшей смены (короткая, для Hero)</label><input style={S.input} value={s.next_session_date||''} onChange={e=>setS({...s,next_session_date:e.target.value})} placeholder="15.06"/></div>
-            <div><label style={S.label}>Дата ближайшей смены (полная, для CTA блока)</label><input style={S.input} value={s.next_session_date_full||''} onChange={e=>setS({...s,next_session_date_full:e.target.value})} placeholder="15 июня 2026"/></div>
-            <div><label style={S.label}>Размер группы (для CTA блока)</label><input style={S.input} value={s.group_size||''} onChange={e=>setS({...s,group_size:e.target.value})} placeholder="12-16"/></div>
-          </div>
-        </div>
-        <div style={S.card}>
-          <h3 style={{fontSize:14,fontWeight:700,color:'#0B3D6B',marginBottom:4}}>📅 Метка расписания</h3>
-          <p style={{fontSize:12,color:'#888',marginBottom:16}}>Заголовок раздела: «<strong>Расписание {s.schedule_year_label||'Лето 2026'}</strong>»</p>
-          <div><label style={S.label}>Год / Сезон</label><input style={{...S.input,maxWidth:300}} value={s.schedule_year_label||''} onChange={e=>setS({...s,schedule_year_label:e.target.value})} placeholder="Лето 2026"/></div>
-          <p style={{fontSize:11,color:'#888',marginTop:8}}>Примеры: «Лето 2027», «Summer 2027», «Сезон 2027»</p>
-        </div>
-        <div>
-          <button onClick={save} disabled={saving} style={S.btn('#0B3D6B')}>{saving?'Сохранение...':'✓ Сохранить настройки'}</button>
-        </div>
-        <div style={{...S.card,background:'#FFF7E6',border:'1.5px solid #F5A623'}}>
-          <h3 style={{fontSize:13,fontWeight:700,color:'#92400E',marginBottom:8}}>ℹ️ Как изменения появляются на сайте</h3>
-          <p style={{fontSize:13,color:'#92400E',lineHeight:1.8,margin:0}}>
-            Данные сохраняются в Supabase. Чтобы сайт подтягивал их автоматически, нужно добавить в <code>page.tsx</code> fetch-запрос к <code>/api/settings</code> при загрузке страницы (уже подготовлено в API-роуте). До этого настройки используются как fallback-значения.
-          </p>
-        </div>
-      </div>
-    )}
-  </div>
+function SeoTab() {
+  return <SettingsEditor title="SEO / CTA" sub="Title, description, ссылки CTA, телефон, Telegram, ближайшая смена." keys={[['seo_title','SEO title'],['seo_description','Meta description'],['og_title','Open Graph title'],['og_description','Open Graph description'],['registration_url','Ссылка Записать ребёнка'],['question_url','Ссылка Задать вопрос'],['phone','Телефон'],['telegram','Telegram'],['next_session_date','Ближайшая смена коротко'],['next_session_date_full','Ближайшая смена полностью']]}/>
 }
+
+function SettingsEditor({title,sub,keys}:{title:string;sub:string;keys:[string,string][]}) {
+  const [s,setS]=useState<Record<string,string>>({})
+  const [msg,setMsg]=useState('')
+  const load=async()=>{const d=await fetch('/api/settings').then(r=>r.json()).catch(()=>({})); setS(d||{})}
+  useEffect(()=>{load()},[])
+  const save=async()=>{await fetch('/api/settings',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({settings:s})});setMsg('Сохранено');setTimeout(()=>setMsg(''),2500)}
+  return <section><Title sub={sub}>{title}</Title><Toast msg={msg}/><div style={S.card}>{keys.map(([k,l])=><Field key={k} label={l} v={s[k]||''} set={v=>setS({...s,[k]:v})}/>) }<button style={S.btn('#0B3D6B')} onClick={save}>Сохранить</button></div></section>
+}
+
+function ContentTab() {
+  const [items,setItems]=useState<ContentItem[]>([])
+  const [msg,setMsg]=useState('')
+  const load=async()=>{const d=await fetch('/api/content').then(r=>r.json()).catch(()=>[]); setItems(Array.isArray(d)&&d.length?d:contentSeed)}
+  useEffect(()=>{load()},[])
+  const setItem=(i:number,patch:Partial<ContentItem>)=>setItems(items.map((it,idx)=>idx===i?{...it,...patch}:it))
+  const save=async()=>{await fetch('/api/content',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({items})});setMsg('Тексты сохранены');setTimeout(()=>setMsg(''),2500)}
+  return <section><Title sub="Таблица для всех текстов сайта. Можно расширять без кода: добавляешь ключ, label и 3 языка.">Тексты сайта</Title><Toast msg={msg}/>{items.map((it,i)=><div key={it.key} style={S.card}><strong style={{color:'#0B3D6B'}}>{it.group_name} / {it.label}</strong><div style={{fontSize:11,color:'#6B8AA0',marginBottom:10}}>{it.key}</div><Text label="RU" v={it.value_ru} set={v=>setItem(i,{value_ru:v})}/><Text label="EN" v={it.value_en} set={v=>setItem(i,{value_en:v})}/><Text label="ET" v={it.value_et} set={v=>setItem(i,{value_et:v})}/></div>)}<button style={S.btn('#0B3D6B')} onClick={save}>Сохранить тексты</button></section>
+}
+
+function FaqTab() {
+  const blank={question_ru:'',answer_ru:'',question_en:'',answer_en:'',question_et:'',answer_et:'',sort_order:0,active:true}
+  const [items,setItems]=useState<FaqItem[]>([])
+  const [form,setForm]=useState<any>(blank)
+  const [editing,setEditing]=useState<number|null>(null)
+  const load=async()=>{const d=await fetch('/api/faqs').then(r=>r.json()).catch(()=>[]); if(Array.isArray(d)) setItems(d)}
+  useEffect(()=>{load()},[])
+  const save=async()=>{await fetch('/api/faqs',{method:editing?'PATCH':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...form,id:editing,sort_order:form.sort_order||items.length+1})});setForm(blank);setEditing(null);load()}
+  const del=async(id:number)=>{if(confirm('Удалить вопрос?')){await fetch('/api/faqs',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({id})});load()}}
+  return <section><Title sub="Вопросы-ответы на сайте. Управляются из базы и отображаются на лендинге.">FAQ</Title><div style={S.card}><Text label="Вопрос RU" v={form.question_ru} set={v=>setForm({...form,question_ru:v})}/><Text label="Ответ RU" v={form.answer_ru} set={v=>setForm({...form,answer_ru:v})}/><Text label="Question EN" v={form.question_en} set={v=>setForm({...form,question_en:v})}/><Text label="Answer EN" v={form.answer_en} set={v=>setForm({...form,answer_en:v})}/><Text label="Question ET" v={form.question_et} set={v=>setForm({...form,question_et:v})}/><Text label="Answer ET" v={form.answer_et} set={v=>setForm({...form,answer_et:v})}/><label><input type="checkbox" checked={form.active} onChange={e=>setForm({...form,active:e.target.checked})}/> Активен</label><br/><button style={{...S.btn('#0B3D6B'),marginTop:12}} onClick={save}>{editing?'Сохранить':'Добавить FAQ'}</button></div>{items.map(f=><div key={f.id} style={S.card}><strong>{f.question_ru}</strong><p>{f.answer_ru}</p><button style={S.btn('#e0f2fe','#0B3D6B')} onClick={()=>{setEditing(f.id);setForm(f)}}>Изменить</button> <button style={S.btn('#fee2e2','#dc2626')} onClick={()=>del(f.id)}>Удалить</button></div>)}</section>
+}
+
+function Field({label,v,set}:{label:string;v:string;set:(v:string)=>void}) { return <div style={{marginBottom:12}}><label style={S.label}>{label}</label><input style={S.input} value={v} onChange={e=>set(e.target.value)}/></div> }
+function Text({label,v,set}:{label:string;v:string;set:(v:string)=>void}) { return <div style={{marginBottom:12}}><label style={S.label}>{label}</label><textarea style={S.area} value={v} onChange={e=>set(e.target.value)}/></div> }
