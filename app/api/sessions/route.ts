@@ -7,6 +7,7 @@ export async function GET() {
     .from('camp_sessions')
     .select('*')
     .order('sort_order', { ascending: true })
+    .order('id', { ascending: true })
 
   if (error) return Response.json({ error: error.message }, { status: 500 })
   return Response.json(data)
@@ -22,7 +23,7 @@ export async function POST(req: Request) {
 
   const { data, error } = await supabase
     .from('camp_sessions')
-    .insert([{ dates, type_ru, type_en: type_en || type_ru, type_et: type_et || type_ru, color: color || '#1A6BAA', leaders: leaders || '', hot: hot || false, sold_out: sold_out || false, detail: detail || 'surf', sort_order: sort_order || 0 }])
+    .insert([{ dates, type_ru, type_en: type_en || type_ru, type_et: type_et || type_ru, color: color || '#1A6BAA', leaders: leaders || '', hot: hot || false, sold_out: sold_out || false, detail: detail || 'surf', sort_order: Number(sort_order) || 0 }])
     .select()
     .single()
 
@@ -36,9 +37,15 @@ export async function PATCH(req: Request) {
 
   if (!id) return Response.json({ error: 'Missing id' }, { status: 400 })
 
+  const cleanUpdates = {
+    ...updates,
+    updated_at: new Date().toISOString(),
+  }
+  if (updates.sort_order !== undefined) cleanUpdates.sort_order = Number(updates.sort_order) || 0
+
   const { error } = await supabase
     .from('camp_sessions')
-    .update(updates)
+    .update(cleanUpdates)
     .eq('id', id)
 
   if (error) return Response.json({ error: error.message }, { status: 500 })
