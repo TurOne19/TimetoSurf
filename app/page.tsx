@@ -850,6 +850,116 @@ export default function Home() {
       .safety-photo-card:nth-child(2):hover,.safety-photo-card:nth-child(3):hover{transform:translateY(-4px) scale(1.015)}
     }
 
+    /* 11/10 MIDDLE SECTIONS */
+    .formats{background:linear-gradient(180deg,#ffffff 0%,#fbf4e7 100%);padding:112px 0;position:relative;overflow:hidden}
+    .formats::before{content:'';position:absolute;inset:auto -10% 8% -10%;height:220px;background:linear-gradient(90deg,rgba(10,172,172,.10),rgba(245,166,35,.12),rgba(11,61,107,.08));filter:blur(60px);pointer-events:none}
+    .fg{position:relative;z-index:1;gap:18px;align-items:stretch}
+    .fcard{border:1px solid rgba(11,61,107,.12);border-radius:22px;background:rgba(255,255,255,.86);box-shadow:0 24px 70px rgba(11,61,107,.10);display:flex;flex-direction:column;min-height:100%;overflow:hidden}
+    .fcard:hover{transform:translateY(-10px);box-shadow:0 34px 90px rgba(11,61,107,.18)}
+    .fcard-banner.placeholder{height:210px;border-bottom:0;background:linear-gradient(145deg,#061828,#0b3d6b);padding:22px;position:relative;overflow:hidden}
+    .fcard-kino .fcard-banner.placeholder{background:radial-gradient(circle at 78% 18%,rgba(245,166,35,.34),transparent 30%),linear-gradient(145deg,#1f1648,#0b3d6b 62%,#0aacac)}
+    .fcard-pohod .fcard-banner.placeholder{background:radial-gradient(circle at 78% 18%,rgba(245,166,35,.24),transparent 30%),linear-gradient(145deg,#07301f,#0b5d52 58%,#0b3d6b)}
+    .fcard-surf .fcard-banner.placeholder{background:radial-gradient(circle at 78% 18%,rgba(80,220,214,.30),transparent 30%),linear-gradient(145deg,#061828,#0b3d6b 62%,#0e7f92)}
+    .fcard-banner.placeholder::before{content:'';position:absolute;inset:18px;border:1px solid rgba(255,255,255,.22);border-radius:16px;background:linear-gradient(135deg,rgba(255,255,255,.10),transparent 45%);box-shadow:inset 0 0 45px rgba(255,255,255,.06)}
+    .fcard-banner.placeholder::after{content:'';display:block;position:absolute;left:-15%;right:-15%;bottom:-54px;height:110px;background:rgba(255,255,255,.20);border-radius:50%;filter:blur(.2px)}
+    .fcard-orbit{position:absolute;right:22px;top:22px;width:82px;height:82px;border-radius:50%;border:1px solid rgba(255,255,255,.25);animation:floatY2 4s ease-in-out infinite}
+    .fcard-orbit::before,.fcard-orbit::after{content:'';position:absolute;border-radius:50%;background:rgba(255,255,255,.55)}
+    .fcard-orbit::before{width:10px;height:10px;left:10px;top:18px}
+    .fcard-orbit::after{width:18px;height:18px;right:6px;bottom:8px;background:rgba(245,166,35,.72)}
+    .fcard-banner.placeholder .fcard-blbl{color:rgba(255,255,255,.66);position:relative;z-index:2}
+    .fcard-banner.placeholder .fcard-bt{color:white;position:relative;z-index:2;font-size:28px;max-width:230px}
+    .fcard-body{padding:24px 24px 16px;flex:1}
+    .fcard-desc{font-size:14px;color:#29465a;line-height:1.78}
+    .fcard-it{background:rgba(10,172,172,.055);border:1px solid rgba(10,172,172,.10);border-radius:12px;padding:9px 10px}
+    .fcard-ck{background:white;box-shadow:0 4px 12px rgba(10,172,172,.16)}
+    .fcard-foot{padding:18px 24px 24px;border-top:0}
+    .fcard-more{background:#061828;color:white;border-color:#061828;padding:10px 18px;font-weight:800}
+    .fcard-more:hover{background:var(--teal);border-color:var(--teal);color:white;transform:translateY(-1px)}
+
+    .why{background:radial-gradient(circle at 10% 18%,rgba(80,220,214,.16),transparent 28%),linear-gradient(145deg,#061828,#0b3d6b 58%,#073150);padding:104px 0}
+    .why-g{gap:14px}
+    .why-it{position:relative;overflow:hidden;border-radius:18px;background:rgba(255,255,255,.07);box-shadow:0 18px 50px rgba(0,0,0,.12)}
+    .why-it::before{content:attr(data-label);position:absolute;right:14px;top:10px;font-family:'Plus Jakarta Sans',sans-serif;font-size:42px;font-weight:800;line-height:1;color:rgba(255,255,255,.045);letter-spacing:-.04em;max-width:160px;text-align:right}
+    .why-it:hover{background:rgba(255,255,255,.11);box-shadow:0 24px 70px rgba(0,0,0,.18)}
+    .why-n{color:#50dcd6}
+    .why-d{color:rgba(255,255,255,.64)}
+
+    .safety-icon{display:none}
+    .safety-mark{width:38px;height:38px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:linear-gradient(145deg,rgba(80,220,214,.24),rgba(245,166,35,.18));border:1px solid rgba(255,255,255,.15);box-shadow:inset 0 0 18px rgba(255,255,255,.08)}
+    .safety-mark span{width:14px;height:14px;border-radius:50%;background:#50dcd6;box-shadow:0 0 0 6px rgba(80,220,214,.12),0 0 24px rgba(80,220,214,.55)}
+    .safety-it:nth-child(2) .safety-mark span{background:#f5a623;box-shadow:0 0 0 6px rgba(245,166,35,.13),0 0 24px rgba(245,166,35,.45)}
+    .safety-it:nth-child(3) .safety-mark span{background:#ffffff;box-shadow:0 0 0 6px rgba(255,255,255,.12),0 0 24px rgba(255,255,255,.35)}
+    .safety-it:nth-child(4) .safety-mark span{background:#8af0cc;box-shadow:0 0 0 6px rgba(138,240,204,.12),0 0 24px rgba(138,240,204,.45)}
+
+    .sched{background:radial-gradient(circle at 18% 16%,rgba(245,166,35,.18),transparent 30%),radial-gradient(circle at 84% 20%,rgba(80,220,214,.18),transparent 30%),linear-gradient(150deg,#061828,#0b3d6b 48%,#062033);padding:112px 0;position:relative;overflow:hidden}
+    .sched::before{content:'';position:absolute;top:230px;bottom:110px;left:50%;width:1px;background:linear-gradient(to bottom,transparent,rgba(80,220,214,.35),rgba(245,166,35,.30),transparent)}
+    .sched-g{display:grid;grid-template-columns:1fr 1fr;gap:16px 48px;position:relative}
+    .sched-it{position:relative;min-height:150px;padding:22px 22px 22px 76px;border-radius:22px;background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.13);box-shadow:0 22px 65px rgba(0,0,0,.16)}
+    .sched-it:nth-child(odd){transform:translateY(12px)}
+    .sched-it:hover{transform:translateY(-4px);background:rgba(255,255,255,.12);box-shadow:0 30px 80px rgba(0,0,0,.24)}
+    .sched-it:nth-child(odd):hover{transform:translateY(4px)}
+    .sched-num{position:absolute;left:18px;top:20px;width:40px;height:40px;border-radius:14px;background:rgba(80,220,214,.15);border:1px solid rgba(80,220,214,.32);display:flex;align-items:center;justify-content:center;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;color:#50dcd6;font-size:13px}
+    .sched-it-3,.sched-it-6{background:linear-gradient(145deg,rgba(10,172,172,.20),rgba(255,255,255,.08));border-color:rgba(80,220,214,.38)}
+    .sched-it-4,.sched-it-7{background:linear-gradient(145deg,rgba(245,166,35,.18),rgba(255,255,255,.075));border-color:rgba(245,166,35,.34)}
+    .sched-time{font-size:12px;color:#50dcd6;margin-bottom:10px}
+    .sched-name{font-size:18px}
+    .sched-desc{font-size:13px;color:rgba(255,255,255,.68)}
+
+    .dates{background:linear-gradient(180deg,#ffffff 0%,#fbf4e7 100%);position:relative;overflow:hidden}
+    .dates::before{content:'';position:absolute;inset:18% -10% auto -10%;height:180px;background:linear-gradient(90deg,rgba(10,172,172,.10),rgba(245,166,35,.14),rgba(124,58,237,.08));filter:blur(52px)}
+    .dg{position:relative;z-index:1;gap:18px}
+    .dc{position:relative;overflow:hidden;padding:22px 20px 20px;border-radius:20px;background:white;border:1px solid rgba(11,61,107,.12);box-shadow:0 22px 60px rgba(11,61,107,.10)}
+    .dc::before{content:'';position:absolute;inset:0 0 auto;height:6px;background:#1a6baa}
+    .dc::after{content:'';position:absolute;right:-32px;top:-38px;width:110px;height:110px;border-radius:50%;background:rgba(26,107,170,.10)}
+    .dc-kino::before{background:#8b5cf6}.dc-kino::after{background:rgba(139,92,246,.13)}
+    .dc-pohod::before{background:#16a34a}.dc-pohod::after{background:rgba(22,163,74,.13)}
+    .dc-surf::before{background:#0aacac}.dc-surf::after{background:rgba(10,172,172,.13)}
+    .dc:hover{transform:translateY(-8px) rotate(-.4deg);box-shadow:0 34px 85px rgba(11,61,107,.18)}
+    .dc-dates{font-size:20px;position:relative;z-index:1}
+    .dc-type,.dc-leaders,.dc-acts,.dc-badge{position:relative;z-index:1}
+    .dc-more{background:#061828;color:white;border-color:#061828}
+    .dc-more:hover{background:var(--teal);border-color:var(--teal)}
+
+    .gallery{background:radial-gradient(circle at 16% 18%,rgba(245,166,35,.16),transparent 28%),radial-gradient(circle at 86% 10%,rgba(80,220,214,.18),transparent 30%),linear-gradient(150deg,#061828 0%,#0b3d6b 50%,#041622 100%);padding:116px 0;position:relative;overflow:hidden}
+    .gallery::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(0deg,rgba(255,255,255,.028) 1px,transparent 1px);background-size:86px 86px;mask-image:radial-gradient(circle at center,black,transparent 72%);pointer-events:none}
+    .gallery-experience{position:relative;z-index:1;display:grid;grid-template-columns:1.35fr .85fr;grid-template-rows:auto auto;gap:16px;margin-top:34px}
+    .gallery-lead{position:relative;min-height:520px;border-radius:26px;overflow:hidden;cursor:zoom-in;border:1px solid rgba(255,255,255,.16);box-shadow:0 34px 100px rgba(0,0,0,.34)}
+    .gallery-lead img{width:100%;height:100%;object-fit:cover;transition:transform 600ms var(--ease),filter 240ms}
+    .gallery-lead::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.55),transparent 56%)}
+    .gallery-lead:hover img{transform:scale(1.045);filter:saturate(1.08)}
+    .gallery-lead-text{position:absolute;left:20px;bottom:20px;z-index:2}
+    .gallery-side{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .gallery-video-card,.gallery-mini{position:relative;min-height:250px;border-radius:22px;overflow:hidden;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.08);box-shadow:0 22px 70px rgba(0,0,0,.22)}
+    .gallery-mini{cursor:zoom-in}
+    .gallery-video-card video,.gallery-mini img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 420ms var(--ease),filter 220ms}
+    .gallery-mini::after,.gallery-video-card::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.45),transparent 58%);pointer-events:none}
+    .gallery-mini:hover img,.gallery-video-card:hover video{transform:scale(1.05);filter:saturate(1.08)}
+    .gallery-strip{grid-column:1/2;display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+    .gallery-thumb{position:relative;border:0;background:rgba(255,255,255,.08);border-radius:16px;overflow:hidden;aspect-ratio:1.28/1;cursor:zoom-in;border:1px solid rgba(255,255,255,.12);padding:0}
+    .gallery-thumb img{width:100%;height:100%;object-fit:cover;transition:transform 320ms var(--ease),filter 180ms}
+    .gallery-thumb span{position:absolute;left:8px;top:8px;border-radius:999px;background:rgba(6,24,40,.62);color:white;font-size:10px;font-weight:800;padding:4px 7px}
+    .gallery-thumb:hover img{transform:scale(1.08);filter:saturate(1.12)}
+    .gallery-video-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+    .gallery-video-chip{border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.13);background:rgba(255,255,255,.08);aspect-ratio:1.35/1}
+    .gallery-video-chip video{width:100%;height:100%;object-fit:cover;display:block}
+
+    @media(max-width:960px){
+      .sched::before{display:none}
+      .sched-g{grid-template-columns:1fr;gap:12px}
+      .sched-it,.sched-it:nth-child(odd){transform:none}
+      .sched-it:hover,.sched-it:nth-child(odd):hover{transform:translateY(-4px)}
+      .gallery-experience{grid-template-columns:1fr}
+      .gallery-lead{min-height:360px}
+      .gallery-strip{grid-column:auto;grid-template-columns:repeat(3,1fr)}
+    }
+    @media(max-width:640px){
+      .fcard-banner.placeholder{height:170px}
+      .gallery-side,.gallery-video-row{grid-template-columns:1fr}
+      .gallery-video-card,.gallery-mini{min-height:210px}
+      .gallery-strip{grid-template-columns:repeat(2,1fr)}
+      .sched-it{padding-left:68px}
+    }
+
     /* RESPONSIVE */
     @media(max-width:1024px){
       .wrap{padding:0 28px} .nav-i{padding:0 28px}
@@ -895,6 +1005,20 @@ export default function Home() {
       .rev-empty{grid-column:span 1}
       .cta-btns,.hero-acts{flex-direction:column;align-items:center}
       .hero-acts .btn{width:100%;justify-content:center}
+    }
+
+    @media(max-width:1024px){
+      .gallery-experience{grid-template-columns:1fr}
+      .gallery-strip{grid-column:auto}
+    }
+    @media(max-width:960px){
+      .sched-g{grid-template-columns:1fr!important}
+      .sched-it,.sched-it:nth-child(odd){transform:none}
+      .sched-it:hover,.sched-it:nth-child(odd):hover{transform:translateY(-4px)}
+    }
+    @media(max-width:768px){
+      .sched-g{grid-template-columns:1fr!important}
+      .gallery-side,.gallery-video-row{grid-template-columns:1fr}
     }
   `
 
@@ -1135,7 +1259,7 @@ export default function Home() {
               {n:'Правила', t:c('перед каждым заходом','before each session','enne igat sessiooni'), d:c('Перед водой повторяем: где стоять, что делать при ветре и как слушать инструктора.','Before water we repeat where to stand, what to do in wind and how to listen.','Enne vett kordame, kus olla, mida tuulega teha ja kuidas juhendajat kuulata.')},
               {n:'Лето', t:c('без телефона','without the phone','ilma telefonita'), d:c('День занят делом: вода, еда, игры, команда и новые навыки.','The day is full: water, food, games, team and new skills.','Päev on sisukas: vesi, toit, mängud, tiim ja uued oskused.')},
             ].map(w => (
-              <div key={w.n} className="why-it">
+              <div key={w.n} className="why-it" data-label={w.n}>
                 <div className="why-n">{w.n}</div>
                 <div className="why-t">{w.t}</div>
                 <div className="why-d">{w.d}</div>
@@ -1172,7 +1296,7 @@ export default function Home() {
                   {icon:'15+', t:c('Опытная команда','Experienced team','Kogenud tiim'), d:c('Инструкторы умеют работать с детьми: объяснить, поддержать и вовремя остановить.','Instructors know children: how to explain, support and stop in time.','Juhendajad oskavad lastega töötada: selgitada, toetada ja õigel ajal peatada.')},
                 ].map((s,i) => (
                   <div key={i} className="safety-it">
-                    <div className="safety-icon">{s.icon}</div>
+                    <div className="safety-mark" aria-hidden="true"><span /></div>
                     <div>
                       <div className="safety-t">{s.t}</div>
                       <div className="safety-d">{s.d}</div>
@@ -1214,8 +1338,9 @@ export default function Home() {
               {key:'pohod', lbl:c('Серфинг + приключение','Surfing + adventure','Surf + seiklus'), title:c('Серфинг + Поход','Surf + Hike','Surf + Matk'), desc:c('Вода, игры и простые походные навыки: карта, компас, костёр, палатка. Подходит детям, которым хочется больше природы и движения.','Water, games and simple outdoor skills: map, compass, fire, tent. For kids who want more nature and movement.','Vesi, mängud ja lihtsad matkioskused: kaart, kompass, lõke, telk. Lastele, kes tahavad rohkem loodust ja liikumist.'), items:[c('Виндсёрфинг, SUP и кайт','Windsurfing, SUP and kite','Purjelaud, SUP ja lohe'), c('Ориентирование и командные задания','Navigation and team tasks','Orienteerumine ja tiimiülesanded'), c('Ведущий - Виталий, Join The Hike','Lead - Vitaliy, Join The Hike','Juhendaja - Vitaliy, Join The Hike')]},
               {key:'surf', lbl:c('Классика для старта','Classic first step','Klassika alustuseks'), title:c('Серфинг лагерь','Surf Camp','Surfilaager'), desc:c('Для первого знакомства с водой и доской. Дети пробуют разные водные виды спорта, учатся правилам безопасности и играют в команде.','A first step into water and boards. Kids try different water sports, learn safety rules and play as a team.','Esimene samm vee ja laua juurde. Lapsed proovivad eri veespordialasid, õpivad ohutust ja mängivad tiimis.'), items:[c('SUP, виндсёрфинг, бодиборд','SUP, windsurfing, bodyboard','SUP, purjelaud, bodyboard'), c('Правила воды простым языком','Water rules in simple words','Vee reeglid lihtsas keeles'), c('Подходит новичкам','Good for beginners','Sobib algajatele')]},
             ].map(f => (
-              <div key={f.key} className="fcard">
+              <div key={f.key} className={`fcard fcard-${f.key}`}>
                 <div className="fcard-banner placeholder">
+                  <div className="fcard-orbit" aria-hidden="true" />
                   <div className="fcard-blbl">{f.lbl}</div>
                   <div className="fcard-bt">{f.title}</div>
                 </div>
@@ -1250,8 +1375,9 @@ export default function Home() {
               {time:'15:30 - 15:45', name:c('Чаепитие ☕','Tea time ☕','Tee aeg ☕'), desc:c('Перерыв, отдых, свободное общение','Break, rest, free conversation','Paus, puhkus, vaba suhtlemine')},
               {time:'15:45 - 16:30', name:c('Спокойный блок','Calm block','Rahulik plokk'), desc:c('Игры, творчество, интеллектуальные задания','Games, creativity, intellectual tasks','Mängud, loovus, intellektuaalsed ülesanded')},
               {time:'16:30', name:c('До завтра! 👋','See you tomorrow! 👋','Homseni! 👋'), desc:c('Конец программы, ожидание родителей','Programme ends, parents pick up','Programm lõpeb, vanemad tulevad järele')},
-            ].map(s => (
-              <div key={s.time} className="sched-it">
+            ].map((s,i) => (
+              <div key={s.time} className={`sched-it sched-it-${i + 1}`}>
+                <div className="sched-num">{String(i + 1).padStart(2,'0')}</div>
                 <div className="sched-time">{s.time}</div>
                 <div className="sched-name">{s.name}</div>
                 <div className="sched-desc">{s.desc}</div>
@@ -1272,7 +1398,7 @@ export default function Home() {
           </div>
           <div className="dg sg">
             {DATES.map((d,i) => (
-              <div key={i} className={`dc${d.hot?' hot':''}`}>
+              <div key={i} className={`dc dc-${d.detail}${d.hot?' hot':''}`}>
                 {d.hot && <div className="dc-badge">{c('Мест мало!','Few spots!','Kohti vähe!')}</div>}
                 <div className="dc-dates">{d.dates}</div>
                 <div className="dc-type" style={{color:d.color}}>{d.type}</div>
@@ -1339,12 +1465,45 @@ export default function Home() {
             <h2 className="sec-h sec-h-lt">{c('Фото и видео со смен','Photos and videos from camp','Fotod ja videod laagrist')}</h2>
             <p style={{color:'rgba(255,255,255,.52)',fontSize:14,marginTop:8,maxWidth:520,margin:'8px auto 0'}}>{c('Компактно: несколько живых кадров на странице, остальные фото можно открыть кликом.','Compact: a few real moments on the page, the rest opens by click.','Kompaktselt: mõned päris hetked lehel, ülejäänud avanevad klikiga.')}</p>
           </div>
-          <div className="gallery-compact rv">
-            {COMPACT_GALLERY.slice(0,8).map((src,i) => {
+          <div className="gallery-experience rv">
+            <div className="gallery-lead" onClick={() => {
+              const src = COMPACT_GALLERY[0]
               const idx = GALLERY_IMGS.indexOf(src)
-              return <div key={src} className={i===0 ? 'gallery-tile big' : 'gallery-tile'} onClick={() => setGalleryLightbox({src,idx:idx>=0?idx:0,pool:'gallery'})}><img src={src} alt={c('детский серфинг лагерь Time to Surf на Stroomi rand', 'Time to Surf kids surf camp at Stroomi Beach', 'Time to Surf laste surfilaager Stroomi rannas')} loading="lazy" /><div className="gallery-label">{i===0 ? c('Дети на воде','Kids on water','Lapsed vees') : c('Фото','Photo','Foto')}</div></div>
-            })}
-            {GALLERY_VIDEOS.slice(0,4).map(src => <div key={src} className="gallery-tile gallery-video"><video src={src} muted loop playsInline preload="metadata" controls aria-label="Time to Surf camp video" /><div className="gallery-label">{c('Видео','Video','Video')}</div></div>)}
+              setGalleryLightbox({src,idx:idx>=0?idx:0,pool:'gallery'})
+            }}>
+              <img src={COMPACT_GALLERY[0]} alt={c('детский серфинг лагерь Time to Surf на Stroomi rand', 'Time to Surf kids surf camp at Stroomi Beach', 'Time to Surf laste surfilaager Stroomi rannas')} loading="lazy" />
+              <div className="gallery-lead-text">
+                <div className="gallery-label">{c('Дети на воде','Kids on water','Lapsed vees')}</div>
+              </div>
+            </div>
+            <div className="gallery-side">
+              {GALLERY_VIDEOS.slice(0,2).map(src => (
+                <div key={src} className="gallery-video-card">
+                  <video src={src} muted loop playsInline preload="metadata" controls aria-label="Time to Surf camp video" />
+                  <div className="gallery-label">{c('Видео','Video','Video')}</div>
+                </div>
+              ))}
+              {COMPACT_GALLERY.slice(1,3).map(src => {
+                const idx = GALLERY_IMGS.indexOf(src)
+                return <div key={src} className="gallery-mini" onClick={() => setGalleryLightbox({src,idx:idx>=0?idx:0,pool:'gallery'})}><img src={src} alt={c('детский серфинг лагерь Time to Surf на Stroomi rand', 'Time to Surf kids surf camp at Stroomi Beach', 'Time to Surf laste surfilaager Stroomi rannas')} loading="lazy" /><div className="gallery-label">{c('Фото','Photo','Foto')}</div></div>
+              })}
+            </div>
+            <div className="gallery-strip">
+              {COMPACT_GALLERY.slice(3,9).map((src,i) => {
+                const idx = GALLERY_IMGS.indexOf(src)
+                return <button key={src} className="gallery-thumb" onClick={() => setGalleryLightbox({src,idx:idx>=0?idx:0,pool:'gallery'})}>
+                  <img src={src} alt={c('детский серфинг лагерь Time to Surf на Stroomi rand', 'Time to Surf kids surf camp at Stroomi Beach', 'Time to Surf laste surfilaager Stroomi rannas')} loading="lazy" />
+                  <span>{String(i + 1).padStart(2,'0')}</span>
+                </button>
+              })}
+            </div>
+            <div className="gallery-video-row">
+              {GALLERY_VIDEOS.slice(2,5).map(src => (
+                <div key={src} className="gallery-video-chip">
+                  <video src={src} muted loop playsInline preload="metadata" controls aria-label="Time to Surf camp video" />
+                </div>
+              ))}
+            </div>
           </div>
           <div className="gallery-more rv">{c(GALLERY_IMGS.length + ' фото + ' + GALLERY_VIDEOS.length + ' видео в подборке', GALLERY_IMGS.length + ' photos + ' + GALLERY_VIDEOS.length + ' videos in the set', GALLERY_IMGS.length + ' fotot + ' + GALLERY_VIDEOS.length + ' videot valikus')}</div>
         </div>
