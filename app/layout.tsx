@@ -1,107 +1,200 @@
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
 
+const siteUrl = 'https://camp.timetosurf.ee'
+const regUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSf-HIXlcSpWy0v0MfJ7HpFNcn_fGDd2Hns2JeHe4kZkNVtqDA/viewform'
+
 export const viewport: Viewport = { width: 'device-width', initialScale: 1 }
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://camp.timetosurf.ee'),
+  metadataBase: new URL(siteUrl),
   title: {
-    default: 'Детский серфинг-лагерь Time to Surf | Таллин — Stroomi rand · Лето 2026',
-    template: '%s | Time to Surf Camp Tallinn',
+    default: 'Детский лагерь в Таллине у моря | Time to Surf - Stroomi rand 2026',
+    template: '%s | Time to Surf',
   },
-  description: 'Детский серфинг-лагерь на пляже Штромка, Таллин. 3 программы: серфинг + кино, серфинг + поход, серфинг-лагерь. 265€ / 5 дней. Возраст 7–14 лет. Гидрокостюмы, жилеты, питание — всё включено. Laste surfilaager Tallinnas. Kids surf camp Tallinn.',
+  description:
+    'Time to Surf - детский летний серфинг лагерь в Таллине на Stroomi rand. Возраст 7-14 лет, малые группы 12-16 детей, жилеты, гидрокостюмы, питание и инструкторы включены. Kids summer camp Tallinn, surfilaager lastele, suvelaager Tallinn.',
   keywords: [
-    'детский лагерь Таллин', 'летний лагерь Таллин', 'серфинг лагерь для детей',
-    'детский спортивный лагерь', 'лагерь у моря Таллин', 'серфинг школа дети Таллин',
-    'lastelaager Tallinn', 'surfilaager lastele', 'suvelaager Tallinn',
-    'spordilaager Tallinn', 'Stroomi lastelaager', 'surfikool lapsed',
-    'kids summer camp Tallinn', 'surf camp Tallinn', 'children surf school Estonia',
-    'Time to Surf', 'Stroomi rand laager', 'детский лагерь Штромка',
+    'детский лагерь Таллин',
+    'летний лагерь Таллин',
+    'серфинг лагерь для детей',
+    'детский спортивный лагерь',
+    'лагерь у моря Таллин',
+    'lastelaager Tallinn',
+    'surfilaager lastele',
+    'suvelaager Tallinn',
+    'spordilaager Tallinn',
+    'Stroomi lastelaager',
+    'kids summer camp Tallinn',
+    'surf camp Tallinn',
+    'Stroomi rand',
+    'Time to Surf',
   ],
+  alternates: { canonical: siteUrl },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+      'max-video-preview': -1,
+    },
+  },
   openGraph: {
-    title: 'Детский серфинг-лагерь Time to Surf — Таллин, лето 2026',
-    description: 'Серфинг, кино, поход. 5 дней на Штромке. 265€, возраст 7–14 лет. Жилеты, гидрокостюмы, питание — всё включено.',
-    url: 'https://camp.timetosurf.ee',
+    title: 'Time to Surf - детский лагерь у моря в Таллине',
+    description:
+      'Летний серфинг лагерь для детей 7-14 лет на Stroomi rand. Малые группы, инструкторы, жилеты, гидрокостюмы и питание включены.',
+    url: siteUrl,
     type: 'website',
     locale: 'ru_RU',
-    siteName: 'Time to Surf Camp',
+    siteName: 'Time to Surf',
+    images: [
+      {
+        url: '/optimized/dsc02825.webp',
+        width: 1000,
+        height: 667,
+        alt: 'Детский серфинг лагерь Time to Surf на Stroomi rand в Таллине',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Детский серфинг-лагерь Time to Surf — Таллин 2026',
-    description: 'Серфинг, кино, поход. 5 дней на Штромке. 265€, возраст 7–14 лет.',
+    title: 'Time to Surf - kids summer camp Tallinn',
+    description:
+      'Surf camp Tallinn for children 7-14 at Stroomi Beach. Small groups, instructors, wetsuits, life jackets and meals included.',
+    images: ['/optimized/dsc02825.webp'],
   },
-  robots: { index: true, follow: true, googleBot: { index: true, follow: true } },
-  alternates: { canonical: 'https://camp.timetosurf.ee' },
+  category: 'sports camp',
+  other: {
+    'geo.region': 'EE-37',
+    'geo.placename': 'Tallinn, Stroomi rand',
+    'geo.position': '59.4316;24.6836',
+    ICBM: '59.4316, 24.6836',
+    'og:locality': 'Tallinn',
+    'og:country-name': 'Estonia',
+  },
 }
 
 const schemaOrg = {
   '@context': 'https://schema.org',
   '@graph': [
     {
-      '@type': 'SportsOrganization',
-      '@id': 'https://camp.timetosurf.ee/#organization',
+      '@type': ['LocalBusiness', 'SportsActivityLocation'],
+      '@id': `${siteUrl}/#organization`,
       name: 'Time to Surf',
-      url: 'https://camp.timetosurf.ee',
+      url: siteUrl,
+      image: `${siteUrl}/optimized/dsc02825.webp`,
+      logo: `${siteUrl}/logo.jpeg`,
       telephone: '+37255512872',
       email: 'info@timetosurf.ee',
-      description: 'Детский серфинг-лагерь на пляже Штромка в Таллине. Работаем с 2017 года.',
+      priceRange: '190-265 EUR',
+      description:
+        'Детский летний серфинг лагерь Time to Surf на пляже Stroomi rand в Таллине. Kids summer camp Tallinn, surfilaager lastele, suvelaager Tallinn.',
       address: {
         '@type': 'PostalAddress',
         streetAddress: 'Stroomi rand',
         addressLocality: 'Tallinn',
         addressCountry: 'EE',
       },
-      priceRange: '190€–265€',
+      geo: {
+        '@type': 'GeoCoordinates',
+        latitude: 59.4316,
+        longitude: 24.6836,
+      },
+      areaServed: ['Tallinn', 'Estonia', 'Stroomi rand', 'Põhja-Tallinn'],
       sameAs: [
+        'https://timetosurf.ee',
         'https://www.instagram.com/timetosurf.ee',
         'https://www.facebook.com/timetosurf.ee',
-        'https://timetosurf.ee',
       ],
     },
     {
       '@type': 'Event',
-      name: 'Детский серфинг-лагерь Time to Surf — Лето 2026',
+      '@id': `${siteUrl}/#summer-camp-2026`,
+      name: 'Time to Surf детский летний лагерь 2026',
+      description:
+        'Серфинг лагерь для детей 7-14 лет в Таллине на Stroomi rand. Малые группы, инструкторы, жилеты, гидрокостюмы и питание включены.',
+      eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+      eventStatus: 'https://schema.org/EventScheduled',
       startDate: '2026-06-15',
       endDate: '2026-08-21',
+      image: [`${siteUrl}/optimized/dsc02825.webp`],
       location: {
         '@type': 'Place',
         name: 'Stroomi rand',
-        address: { '@type': 'PostalAddress', addressLocality: 'Tallinn', addressCountry: 'EE' },
+        address: {
+          '@type': 'PostalAddress',
+          addressLocality: 'Tallinn',
+          addressCountry: 'EE',
+        },
+        geo: {
+          '@type': 'GeoCoordinates',
+          latitude: 59.4316,
+          longitude: 24.6836,
+        },
       },
-      organizer: { '@id': 'https://camp.timetosurf.ee/#organization' },
+      organizer: { '@id': `${siteUrl}/#organization` },
       offers: {
         '@type': 'Offer',
+        url: regUrl,
         price: '265',
         priceCurrency: 'EUR',
         availability: 'https://schema.org/LimitedAvailability',
-        url: 'https://docs.google.com/forms/d/e/1FAIpQLSf-HIXlcSpWy0v0MfJ7HpFNcn_fGDd2Hns2JeHe4kZkNVtqDA/viewform',
+        validFrom: '2026-01-01',
+      },
+      audience: {
+        '@type': 'PeopleAudience',
+        suggestedMinAge: 7,
+        suggestedMaxAge: 14,
       },
     },
     {
       '@type': 'FAQPage',
+      '@id': `${siteUrl}/#faq`,
       mainEntity: [
         {
           '@type': 'Question',
-          name: 'Нужен ли опыт серфинга для участия в лагере?',
-          acceptedAnswer: { '@type': 'Answer', text: 'Нет. Лагерь подходит полным новичкам — учим с нуля. Дети с опытом тоже найдут задачу по уровню.' },
+          name: 'Нужен ли опыт серфинга?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Нет. Лагерь подходит новичкам. Инструкторы объясняют правила и помогают детям спокойно зайти в воду.',
+          },
         },
         {
           '@type': 'Question',
-          name: 'Какой возраст подходит для лагеря?',
-          acceptedAnswer: { '@type': 'Answer', text: 'Основная программа для детей 7–12 лет. Максимальный возраст — 14 лет.' },
+          name: 'Какой возраст подходит?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Основной возраст - 7-14 лет. Группы маленькие, 12-16 детей.',
+          },
         },
         {
           '@type': 'Question',
-          name: 'Что входит в стоимость?',
-          acceptedAnswer: { '@type': 'Answer', text: 'Вся программа, питание от Tark Catering (обед + полдник), гидрокостюмы, спасательные жилеты, всё оборудование, работа инструкторов и сертификат участника.' },
+          name: 'Что входит в цену?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Программа, питание, гидрокостюм, спасательный жилет, оборудование и работа инструкторов.',
+          },
         },
         {
           '@type': 'Question',
-          name: 'Как обеспечивается безопасность на воде?',
-          acceptedAnswer: { '@type': 'Answer', text: 'Все дети в воде — только в жилете и гидрокостюме. Группы 12–16 человек, постоянный контроль инструкторов, обязательная теория безопасности перед каждым заходом.' },
+          name: 'Где проходит лагерь?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Лагерь проходит на Stroomi rand в Таллине, Эстония.',
+          },
         },
       ],
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${siteUrl}/#website`,
+      url: siteUrl,
+      name: 'Time to Surf',
+      inLanguage: ['ru', 'et', 'en'],
+      publisher: { '@id': `${siteUrl}/#organization` },
     },
   ],
 }
@@ -110,12 +203,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ru">
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,400;0,600;0,700;0,800;1,700;1,800&display=swap"
-          rel="stylesheet"
-        />
+        <link rel="canonical" href={siteUrl} />
+        <link rel="preload" as="image" href="/optimized/dsc02825.webp" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaOrg) }}

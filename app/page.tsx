@@ -105,71 +105,21 @@ export default function Home() {
     fetch('/api/gallery').then(r => r.json()).then(d => { if (Array.isArray(d) && d.length > 0) setDbGallery(d) }).catch(() => {})
   }, [])
 
-  // 4 hero showcase photos (top grid, separate lightbox)
-  const HERO_PHOTOS = dbGallery.filter(p => p.section === 'hero').map(p => p.url).length > 0
-    ? dbGallery.filter(p => p.section === 'hero').map(p => p.url)
-    : [
-    '/photo-output-2-1024x1024__1_.jpeg',
-    '/IMG_7917-1024x768.jpeg',
-    '/IMG_6615-821x1024.jpeg',
-    '/IMG_8779-1-768x1024.jpeg',
+  const HERO_PHOTOS = [
+    '/optimized/dsc02825.webp',
+    '/optimized/img_6362.webp',
+    '/optimized/dsc02878.webp',
+    '/optimized/img_6438.webp',
   ]
 
-  // All gallery photos organized in sections
   const STATIC_GALLERY_SECTIONS = [
     {
-      label: c('На воде', 'On the Water', 'Vees'),
-      imgs: [
-        '/DSC02601-150x150.jpeg',
-        '/DSC02691-150x150.jpeg',
-        '/DSC02699-150x150.jpeg',
-        '/DSC02878-150x150.jpeg',
-        '/DSC02883-150x150.jpeg',
-        '/DSC02899-150x150.jpeg',
-        '/IMG_7757-150x150.jpeg',
-        '/IMG_7758-150x150.jpeg',
-        '/IMG_7773-150x150.jpeg',
-        '/IMG_7752-150x150.jpeg',
-        '/IMG_7796-150x150.jpeg',
-        '/IMG_7787-150x150.jpeg',
-      ]
+      label: c('На воде', 'On the water', 'Vees'),
+      imgs: ['/optimized/dsc02825.webp','/optimized/dsc02878.webp','/optimized/dsc03180.webp','/optimized/img_6751.webp']
     },
     {
-      label: c('Команда и атмосфера', 'Team & Vibes', 'Meeskond ja atmosfäär'),
-      imgs: [
-        '/217650841_4107074432694657_6267790752617918985_n.jpg',
-        '/IMG_0806-150x150.jpeg',
-        '/IMG_0843-150x150.jpeg',
-        '/IMG_0850-150x150.jpeg',
-        '/IMG_0857-150x150.jpeg',
-        '/IMG_7805-150x150.jpeg',
-        '/IMG_7807-150x150.jpeg',
-        '/IMG_7809-150x150.jpeg',
-        '/IMG_7812-150x150.jpeg',
-        '/IMG_7659-150x150.jpeg',
-        '/IMG_7046-150x150.jpg',
-      ]
-    },
-    {
-      label: c('Моменты', 'Moments', 'Hetked'),
-      imgs: [
-        '/IMG_9281-150x150.jpeg',
-        '/IMG_9284-150x150.jpeg',
-        '/IMG_9294-150x150.jpeg',
-        '/IMG_9302-150x150.jpeg',
-        '/IMG_9532-150x150.jpeg',
-        '/IMG_9585-150x150.jpeg',
-        '/IMG_6342-150x150.jpg',
-        '/IMG_6351-150x150.jpg',
-        '/IMG_6359-2-150x150.jpg',
-        '/IMG_6613-150x150.jpeg',
-        '/IMG_6614-150x150.jpeg',
-        '/photo_2026-04-18-10_00_40-150x150.jpeg',
-        '/photo_2026-04-18-10_00_44-150x150.jpeg',
-        '/photo_2026-04-18-10_00_46-150x150.jpeg',
-        '/IMG_8779-1-768x1024.jpeg',
-        '/photo-output-2-1024x1024__1_.jpeg',
-      ]
+      label: c('Команда и берег', 'Team and shore', 'Tiim ja rand'),
+      imgs: ['/optimized/img_6362.webp','/optimized/img_6438.webp','/optimized/img_6865.webp','/optimized/img_8191.webp']
     },
   ]
 
@@ -260,7 +210,7 @@ export default function Home() {
     kino: {
       title: c('Серфинг + Кино','Surf + Cinema','Surf + Kino'),
       sub: c('Лагерь, где дети не просто отдыхают - а становятся героями своего фильма. 5 дней приключений.','A camp where kids don\'t just rest - they become heroes of their own film. 5 days of adventure.','Laager, kus lapsed ei puhka lihtsalt - nad saavad oma filmi kangelasteks. 5 paeva seiklusi.'),
-      photo: '/IMG_7917-1024x768.jpeg',
+      photo: '/optimized/img_6362.webp',
       price: '265€', age: c('7-12 лет','7-12 years','7-12 aastat'),
       dates: ['15.06 - 19.06.2026', '29.06 - 03.07.2026'],
       sections: [
@@ -298,7 +248,7 @@ export default function Home() {
     pohod: {
       title: c('Серфинг + Поход','Surf + Hike','Surf + Matk'),
       sub: c('Приключенческая программа, где ребёнок открывает мир серфинга и учится жить в природе.','An adventure programme where the child discovers surfing and learns to live in nature.','Seiklusprogramm, kus laps avastab surfimaailma ja opib looduses elama.'),
-      photo: '/photo_2026-04-18-10_00_46-150x150.jpeg',
+      photo: '/optimized/img_6438.webp',
       price: '265€', age: c('7-14 лет','7-14 years','7-14 aastat'),
       dates: ['13.07 - 17.07.2026', '17.08 - 21.08.2026'],
       sections: [
@@ -331,7 +281,7 @@ export default function Home() {
     surf: {
       title: c('Серфинг лагерь','Surf Camp','Surfilaager'),
       sub: c('Классическая программа для тех, кто впервые открывает мир серфинга. Разные виды водного спорта, безопасность и командные игры.','The classic programme for those discovering surfing for the first time. Different water sports, safety and team games.','Klassikaline programm neile, kes avastab surfimaailma esimest korda. Erinevad veespordialad, ohutus ja meeskonnamangud.'),
-      photo: '/DSC02878-150x150.jpeg',
+      photo: '/optimized/dsc02878.webp',
       price: '265€', age: c('7-12 лет','7-12 years','7-12 aastat'),
       dates: ['06.07', '20.07', '27.07', '03.08', '10.08'],
       sections: [
@@ -587,10 +537,6 @@ export default function Home() {
     .pc-note{font-size:12px;margin-bottom:22px}
     .pc-note-std{color:var(--muted)} .pc-note-feat{color:rgba(255,255,255,.5)}
     .pop-badge{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--teal);background:var(--teal-pale);padding:4px 12px;border-radius:20px;display:inline-block;margin-bottom:10px}
-    .pc-btn-std{display:block;padding:12px;background:var(--ocean);color:white;border-radius:50px;font-size:13px;font-weight:700;transition:background 180ms;text-decoration:none;text-align:center}
-    .pc-btn-std:hover{background:var(--ocean2)}
-    .pc-btn-feat{display:block;padding:12px;background:var(--teal);color:white;border-radius:50px;font-size:13px;font-weight:700;box-shadow:0 4px 16px rgba(10,172,172,.35);transition:box-shadow 180ms;text-decoration:none;text-align:center}
-    .pc-btn-feat:hover{box-shadow:0 8px 28px rgba(10,172,172,.5)}
     .includes{background:white;border:2px solid var(--border);border-radius:16px;padding:28px;transition:box-shadow 240ms var(--ease)}
     .includes:hover{box-shadow:0 12px 40px rgba(11,61,107,.08)}
     .inc-title{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:18px;text-align:center}
@@ -639,6 +585,10 @@ export default function Home() {
     .gallery-tile:hover::after{opacity:.45}
     .gallery-label{position:absolute;left:12px;bottom:10px;z-index:2;color:white;font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
     .gallery-video{cursor:default}
+    .gallery-video::after{display:none}
+    .gallery-video video{position:relative;z-index:2}
+    .gallery-video .gallery-label{pointer-events:none}
+    @media(max-width:700px){.gallery-compact{grid-template-columns:1fr 1fr;grid-auto-rows:132px}.gallery-tile.big{grid-row:span 1}}
     .gallery-more{margin-top:16px;display:flex;justify-content:center;color:rgba(255,255,255,.54);font-size:13px}
 
 
@@ -666,10 +616,6 @@ export default function Home() {
     .dc-type{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
     .dc-leaders{font-size:12px;color:var(--muted);margin-bottom:14px;font-weight:500}
     .dc-acts{display:flex;gap:8px;flex-wrap:wrap}
-    .dc-cta{display:inline-flex;align-items:center;justify-content:center;padding:9px 16px;background:var(--ocean);color:white;border-radius:50px;font-size:12px;font-weight:700;transition:background 180ms;text-decoration:none;flex:1}
-    .dc-cta:hover{background:var(--ocean2)}
-    .dc.hot .dc-cta{background:var(--sun)}
-    .dc.hot .dc-cta:hover{background:#e8951f}
     .dc-more{display:inline-flex;align-items:center;justify-content:center;padding:9px 14px;border:1.5px solid var(--teal);color:var(--teal);border-radius:50px;font-size:12px;font-weight:700;transition:background 180ms;background:transparent}
     .dc-more:hover{background:var(--teal-pale)}
 
@@ -927,7 +873,7 @@ export default function Home() {
                   <div className="pm-price">{d.price}</div>
                   <div className="pm-price-note">{c('5 дней - всё включено','5 days - all included','5 paeva - koik sees')}</div>
                 </div>
-                <a href={REG} target="_blank" className="btn btn-teal" style={{marginLeft:'auto'}} onClick={() => setProgramModal(null)}>{c('Записаться','Register','Registreeru')} {'->'}</a>
+                
               </div>
             </div>
           </div>
@@ -962,7 +908,6 @@ export default function Home() {
                 <button key={l} className={`lang-btn${lang===l?' a':''}`} onClick={() => { setLang(l); localStorage.setItem('tts-lang',l); setMenuOpen(false) }}>{l.toUpperCase()}</button>
               ))}
             </div>
-            <a href={REG} target="_blank" className="btn btn-teal btn-sm">{c('Записаться','Register','Registreeru')}</a>
           </div>
           <button className="mob-btn" onClick={() => setMenuOpen(true)} aria-label="Menu">
             <svg width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 12h16M3 7h16M3 17h16"/></svg>
@@ -990,7 +935,6 @@ export default function Home() {
             <button key={l} className={`lang-btn${lang===l?' a':''}`} onClick={() => { setLang(l); localStorage.setItem('tts-lang',l); setMenuOpen(false) }}>{l.toUpperCase()}</button>
           ))}
         </div>
-        <a href={REG} target="_blank" className="btn btn-sun" style={{marginTop:8}}>{c('Записаться в лагерь','Register for Camp','Registreeru laagrisse')}</a>
       </div>
 
       {/* HERO */}
@@ -1146,10 +1090,10 @@ export default function Home() {
             </div>
             <div className="safety-photos sg">
               {[
-                {src:'/DSC02691-150x150.jpeg', alt:'Life jackets'},
-                {src:'/IMG_7773-150x150.jpeg', alt:'Kids in water'},
-                {src:'/IMG_7812-150x150.jpeg', alt:'Small group'},
-                {src:'/DSC02699-150x150.jpeg', alt:'Instructor control'},
+                {src:'/optimized/dsc02825.webp', alt:'Дети в спасательных жилетах на Stroomi rand'},
+                {src:'/optimized/dsc02878.webp', alt:'Детский серфинг лагерь на воде в Таллине'},
+                {src:'/optimized/img_6362.webp', alt:'Инструкторы Time to Surf с детьми'},
+                {src:'/optimized/img_6438.webp', alt:'Малая группа детей на пляже Stroomi'},
               ].map((p,i) => {
                 const globalIdx = GALLERY_SECTIONS.flatMap(s=>s.imgs).indexOf(p.src)
                 return (
@@ -1189,7 +1133,7 @@ export default function Home() {
                     {f.items.map((it,j) => <div key={j} className="fcard-it"><div className="fcard-ck"><svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1 4l2 2 4-4" stroke="var(--teal)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg></div><span>{it}</span></div>)}
                   </div>
                 </div>
-                <div className="fcard-foot"><div className="fcard-btns"><button className="fcard-more" onClick={() => setProgramModal(f.key)}>{c('Подробнее','Details','Loe lähemalt')}</button><a href={REG} target="_blank" className="btn btn-teal btn-sm">{c('Записаться','Register','Registreeru')}</a></div></div>
+                <div className="fcard-foot"><div className="fcard-btns"><button className="fcard-more" onClick={() => setProgramModal(f.key)}>{c('Подробнее','Details','Loe lähemalt')}</button></div></div>
               </div>
             ))}
           </div>
@@ -1242,7 +1186,6 @@ export default function Home() {
                 <div className="dc-type" style={{color:d.color}}>{d.type}</div>
                 <div className="dc-leaders">{d.leaders}</div>
                 <div className="dc-acts">
-                  <a href={REG} target="_blank" className="dc-cta">{c('Записаться ->','Register ->','Registreeru ->')}</a>
                   <button className="dc-more" onClick={() => setProgramModal(d.detail)}>{c('Подробнее','Details','Loe lähemalt')}</button>
                 </div>
               </div>
@@ -1271,7 +1214,6 @@ export default function Home() {
                 <div className={`pc-days ${p.feat?'pc-days-feat':'pc-days-std'}`}>{p.label}</div>
                 <div className={`pc-price ${p.feat?'pc-price-feat':'pc-price-std'}`}>{p.price}</div>
                 <div className={`pc-note ${p.feat?'pc-note-feat':'pc-note-std'}`}>{p.note}</div>
-                <a href={REG} target="_blank" className={p.feat?'pc-btn-feat':'pc-btn-std'}>{c('Записаться','Register','Registreeru')}</a>
               </div>
             ))}
           </div>
@@ -1307,9 +1249,9 @@ export default function Home() {
           <div className="gallery-compact rv">
             {COMPACT_GALLERY.slice(0,8).map((src,i) => {
               const idx = GALLERY_IMGS.indexOf(src)
-              return <div key={src} className={i===0 ? 'gallery-tile big' : 'gallery-tile'} onClick={() => setGalleryLightbox({src,idx:idx>=0?idx:0,pool:'gallery'})}><img src={src} alt="Time to Surf camp" loading="lazy" /><div className="gallery-label">{i===0 ? c('Дети на воде','Kids on water','Lapsed vees') : c('Фото','Photo','Foto')}</div></div>
+              return <div key={src} className={i===0 ? 'gallery-tile big' : 'gallery-tile'} onClick={() => setGalleryLightbox({src,idx:idx>=0?idx:0,pool:'gallery'})}><img src={src} alt={c('детский серфинг лагерь Time to Surf на Stroomi rand', 'Time to Surf kids surf camp at Stroomi Beach', 'Time to Surf laste surfilaager Stroomi rannas')} loading="lazy" /><div className="gallery-label">{i===0 ? c('Дети на воде','Kids on water','Lapsed vees') : c('Фото','Photo','Foto')}</div></div>
             })}
-            {GALLERY_VIDEOS.slice(0,4).map(src => <div key={src} className="gallery-tile gallery-video"><video src={src} muted loop playsInline preload="metadata" controls /><div className="gallery-label">{c('Видео','Video','Video')}</div></div>)}
+            {GALLERY_VIDEOS.slice(0,4).map(src => <div key={src} className="gallery-tile gallery-video"><video src={src} muted loop playsInline preload="metadata" controls aria-label="Time to Surf camp video" /><div className="gallery-label">{c('Видео','Video','Video')}</div></div>)}
           </div>
           <div className="gallery-more rv">{c(GALLERY_IMGS.length + ' фото + ' + GALLERY_VIDEOS.length + ' видео в подборке', GALLERY_IMGS.length + ' photos + ' + GALLERY_VIDEOS.length + ' videos in the set', GALLERY_IMGS.length + ' fotot + ' + GALLERY_VIDEOS.length + ' videot valikus')}</div>
         </div>
