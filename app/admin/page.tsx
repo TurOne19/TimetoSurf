@@ -156,12 +156,44 @@ function SettingsEditor({title,sub,keys}:{title:string;sub:string;keys:[string,s
 
 function ContentTab() {
   const [items,setItems]=useState<ContentItem[]>([])
+  const [query,setQuery]=useState('')
+  const [group,setGroup]=useState('all')
   const [msg,setMsg]=useState('')
-  const load=async()=>{const d=await fetch('/api/content').then(r=>r.json()).catch(()=>[]); setItems(Array.isArray(d)&&d.length?d:contentSeed)}
+  const load=async()=>{
+    const d=await fetch('/api/content').then(r=>r.json()).catch(()=>[])
+    if(Array.isArray(d)&&d.length){setItems(d);return}
+    const seed=await fetch('/site-content-seed.json').then(r=>r.json()).catch(()=>contentSeed)
+    setItems(Array.isArray(seed)&&seed.length?seed:contentSeed)
+  }
   useEffect(()=>{load()},[])
   const setItem=(i:number,patch:Partial<ContentItem>)=>setItems(items.map((it,idx)=>idx===i?{...it,...patch}:it))
   const save=async()=>{await fetch('/api/content',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({items})});setMsg('Тексты сохранены');setTimeout(()=>setMsg(''),2500)}
-  return <section><Title sub="Таблица для всех текстов сайта. Можно расширять без кода: добавляешь ключ, label и 3 языка.">Тексты сайта</Title><Toast msg={msg}/>{items.map((it,i)=><div key={it.key} style={S.card}><strong style={{color:'#0B3D6B'}}>{it.group_name} / {it.label}</strong><div style={{fontSize:11,color:'#6B8AA0',marginBottom:10}}>{it.key}</div><Text label="RU" v={it.value_ru} set={v=>setItem(i,{value_ru:v})}/><Text label="EN" v={it.value_en} set={v=>setItem(i,{value_en:v})}/><Text label="ET" v={it.value_et} set={v=>setItem(i,{value_et:v})}/></div>)}<button style={S.btn('#0B3D6B')} onClick={save}>Сохранить тексты</button></section>
+  const groups=Array.from(new Set(items.map(i=>i.group_name||'Site text')))
+  const filtered=items.filter(it=>{
+    const q=query.trim().toLowerCase()
+    const okGroup=group==='all'||it.group_name===group
+    const okQuery=!q||[it.key,it.label,it.value_ru,it.value_en,it.value_et,it.group_name].join(' ').toLowerCase().includes(q)
+    return okGroup&&okQuery
+  })
+  return <section>
+    <Title sub="Все строки из главной страницы. Меняешь букву или предложение здесь - сохраняешь - сайт подтягивает значение из Supabase.">Тексты сайта</Title>
+    <Toast msg={msg}/>
+    <div style={{...S.card,position:'sticky',top:0,zIndex:5,display:'grid',gridTemplateColumns:'1fr 220px auto',gap:12,alignItems:'end'}}>
+      <div><label style={S.label}>Поиск по ключу / слову / предложению</label><input style={S.input} value={query} onChange={e=>setQuery(e.target.value)} placeholder="Например: hero, цена, Записаться, text_128"/></div>
+      <div><label style={S.label}>Секция</label><select style={S.input} value={group} onChange={e=>setGroup(e.target.value)}><option value="all">Все секции</option>{groups.map(g=><option key={g} value={g}>{g}</option>)}</select></div>
+      <button style={S.btn('#0B3D6B')} onClick={save}>Сохранить всё</button>
+      <div style={{gridColumn:'1 / -1',fontSize:12,color:'#6B8AA0'}}>Всего строк: {items.length}. Показано: {filtered.length}.</div>
+    </div>
+    {filtered.map((it)=><div key={it.key} style={S.card}>
+      <div style={{display:'flex',justifyContent:'space-between',gap:12,alignItems:'center',marginBottom:10}}>
+        <div><strong style={{color:'#0B3D6B'}}>{it.group_name} / {it.label}</strong><div style={{fontSize:11,color:'#6B8AA0'}}>{it.key}</div></div>
+        <button style={S.btn('#e0f2fe','#0B3D6B')} onClick={()=>navigator.clipboard?.writeText(it.key)}>Копировать ключ</button>
+      </div>
+      <Text label="RU" v={it.value_ru} set={v=>setItems(items.map(row=>row.key===it.key?{...row,value_ru:v}:row))}/>
+      <Text label="EN" v={it.value_en} set={v=>setItems(items.map(row=>row.key===it.key?{...row,value_en:v}:row))}/>
+      <Text label="ET" v={it.value_et} set={v=>setItems(items.map(row=>row.key===it.key?{...row,value_et:v}:row))}/>
+    </div>)}
+  </section>
 }
 
 function FaqTab() {

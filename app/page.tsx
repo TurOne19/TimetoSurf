@@ -154,10 +154,10 @@ export default function Home() {
   ]
 
   const SAFETY_PHOTOS = [
-    {src:'/optimized/dsc02825.webp', alt:'Дети в спасательных жилетах на Stroomi rand'},
-    {src:'/optimized/dsc02878.webp', alt:'Детский серфинг лагерь на воде в Таллине'},
-    {src:'/optimized/img_6362.webp', alt:'Инструкторы Time to Surf с детьми'},
-    {src:'/optimized/img_6438.webp', alt:'Малая группа детей на пляже Stroomi'},
+    {src:'/optimized/dsc02825.webp', alt:t('text_295', 'Дети в спасательных жилетах на Stroomi rand', 'Children in life jackets at Stroomi Beach', 'Lapsed paastevestides Stroomi rannas')},
+    {src:'/optimized/dsc02878.webp', alt:t('text_296', 'Детский серфинг лагерь на воде в Таллине', 'Kids surf camp on the water in Tallinn', 'Laste surfilaager vees Tallinnas')},
+    {src:'/optimized/img_6362.webp', alt:t('text_297', 'Инструкторы Time to Surf с детьми', 'Time to Surf instructors with children', 'Time to Surf juhendajad lastega')},
+    {src:'/optimized/img_6438.webp', alt:t('text_298', 'Малая группа детей на пляже Stroomi', 'Small group of children at Stroomi Beach', 'Vaike lastegrupp Stroomi rannas')},
   ]
 
   const TRUST_PHOTOS = [
@@ -1242,7 +1242,7 @@ export default function Home() {
                   <span className="pill">{t('text_133', '7-14 лет', 'Ages 7-14', '7-14 aastat')}</span>
                   <span className="pill">Stroomi rand, Tallinn</span>
                   <span className="pill">{t('text_134', 'лето 2026', 'Summer 2026', 'Suvi 2026')}</span>
-                  <span className="pill">{c(`от ${siteSettings.price_3day||'190€'}`,`from ${siteSettings.price_3day||'190€'}`,`alates ${siteSettings.price_3day||'190€'}`)}</span>
+                  <span className="pill">{t('text_303', 'от', 'from', 'alates')} {siteSettings.price_3day||'190€'}</span>
                   <span className="pill">{t('text_135', 'безопасность на воде', 'water safety', 'veeohutus')}</span>
                   <span className="pill pill-hot">{t('text_136', 'места ограничены', 'limited spots', 'kohad piiratud')}</span></div>
                 <div className="hero-acts rv" style={{transitionDelay:'190ms'}}>
@@ -1258,7 +1258,7 @@ export default function Home() {
                     ))}
                   </div>
                   <span style={{fontSize:12,color:'rgba(255,255,255,.65)',fontWeight:600}}>
-                    {c(`${siteSettings.spots_taken||'4'} из ${siteSettings.spots_total||'16'} мест занято - Ближайшая смена ${siteSettings.next_session_date||'15.06'}`,`${siteSettings.spots_taken||'4'} of ${siteSettings.spots_total||'16'} spots taken - Next: ${siteSettings.next_session_date||'Jun 15'}`,`${siteSettings.spots_taken||'4'}/${siteSettings.spots_total||'16'} kohta võetud - Järgmine ${siteSettings.next_session_date||'15.06'}`)}
+                    {siteSettings.spots_taken||'4'} {t('text_304', 'из', 'of', '/')} {siteSettings.spots_total||'16'} {t('text_305', 'мест занято - Ближайшая смена', 'spots taken - Next:', 'kohta voetud - Jargmine')} {siteSettings.next_session_date||'15.06'}
                   </span>
                 </div>
               </div>
@@ -1373,10 +1373,10 @@ export default function Home() {
             </div>
             <div className="safety-photos sg">
               {[
-                {src:'/optimized/dsc02825.webp', alt:'Дети в спасательных жилетах на Stroomi rand'},
-                {src:'/optimized/dsc02878.webp', alt:'Детский серфинг лагерь на воде в Таллине'},
-                {src:'/optimized/img_6362.webp', alt:'Инструкторы Time to Surf с детьми'},
-                {src:'/optimized/img_6438.webp', alt:'Малая группа детей на пляже Stroomi'},
+                {src:'/optimized/dsc02825.webp', alt:t('text_295', 'Дети в спасательных жилетах на Stroomi rand', 'Children in life jackets at Stroomi Beach', 'Lapsed paastevestides Stroomi rannas')},
+                {src:'/optimized/dsc02878.webp', alt:t('text_296', 'Детский серфинг лагерь на воде в Таллине', 'Kids surf camp on the water in Tallinn', 'Laste surfilaager vees Tallinnas')},
+                {src:'/optimized/img_6362.webp', alt:t('text_297', 'Инструкторы Time to Surf с детьми', 'Time to Surf instructors with children', 'Time to Surf juhendajad lastega')},
+                {src:'/optimized/img_6438.webp', alt:t('text_298', 'Малая группа детей на пляже Stroomi', 'Small group of children at Stroomi Beach', 'Vaike lastegrupp Stroomi rannas')},
               ].map((p,i) => {
                 return (
                   <div key={i} className="safety-photo-card"
@@ -1572,7 +1572,7 @@ export default function Home() {
               ))}
             </div>
           </div>
-          <div className="gallery-more rv">{c(GALLERY_IMGS.length + ' фото + ' + GALLERY_VIDEO_ITEMS.length + ' видео в подборке', GALLERY_IMGS.length + ' photos + ' + GALLERY_VIDEO_ITEMS.length + ' videos in the set', GALLERY_IMGS.length + ' fotot + ' + GALLERY_VIDEO_ITEMS.length + ' videot valikus')}</div>
+          <div className="gallery-more rv">{GALLERY_IMGS.length} {t('text_299', 'фото', 'photos', 'fotot')} + {GALLERY_VIDEO_ITEMS.length} {t('text_300', 'видео в подборке', 'videos in the set', 'videot valikus')}</div>
         </div>
       </section>
 
@@ -1680,7 +1680,7 @@ export default function Home() {
                 {icon:'📍', t:t('text_276', 'Адрес', 'Address', 'Aadress'), d:t('text_277', 'Time to Surf Stroomi - серфинг-станция на Stroomi rand.', 'Time to Surf Stroomi - surf station at Stroomi Beach.', 'Time to Surf Stroomi - surfijaam Stroomi rannas.')},
                 {icon:'🚌', t:t('text_278', 'Как добраться', 'Getting there', 'Kuidas jõuda'), d:t('text_279', 'Автобусы №40, 48 до остановки Stroomi rand - около 20 минут от центра.', 'Buses 40, 48 to Stroomi rand stop - about 20 minutes from the city centre.', 'Bussid nr 40, 48 peatuseni Stroomi rand - ~20 min kesklinnast.')},
                 {icon:'🚗', t:t('text_280', 'Парковка', 'Parking', 'Parkimine'), d:t('text_281', 'Бесплатная парковка у пляжа. В выходные может быть занята - приезжайте заранее.', 'Free parking at the beach. Can be busy on weekends - arrive early.', 'Tasuta parkimine ranna juures. Nädalavahetustel võib täis olla.')},
-                {icon:'📞', t:t('text_282', 'Контакт', 'Contact', 'Kontakt'), d:'+372 55512872 (Андрей)\nTelegram: @Andrei_Time_to_Surf\ninfo@timetosurf.ee'},
+                {icon:'📞', t:t('text_282', 'Контакт', 'Contact', 'Kontakt'), d:t('text_301', '+372 55512872 (Андрей)\nTelegram: @Andrei_Time_to_Surf\ninfo@timetosurf.ee', '+372 55512872 (Andrei)\nTelegram: @Andrei_Time_to_Surf\ninfo@timetosurf.ee', '+372 55512872 (Andrei)\nTelegram: @Andrei_Time_to_Surf\ninfo@timetosurf.ee')},
               ].map((lc,i) => (
                 <div key={i} className="loc-card">
                   <div className="loc-ic">{lc.icon}</div>
@@ -1704,7 +1704,7 @@ export default function Home() {
             <h2 className="cta-h">
               {t('text_284', 'Места', 'Spots are', 'Kohti on')} <em>{t('text_285', 'ограничены.', 'limited.', 'piiratud.')}</em><br/>{t('text_286', 'Записывайтесь сейчас.', 'Register now.', 'Registreeruge kohe.')}
             </h2>
-            <p className="cta-p">{c(`Мы работаем в малых группах - ${siteSettings.group_size||'12-16'} детей - чтобы каждый ребёнок получил внимание инструктора. Ближайшая смена: ${siteSettings.next_session_date_full||siteSettings.next_session_date||'15 июня 2026'}.`,`Small groups of ${siteSettings.group_size||'12-16'} children - every child gets personal instructor attention. Next session: ${siteSettings.next_session_date_full||siteSettings.next_session_date||'June 15, 2026'}.`,`Väikesed rühmad ${siteSettings.group_size||'12-16'} last - iga laps saab instruktori tähelepanu. Järgmine vahetus: ${siteSettings.next_session_date_full||siteSettings.next_session_date||'15. juuni 2026'}.`)}</p>
+            <p className="cta-p">{t('text_302', 'Мы работаем в малых группах, чтобы каждый ребёнок получил внимание инструктора. Ближайшая смена:', 'We work in small groups so every child gets instructor attention. Next session:', 'Tootame vaikestes gruppides, et iga laps saaks juhendaja tahelepanu. Jargmine vahetus:')} {siteSettings.next_session_date_full||siteSettings.next_session_date||'15 июня 2026'}.</p>
             <div className="cta-btns">
               <a href={regUrl} target="_blank" className="btn btn-sun" style={{padding:'16px 40px',fontSize:16,fontWeight:800}}>{t('text_287', 'Записать ребёнка', 'Register my child', 'Registreeri laps')} {'->'}</a>
               <a href={questionUrl} target="_blank" className="btn btn-ghost" style={{padding:'16px 28px',fontSize:15}}>{t('text_288', 'Задать вопрос', 'Ask a question', 'Küsi küsimus')}</a>
