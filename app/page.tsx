@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from 'react'
 
 type Lang = 'ru' | 'en' | 'et'
+type LightboxPool = 'gallery' | 'hero' | 'safety' | 'trust'
 const REG = 'https://docs.google.com/forms/d/e/1FAIpQLSf-HIXlcSpWy0v0MfJ7HpFNcn_fGDd2Hns2JeHe4kZkNVtqDA/viewform'
 
 function useReveal(deps: unknown[] = []) {
@@ -67,7 +68,7 @@ export default function Home() {
   const [reviewSent, setReviewSent] = useState(false)
   const [reviewLoading, setReviewLoading] = useState(false)
   const [showReviewForm, setShowReviewForm] = useState(false)
-  const [galleryLightbox, setGalleryLightbox] = useState<{src:string,idx:number,pool:'gallery'|'hero'} | null>(null)
+  const [galleryLightbox, setGalleryLightbox] = useState<{src:string,idx:number,pool:LightboxPool} | null>(null)
   const [programModal, setProgramModal] = useState<string | null>(null)
   const [dbSessions, setDbSessions] = useState<any[]>([])
   const [siteSettings, setSiteSettings] = useState<Record<string,string>>({})
@@ -112,6 +113,19 @@ export default function Home() {
     '/optimized/img_6438.webp',
   ]
 
+  const SAFETY_PHOTOS = [
+    {src:'/optimized/dsc02825.webp', alt:'Дети в спасательных жилетах на Stroomi rand'},
+    {src:'/optimized/dsc02878.webp', alt:'Детский серфинг лагерь на воде в Таллине'},
+    {src:'/optimized/img_6362.webp', alt:'Инструкторы Time to Surf с детьми'},
+    {src:'/optimized/img_6438.webp', alt:'Малая группа детей на пляже Stroomi'},
+  ]
+
+  const TRUST_PHOTOS = [
+    {src:'/optimized/dsc02825.webp', alt:'Time to Surf team'},
+    {src:'/optimized/img_6362.webp', alt:'Time to Surf team'},
+    {src:'/optimized/img_6438.webp', alt:'Time to Surf team'},
+  ]
+
   const STATIC_GALLERY_SECTIONS = [
     {
       label: c('На воде', 'On the water', 'Vees'),
@@ -143,12 +157,18 @@ export default function Home() {
     '/IMG_6857.mp4',
   ]
   const COMPACT_GALLERY = Array.from(new Set([...HERO_PHOTOS, ...GALLERY_IMGS])).slice(0, 14)
+  const lightboxPools: Record<LightboxPool, string[]> = {
+    hero: HERO_PHOTOS,
+    gallery: GALLERY_IMGS,
+    safety: SAFETY_PHOTOS.map(p => p.src),
+    trust: TRUST_PHOTOS.map(p => p.src),
+  }
 
   useEffect(() => {
     if (!galleryLightbox) return
     const handler = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setGalleryLightbox(null)
-      const pool = galleryLightbox.pool === 'hero' ? HERO_PHOTOS : GALLERY_IMGS
+      const pool = lightboxPools[galleryLightbox.pool]
       if (e.key === 'ArrowRight') setGalleryLightbox(prev => {
         if (!prev) return null
         const next = (prev.idx + 1) % pool.length
@@ -761,6 +781,75 @@ export default function Home() {
     .soc-l{font-size:11px;color:rgba(255,255,255,.3);transition:color 180ms;letter-spacing:.04em;text-decoration:none}
     .soc-l:hover{color:rgba(255,255,255,.7)}
 
+    /* PREMIUM FINISH */
+    .safety{background:radial-gradient(circle at 16% 8%,rgba(245,166,35,.18),transparent 30%),linear-gradient(135deg,#061828 0%,#0b3d6b 56%,#0f747d 100%);padding:104px 0;position:relative;overflow:hidden}
+    .safety::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(0deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:72px 72px;mask-image:linear-gradient(to bottom,transparent,black 20%,black 70%,transparent);pointer-events:none}
+    .safety-g{position:relative;z-index:1;gap:54px}
+    .safety-items{gap:12px}
+    .safety-it{background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:16px;backdrop-filter:blur(10px);transition:transform 220ms var(--ease),background 220ms var(--ease),border-color 220ms var(--ease)}
+    .safety-it:hover{transform:translateX(4px);background:rgba(255,255,255,.105);border-color:rgba(80,220,214,.34)}
+    .safety-icon{background:linear-gradient(145deg,rgba(80,220,214,.24),rgba(245,166,35,.18));color:white}
+    .safety-d{color:rgba(255,255,255,.64)}
+    .safety-photos{gap:14px;align-items:stretch}
+    .safety-photo-card{border-radius:18px;overflow:hidden;aspect-ratio:4/3;cursor:zoom-in;position:relative;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);box-shadow:0 22px 55px rgba(0,0,0,.18);transition:transform 260ms var(--ease),box-shadow 260ms var(--ease),border-color 220ms}
+    .safety-photo-card:nth-child(2),.safety-photo-card:nth-child(3){transform:translateY(18px)}
+    .safety-photo-card:hover{transform:translateY(-4px) scale(1.015);border-color:rgba(80,220,214,.55);box-shadow:0 30px 75px rgba(0,0,0,.28)}
+    .safety-photo-card:nth-child(2):hover,.safety-photo-card:nth-child(3):hover{transform:translateY(10px) scale(1.015)}
+    .safety-photo{height:100%;border-radius:0;transition:transform 420ms var(--ease),filter 220ms}
+    .safety-photo-card:hover .safety-photo{transform:scale(1.055);filter:saturate(1.06)}
+
+    .trust-photo{display:block;width:100%;padding:0;border:0;background:transparent;border-radius:14px;overflow:hidden;cursor:zoom-in;box-shadow:0 18px 45px rgba(0,0,0,.18);transition:transform 240ms var(--ease),box-shadow 240ms var(--ease)}
+    .trust-photo:hover{transform:translateY(-5px);box-shadow:0 24px 60px rgba(0,0,0,.28)}
+    .trust-photo img{display:block;border-radius:14px;border:1px solid rgba(255,255,255,.16);transition:transform 360ms var(--ease),filter 220ms}
+    .trust-photo:hover img{transform:scale(1.045);filter:saturate(1.08)}
+
+    .sched{background:radial-gradient(circle at 78% 12%,rgba(80,220,214,.18),transparent 28%),linear-gradient(150deg,#061828,#0b3d6b 52%,#083152);padding:104px 0}
+    .sched-g{gap:10px;border:0;border-radius:0;overflow:visible}
+    .sched-it{border:1px solid rgba(255,255,255,.12);border-radius:16px;background:rgba(255,255,255,.065);backdrop-filter:blur(8px);box-shadow:0 18px 45px rgba(0,0,0,.12)}
+    .sched-it:hover{background:rgba(255,255,255,.105);transform:translateY(-4px);border-color:rgba(80,220,214,.35)}
+    .sched-time{color:#50dcd6}
+    .sched-desc{color:rgba(255,255,255,.56)}
+
+    .dates{background:linear-gradient(180deg,#fff 0%,#fbf4e7 100%);padding:104px 0}
+    .dg{gap:16px}
+    .dc{border:1px solid rgba(11,61,107,.11);border-radius:18px;background:rgba(255,255,255,.86);box-shadow:0 18px 45px rgba(11,61,107,.08)}
+    .dc:hover{transform:translateY(-6px);box-shadow:0 28px 70px rgba(11,61,107,.14);border-color:rgba(10,172,172,.42)}
+    .dc.hot{background:linear-gradient(180deg,#fffaf0,#fff);border-color:rgba(245,166,35,.52)}
+    .dc-more{border-color:rgba(10,172,172,.55);background:rgba(10,172,172,.08)}
+    .dc-more:hover{background:var(--teal);color:white}
+
+    .pricing{background:linear-gradient(180deg,#fbf4e7 0%,#ffffff 100%);padding:108px 0}
+    .pg{gap:18px;align-items:stretch}
+    .pc{position:relative;border-radius:20px;padding:30px 26px;overflow:hidden;box-shadow:0 20px 55px rgba(11,61,107,.08)}
+    .pc::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 0%,rgba(80,220,214,.12),transparent 38%);opacity:0;transition:opacity 220ms}
+    .pc:hover::before{opacity:1}
+    .pc > *{position:relative;z-index:1}
+    .pc-std{background:rgba(255,255,255,.9);border:1px solid rgba(11,61,107,.12)}
+    .pc-feat{background:linear-gradient(145deg,#061828,#0b3d6b 58%,#0f747d);border:1px solid rgba(80,220,214,.35);box-shadow:0 30px 80px rgba(11,61,107,.28)}
+    .pc-price{letter-spacing:0}
+    .pc-btn{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:11px 18px;border-radius:999px;font-size:13px;font-weight:800;text-decoration:none;transition:transform 180ms var(--ease),box-shadow 180ms var(--ease),background 180ms,color 180ms}
+    .pc-btn:hover{transform:translateY(-2px)}
+    .pc-btn-std{background:var(--ocean);color:white;box-shadow:0 12px 28px rgba(11,61,107,.18)}
+    .pc-btn-std:hover{background:var(--teal)}
+    .pc-btn-feat{background:var(--sun);color:#061828;box-shadow:0 12px 30px rgba(245,166,35,.3)}
+    .pc-btn-feat:hover{background:#ffc45d}
+    .includes{border:1px solid rgba(11,61,107,.1);border-radius:20px;box-shadow:0 18px 50px rgba(11,61,107,.07)}
+
+    .gallery{background:radial-gradient(circle at 15% 15%,rgba(245,166,35,.13),transparent 28%),linear-gradient(150deg,#061828,#0b3d6b 52%,#062033);padding:108px 0}
+    .gallery-compact{grid-template-columns:1.2fr .85fr .85fr .85fr;grid-auto-rows:138px;gap:12px}
+    .gallery-tile{border-radius:18px;border:1px solid rgba(255,255,255,.14);box-shadow:0 22px 60px rgba(0,0,0,.18);transition:transform 240ms var(--ease),border-color 220ms,box-shadow 240ms}
+    .gallery-tile:hover{transform:translateY(-5px);border-color:rgba(80,220,214,.48);box-shadow:0 30px 80px rgba(0,0,0,.28)}
+    .gallery-tile img,.gallery-tile video{transition:transform 420ms var(--ease),filter 220ms}
+    .gallery-tile:hover img,.gallery-tile:hover video{transform:scale(1.045);filter:saturate(1.08)}
+    .gallery-label{left:14px;bottom:12px;letter-spacing:.08em;background:rgba(6,24,40,.58);border:1px solid rgba(255,255,255,.16);border-radius:999px;padding:6px 10px;backdrop-filter:blur(8px)}
+    .gallery-more{color:rgba(255,255,255,.68)}
+
+    @media(max-width:900px){
+      .gallery-compact{grid-template-columns:1fr 1fr;grid-auto-rows:138px}
+      .safety-photo-card:nth-child(2),.safety-photo-card:nth-child(3){transform:none}
+      .safety-photo-card:nth-child(2):hover,.safety-photo-card:nth-child(3):hover{transform:translateY(-4px) scale(1.015)}
+    }
+
     /* RESPONSIVE */
     @media(max-width:1024px){
       .wrap{padding:0 28px} .nav-i{padding:0 28px}
@@ -813,11 +902,11 @@ export default function Home() {
     <>
       <style>{CSS}</style>
 
-      <ScrollProgress />      <ScrollProgress />
+      <ScrollProgress />
 
       {/* GALLERY LIGHTBOX */}
       {galleryLightbox && (() => {
-        const pool = galleryLightbox.pool === 'hero' ? HERO_PHOTOS : GALLERY_IMGS
+        const pool = lightboxPools[galleryLightbox.pool]
         return (
           <div className="lb-overlay" onClick={() => setGalleryLightbox(null)}>
             <button className="lb-close" onClick={() => setGalleryLightbox(null)}>✕</button>
@@ -1054,7 +1143,11 @@ export default function Home() {
             ))}
           </div>
           <div className="trust-team rv">
-            {['/DSC02825.jpg','/IMG_6362.JPG','/IMG_6438.JPG'].map((src,i) => <img key={i} src={src} alt="Time to Surf team" loading="lazy" />)}
+            {TRUST_PHOTOS.map((p,i) => (
+              <button key={p.src} className="trust-photo" onClick={() => setGalleryLightbox({src:p.src,idx:i,pool:'trust'})} aria-label="Open team photo">
+                <img src={p.src} alt={p.alt} loading="lazy" />
+              </button>
+            ))}
           </div>
         </div>
       </section>
@@ -1095,10 +1188,9 @@ export default function Home() {
                 {src:'/optimized/img_6362.webp', alt:'Инструкторы Time to Surf с детьми'},
                 {src:'/optimized/img_6438.webp', alt:'Малая группа детей на пляже Stroomi'},
               ].map((p,i) => {
-                const globalIdx = GALLERY_SECTIONS.flatMap(s=>s.imgs).indexOf(p.src)
                 return (
-                  <div key={i} style={{borderRadius:12,overflow:'hidden',aspectRatio:'4/3',cursor:'zoom-in',position:'relative'}}
-                    onClick={() => setGalleryLightbox({src:p.src,idx:globalIdx>=0?globalIdx:0,pool:'gallery'})}>
+                  <div key={i} className="safety-photo-card"
+                    onClick={() => setGalleryLightbox({src:p.src,idx:i,pool:'safety'})}>
                     <img src={p.src} alt={p.alt} className="safety-photo" />
                   </div>
                 )
@@ -1214,6 +1306,7 @@ export default function Home() {
                 <div className={`pc-days ${p.feat?'pc-days-feat':'pc-days-std'}`}>{p.label}</div>
                 <div className={`pc-price ${p.feat?'pc-price-feat':'pc-price-std'}`}>{p.price}</div>
                 <div className={`pc-note ${p.feat?'pc-note-feat':'pc-note-std'}`}>{p.note}</div>
+                <a className={`pc-btn ${p.feat?'pc-btn-feat':'pc-btn-std'}`} href={REG} target="_blank" rel="noopener noreferrer">{c('Записать ребёнка','Register my child','Registreeri laps')}</a>
               </div>
             ))}
           </div>
