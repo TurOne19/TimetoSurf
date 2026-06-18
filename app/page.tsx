@@ -87,6 +87,7 @@ export default function Home() {
   const [reviewLoading, setReviewLoading] = useState(false)
   const [showReviewForm, setShowReviewForm] = useState(false)
   const [galleryLightbox, setGalleryLightbox] = useState<{src:string,idx:number,pool:LightboxPool} | null>(null)
+  const [videoLightbox, setVideoLightbox] = useState<{idx:number} | null>(null)
   const [programModal, setProgramModal] = useState<string | null>(null)
   const [dbSessions, setDbSessions] = useState<any[]>([])
   const [siteSettings, setSiteSettings] = useState<Record<string,string>>({})
@@ -126,7 +127,7 @@ export default function Home() {
     return () => window.removeEventListener('scroll', fn)
   }, [])
 
-  useEffect(() => { document.body.style.overflow = (menuOpen || galleryLightbox !== null || programModal !== null) ? 'hidden' : '' }, [menuOpen, galleryLightbox, programModal])
+  useEffect(() => { document.body.style.overflow = (menuOpen || galleryLightbox !== null || videoLightbox !== null || programModal !== null) ? 'hidden' : '' }, [menuOpen, galleryLightbox, videoLightbox, programModal])
 
   useEffect(() => {
     fetch('/api/reviews').then(r => r.json()).then(d => { if (Array.isArray(d)) setReviews(d) }).catch(() => {})
@@ -269,6 +270,17 @@ export default function Home() {
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
   }, [galleryLightbox])
+
+  useEffect(() => {
+    if (!videoLightbox) return
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setVideoLightbox(null)
+      if (e.key === 'ArrowRight') setVideoLightbox(prev => prev ? { idx: (prev.idx + 1) % GALLERY_VIDEO_ITEMS.length } : null)
+      if (e.key === 'ArrowLeft') setVideoLightbox(prev => prev ? { idx: (prev.idx - 1 + GALLERY_VIDEO_ITEMS.length) % GALLERY_VIDEO_ITEMS.length } : null)
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [videoLightbox, GALLERY_VIDEO_ITEMS.length])
 
   const go = (id: string) => {
     setMenuOpen(false)
@@ -759,6 +771,8 @@ export default function Home() {
     @keyframes lbIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
     .lb-overlay{position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.95);display:flex;align-items:center;justify-content:center;animation:lbIn 220ms ease}
     .lb-overlay img{width:auto;height:auto;max-width:88vw;max-height:86vh;min-width:min(500px,80vw);object-fit:contain;border-radius:8px;cursor:default;user-select:none;display:block}
+    .lb-video-wrap{width:min(1080px,86vw);max-height:84vh;display:flex;align-items:center;justify-content:center}
+    .lb-video-wrap video{width:100%;max-height:84vh;object-fit:contain;border-radius:12px;background:#020b14;box-shadow:0 28px 90px rgba(0,0,0,.45)}
     .lb-close{position:absolute;top:18px;right:22px;background:rgba(255,255,255,.12);border:none;color:white;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;transition:background 160ms;z-index:1}
     .lb-close:hover{background:rgba(255,255,255,.28)}
     .lb-prev,.lb-next{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.12);border:none;color:white;width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;transition:background 160ms;z-index:1;user-select:none}
@@ -1028,11 +1042,11 @@ export default function Home() {
     .gallery-lead:hover img{transform:scale(1.045);filter:saturate(1.08)}
     .gallery-lead-text{position:absolute;left:20px;bottom:20px;z-index:2}
     .gallery-side{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-    .gallery-video-card,.gallery-mini{position:relative;min-height:250px;border-radius:22px;overflow:hidden;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.08);box-shadow:0 22px 70px rgba(0,0,0,.22)}
+    .gallery-video-card,.gallery-mini{position:relative;min-height:250px;border-radius:22px;overflow:hidden;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.08);box-shadow:0 22px 70px rgba(0,0,0,.22);cursor:pointer}
     .gallery-mini{cursor:zoom-in}
     .gallery-video-card video,.gallery-mini img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 420ms var(--ease),filter 220ms}
     .gallery-mini::after,.gallery-video-card::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.45),transparent 58%);pointer-events:none}
-    .gallery-video-card::after{display:none}
+    .gallery-video-card::after{display:block;background:linear-gradient(to top,rgba(0,0,0,.54),rgba(0,0,0,.08) 62%,transparent)}
     .gallery-mini:hover img,.gallery-video-card:hover video{transform:scale(1.05);filter:saturate(1.08)}
     .gallery-video-card .gallery-label{top:12px;bottom:auto;pointer-events:none}
     .gallery-strip{grid-column:1/2;display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
@@ -1041,7 +1055,8 @@ export default function Home() {
     .gallery-thumb span{position:absolute;left:8px;top:8px;border-radius:999px;background:rgba(6,24,40,.62);color:white;font-size:10px;font-weight:800;padding:4px 7px}
     .gallery-thumb:hover img{transform:scale(1.08);filter:saturate(1.12)}
     .gallery-video-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-    .gallery-video-chip{border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.13);background:rgba(255,255,255,.08);aspect-ratio:1.35/1}
+    .gallery-video-chip{position:relative;border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.13);background:rgba(255,255,255,.08);aspect-ratio:1.35/1;cursor:pointer}
+    .gallery-video-chip::after{content:'▶';position:absolute;left:12px;bottom:10px;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.88);color:#0B3D6B;display:grid;place-items:center;font-size:13px;font-weight:900;box-shadow:0 10px 26px rgba(0,0,0,.18);pointer-events:none}
     .gallery-video-chip video,.gallery-video-card video{width:100%;height:100%;object-fit:cover;display:block;border-radius:20px}
     .gallery-video-chip video{border-radius:16px}
 
@@ -1142,6 +1157,24 @@ export default function Home() {
             <div className="lb-counter">{galleryLightbox.idx + 1} / {pool.length}</div>
           </div>
         )
+      })()}
+
+      {/* VIDEO LIGHTBOX */}
+      {videoLightbox && (() => {
+        const item = GALLERY_VIDEO_ITEMS[videoLightbox.idx]
+        const prev = (videoLightbox.idx - 1 + GALLERY_VIDEO_ITEMS.length) % GALLERY_VIDEO_ITEMS.length
+        const next = (videoLightbox.idx + 1) % GALLERY_VIDEO_ITEMS.length
+        return item ? (
+          <div className="lb-overlay" onClick={() => setVideoLightbox(null)}>
+            <button className="lb-close" onClick={() => setVideoLightbox(null)}>✕</button>
+            <button className="lb-prev" onClick={e => { e.stopPropagation(); setVideoLightbox({idx:prev}) }}>‹</button>
+            <div className="lb-video-wrap" onClick={e => e.stopPropagation()}>
+              <video key={item.src} src={item.src} poster={item.poster} controls autoPlay playsInline preload="metadata" />
+            </div>
+            <button className="lb-next" onClick={e => { e.stopPropagation(); setVideoLightbox({idx:next}) }}>›</button>
+            <div className="lb-counter">{videoLightbox.idx + 1} / {GALLERY_VIDEO_ITEMS.length}</div>
+          </div>
+        ) : null
       })()}
 
       {/* PROGRAM MODAL */}
@@ -1575,9 +1608,9 @@ export default function Home() {
               </div>
             </div>
             <div className="gallery-side">
-              {GALLERY_VIDEO_ITEMS.slice(0,2).map(v => (
-                <div key={v.src} className="gallery-video-card">
-                  <video src={v.src} poster={v.poster} muted loop playsInline preload="metadata" controls aria-label="Time to Surf camp video" />
+              {GALLERY_VIDEO_ITEMS.slice(0,2).map((v,i) => (
+                <div key={v.src} className="gallery-video-card" onClick={() => setVideoLightbox({idx:i})}>
+                  <video src={v.src} poster={v.poster} muted loop playsInline preload="metadata" aria-label="Time to Surf camp video" />
                   <div className="gallery-label">{t('text_254', 'Видео', 'Video', 'Video')}</div>
                 </div>
               ))}
@@ -1596,9 +1629,9 @@ export default function Home() {
               })}
             </div>
             <div className="gallery-video-row">
-              {GALLERY_VIDEO_ITEMS.slice(2).map(v => (
-                <div key={v.src} className="gallery-video-chip">
-                  <video src={v.src} poster={v.poster} muted loop playsInline preload="metadata" controls aria-label="Time to Surf camp video" />
+              {GALLERY_VIDEO_ITEMS.slice(2).map((v,i) => (
+                <div key={v.src} className="gallery-video-chip" onClick={() => setVideoLightbox({idx:i + 2})}>
+                  <video src={v.src} poster={v.poster} muted loop playsInline preload="metadata" aria-label="Time to Surf camp video" />
                 </div>
               ))}
             </div>

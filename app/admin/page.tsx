@@ -169,7 +169,42 @@ function MediaTab() {
     }catch(e:any){setErr(e.message||'Ошибка загрузки')}finally{setBusy(false)}
   }
   const del=async(id:number)=>{if(confirm('Удалить медиа?')){await fetch('/api/gallery',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({id})});load()}}
-  return <section><Title sub="Загружай фото или видео прямо с устройства. URL можно оставить пустым, он появится после загрузки файла.">Фото / видео</Title><Toast msg={msg}/><ErrorBox msg={err}/><div style={S.card}><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}><div><label style={S.label}>Файл с устройства</label><input style={S.input} type="file" accept="image/*,video/*" onChange={e=>setFile(e.target.files?.[0]||null)}/></div><div><label style={S.label}>Poster для видео с устройства</label><input style={S.input} type="file" accept="image/*" onChange={e=>setPoster(e.target.files?.[0]||null)}/></div><Field label="URL файла (запасной вариант)" v={form.url} set={v=>setForm({...form,url:v})}/><Field label="Poster URL для видео (запасной вариант)" v={form.poster_url} set={v=>setForm({...form,poster_url:v})}/><div><label style={S.label}>Тип</label><select style={S.input} value={form.media_type} onChange={e=>setForm({...form,media_type:e.target.value})}><option value="image">Фото</option><option value="video">Видео</option></select></div><div><label style={S.label}>Секция</label><select style={S.input} value={form.section} onChange={e=>setForm({...form,section:e.target.value})}>{mediaSections.map(([v,l])=><option key={v} value={v}>{l}</option>)}</select></div><Field label="Подпись / alt" v={form.title} set={v=>setForm({...form,title:v})}/></div><button style={{...S.btn('#0B3D6B'),marginTop:14,opacity:busy?.65:1}} onClick={add} disabled={busy}>{busy?'Загружаю...':'Добавить'}</button></div><div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(180px,1fr))',gap:12}}>{items.map(m=><div key={m.id} style={{...S.card,padding:10,margin:0}}>{m.media_type==='video'?<video src={m.url} poster={m.poster_url||undefined} controls style={{width:'100%',height:110,objectFit:'cover',borderRadius:10}}/>:<img src={m.url} alt="" style={{width:'100%',height:110,objectFit:'cover',borderRadius:10}}/>}<div style={{fontSize:11,color:'#6B8AA0',marginTop:6,wordBreak:'break-all'}}>{m.media_type||'image'} · {m.section}<br/>{m.url}</div><button style={{...S.btn('#fee2e2','#dc2626'),marginTop:8,width:'100%'}} onClick={()=>del(m.id)}>Удалить</button></div>)}</div></section>
+  const sections = mediaSections.map(([value,label]) => ({ value, label, rows: items.filter(m => m.section === value) }))
+  const unknown = items.filter(m => !mediaSections.some(([value]) => value === m.section))
+  if (unknown.length) sections.push({ value:'other', label:'Другое / старые записи', rows:unknown })
+  return <section>
+    <Title sub="Загружай фото или видео прямо с устройства. Ниже всё разложено по секциям, чтобы удалять конкретные фото из нужного блока.">Фото / видео</Title>
+    <Toast msg={msg}/><ErrorBox msg={err}/>
+    <div style={S.card}>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+        <div><label style={S.label}>Файл с устройства</label><input style={S.input} type="file" accept="image/*,video/*" onChange={e=>setFile(e.target.files?.[0]||null)}/></div>
+        <div><label style={S.label}>Poster для видео с устройства</label><input style={S.input} type="file" accept="image/*" onChange={e=>setPoster(e.target.files?.[0]||null)}/></div>
+        <Field label="URL файла (запасной вариант)" v={form.url} set={v=>setForm({...form,url:v})}/>
+        <Field label="Poster URL для видео (запасной вариант)" v={form.poster_url} set={v=>setForm({...form,poster_url:v})}/>
+        <div><label style={S.label}>Тип</label><select style={S.input} value={form.media_type} onChange={e=>setForm({...form,media_type:e.target.value})}><option value="image">Фото</option><option value="video">Видео</option></select></div>
+        <div><label style={S.label}>Секция</label><select style={S.input} value={form.section} onChange={e=>setForm({...form,section:e.target.value})}>{mediaSections.map(([v,l])=><option key={v} value={v}>{l}</option>)}</select></div>
+        <Field label="Подпись / alt" v={form.title} set={v=>setForm({...form,title:v})}/>
+      </div>
+      <button style={{...S.btn('#0B3D6B'),marginTop:14,opacity:busy?.65:1}} onClick={add} disabled={busy}>{busy?'Загружаю...':'Добавить'}</button>
+    </div>
+    {sections.map(section => (
+      <div key={section.value} style={{...S.card,padding:16}}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',gap:12,marginBottom:12}}>
+          <strong style={{color:'#0B3D6B',fontSize:16}}>{section.label}</strong>
+          <span style={{fontSize:12,fontWeight:900,color:'#6B8AA0',background:'#eef7fb',borderRadius:999,padding:'5px 10px'}}>{section.rows.length}</span>
+        </div>
+        {section.rows.length === 0 ? <div style={{fontSize:13,color:'#8AA5B8'}}>Пока пусто</div> : (
+          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(180px,1fr))',gap:12}}>
+            {section.rows.map(m=><div key={m.id} style={{border:'1px solid #D4E6F1',borderRadius:12,padding:10,background:'#fbfdff'}}>
+              {m.media_type==='video'?<video src={m.url} poster={m.poster_url||undefined} controls style={{width:'100%',height:110,objectFit:'cover',borderRadius:10}}/>:<img src={m.url} alt="" style={{width:'100%',height:110,objectFit:'cover',borderRadius:10}}/>}
+              <div style={{fontSize:11,color:'#6B8AA0',marginTop:6,wordBreak:'break-all'}}>{m.media_type||'image'} · id {m.id}<br/>{m.url}</div>
+              <button style={{...S.btn('#fee2e2','#dc2626'),marginTop:8,width:'100%'}} onClick={()=>del(m.id)}>Удалить из этой секции</button>
+            </div>)}
+          </div>
+        )}
+      </div>
+    ))}
+  </section>
 }
 
 function ReviewsTab() {
