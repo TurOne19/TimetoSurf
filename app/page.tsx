@@ -165,6 +165,18 @@ export default function Home() {
     {src:'/optimized/img_6362.webp', alt:'Time to Surf team'},
     {src:'/optimized/img_6438.webp', alt:'Time to Surf team'},
   ]
+  const DB_HERO_PHOTOS = dbGallery.filter(p => p.section === 'hero' && p.media_type !== 'video').map(p => p.url)
+  const DISPLAY_HERO_PHOTOS = DB_HERO_PHOTOS.length > 0 ? DB_HERO_PHOTOS : HERO_PHOTOS
+  const DB_SAFETY_PHOTOS = dbGallery.filter(p => p.section === 'safety' && p.media_type !== 'video').map(p => ({
+    src: p.url,
+    alt: p.title || t('text_295', 'Дети в спасательных жилетах на Stroomi rand', 'Children in life jackets at Stroomi Beach', 'Lapsed paastevestides Stroomi rannas')
+  }))
+  const DISPLAY_SAFETY_PHOTOS = DB_SAFETY_PHOTOS.length > 0 ? DB_SAFETY_PHOTOS : SAFETY_PHOTOS
+  const DB_TRUST_PHOTOS = dbGallery.filter(p => p.section === 'trust' && p.media_type !== 'video').map(p => ({
+    src: p.url,
+    alt: p.title || 'Time to Surf team'
+  }))
+  const DISPLAY_TRUST_PHOTOS = DB_TRUST_PHOTOS.length > 0 ? DB_TRUST_PHOTOS : TRUST_PHOTOS
 
   const STATIC_GALLERY_SECTIONS = [
     {
@@ -206,12 +218,12 @@ export default function Home() {
   ]
   const DB_VIDEOS = dbGallery.filter(p => p.media_type === 'video').map(p => ({ src: p.url, poster: p.poster_url || '/optimized/dsc02825.webp' }))
   const GALLERY_VIDEO_ITEMS = DB_VIDEOS.length > 0 ? DB_VIDEOS : GALLERY_VIDEOS.map((src, i) => ({ src, poster: VIDEO_POSTERS[i % VIDEO_POSTERS.length] }))
-  const COMPACT_GALLERY = Array.from(new Set([...HERO_PHOTOS, ...GALLERY_IMGS])).slice(0, 14)
+  const COMPACT_GALLERY = Array.from(new Set([...DISPLAY_HERO_PHOTOS, ...GALLERY_IMGS])).slice(0, 14)
   const lightboxPools: Record<LightboxPool, string[]> = {
-    hero: HERO_PHOTOS,
+    hero: DISPLAY_HERO_PHOTOS,
     gallery: GALLERY_IMGS,
-    safety: SAFETY_PHOTOS.map(p => p.src),
-    trust: TRUST_PHOTOS.map(p => p.src),
+    safety: DISPLAY_SAFETY_PHOTOS.map(p => p.src),
+    trust: DISPLAY_TRUST_PHOTOS.map(p => p.src),
   }
 
   useEffect(() => {
@@ -1174,7 +1186,7 @@ export default function Home() {
               [t('text_116', 'Программы', 'Programmes', 'Programmid'),'formats'],
               [t('text_117', 'Цены', 'Prices', 'Hinnad'),'pricing'],
               [t('text_118', 'Расписание', 'Schedule', 'Ajakava'),'dates'],
-              [t('text_119', 'Команда', 'Team', 'Meeskond'),'team'],
+              [t('text_166', 'Безопасность', 'Safety', 'Ohutus'),'safety'],
               [t('text_120', 'Отзывы', 'Reviews', 'Arvustused'),'reviews'],
               [t('text_121', 'Место', 'Location', 'Asukoht'),'location'],
             ].map(([l,id]) => (
@@ -1203,7 +1215,7 @@ export default function Home() {
           [t('text_122', 'Программы', 'Programmes', 'Programmid'),'formats'],
           [t('text_123', 'Цены', 'Prices', 'Hinnad'),'pricing'],
           [t('text_124', 'Расписание', 'Schedule', 'Ajakava'),'dates'],
-          [t('text_125', 'Команда', 'Team', 'Meeskond'),'team'],
+          [t('text_166', 'Безопасность', 'Safety', 'Ohutus'),'safety'],
           [t('text_126', 'Отзывы', 'Reviews', 'Arvustused'),'reviews'],
           [t('text_127', 'Место', 'Location', 'Asukoht'),'location'],
         ].map(([l,id]) => (
@@ -1333,7 +1345,7 @@ export default function Home() {
             ))}
           </div>
           <div className="trust-team rv">
-            {TRUST_PHOTOS.map((p,i) => (
+            {DISPLAY_TRUST_PHOTOS.map((p,i) => (
               <button key={p.src} className="trust-photo" onClick={() => setGalleryLightbox({src:p.src,idx:i,pool:'trust'})} aria-label="Open team photo">
                 <img src={p.src} alt={p.alt} loading="lazy" />
               </button>
@@ -1343,7 +1355,7 @@ export default function Home() {
       </section>
 
       {/* SAFETY */}
-      <section className="safety">
+      <section className="safety" id="safety">
         <div className="wrap">
           <div className="safety-g">
             <div className="rv">
@@ -1372,12 +1384,7 @@ export default function Home() {
               </div>
             </div>
             <div className="safety-photos sg">
-              {[
-                {src:'/optimized/dsc02825.webp', alt:t('text_295', 'Дети в спасательных жилетах на Stroomi rand', 'Children in life jackets at Stroomi Beach', 'Lapsed paastevestides Stroomi rannas')},
-                {src:'/optimized/dsc02878.webp', alt:t('text_296', 'Детский серфинг лагерь на воде в Таллине', 'Kids surf camp on the water in Tallinn', 'Laste surfilaager vees Tallinnas')},
-                {src:'/optimized/img_6362.webp', alt:t('text_297', 'Инструкторы Time to Surf с детьми', 'Time to Surf instructors with children', 'Time to Surf juhendajad lastega')},
-                {src:'/optimized/img_6438.webp', alt:t('text_298', 'Малая группа детей на пляже Stroomi', 'Small group of children at Stroomi Beach', 'Vaike lastegrupp Stroomi rannas')},
-              ].map((p,i) => {
+              {DISPLAY_SAFETY_PHOTOS.map((p,i) => {
                 return (
                   <div key={i} className="safety-photo-card"
                     onClick={() => setGalleryLightbox({src:p.src,idx:i,pool:'safety'})}>

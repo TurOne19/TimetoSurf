@@ -53,10 +53,7 @@ export async function PATCH(req: Request) {
 
   if (!id) return Response.json({ error: 'Missing id' }, { status: 400 })
 
-  const cleanUpdates = {
-    ...updates,
-    updated_at: new Date().toISOString(),
-  }
+  const cleanUpdates = { ...updates }
   if (updates.sort_order !== undefined) cleanUpdates.sort_order = Number(updates.sort_order) || 0
 
   let { error } = await supabase

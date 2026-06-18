@@ -17,7 +17,7 @@ export async function PATCH(req: Request) {
 
     const { error } = await supabase
       .from('camp_sessions')
-      .update({ sort_order, updated_at: new Date().toISOString() })
+      .update({ sort_order })
       .eq('id', id)
 
     if (error) return Response.json({ error: error.message }, { status: 500 })
