@@ -316,11 +316,11 @@
   },
   {
     "key": "text_036",
-    "label": "Да! 3 дня - 190€, 4 дня - 235€. Укажи...",
+    "label": "Да! 3 дня - 190€, 4 дня - 235€. Укажите при регистрации.",
     "group_name": "FAQ",
     "value_ru": "Да! 3 дня - 190€, 4 дня - 235€. Укажите при регистрации.",
     "value_en": "Yes! 3 days €190, 4 days €235. Specify at registration.",
-    "value_et": "Jah! 3 päeva 190€, 4 päeva 235€.",
+    "value_et": "Jah! 3 päeva 190€, 4 päeva 235€. Märkige see registreerimisel.",
     "sort_order": 36
   },
   {
@@ -356,7 +356,7 @@
     "group_name": "Модалки программ",
     "value_ru": "Лагерь, где дети не просто отдыхают - а становятся героями своего фильма. 5 дней приключений.",
     "value_en": "A camp where kids don't just rest - they become heroes of their own film. 5 days of adventure.",
-    "value_et": "Laager, kus lapsed ei puhka lihtsalt - nad saavad oma filmi kangelasteks. 5 paeva seiklusi.",
+    "value_et": "Laager, kus lapsed ei puhka lihtsalt - nad saavad oma filmi kangelasteks. 5 päeva seiklusi.",
     "sort_order": 40
   },
   {
@@ -383,7 +383,7 @@
     "group_name": "Модалки программ",
     "value_ru": "SUP-серфинг, баланс, координация и ОФП каждый день",
     "value_en": "SUP surfing, balance, coordination and fitness every day",
-    "value_et": "SUP surfamine, tasakaal, koordinatsioon ja kehaline ettevalmistus iga paev",
+    "value_et": "SUP-surf, tasakaal, koordinatsioon ja üldfüüsiline ettevalmistus iga päev",
     "sort_order": 43
   },
   {
@@ -392,7 +392,7 @@
     "group_name": "Модалки программ",
     "value_ru": "Игры на пляже",
     "value_en": "Beach games",
-    "value_et": "Rannamangud",
+    "value_et": "Rannamängud",
     "sort_order": 44
   },
   {
@@ -437,7 +437,7 @@
     "group_name": "Модалки программ",
     "value_ru": "Операторы - учатся видеть детали и кадры",
     "value_en": "Cameramen - learn to see details and frames",
-    "value_et": "Operaatorid - opivad naegema detaile ja kaadrit",
+    "value_et": "Operaatorid - õpivad nägema detaile ja kaadreid",
     "sort_order": 49
   },
   {
@@ -518,7 +518,7 @@
     "group_name": "Модалки программ",
     "value_ru": "Короткий фильм, который останется вам на память",
     "value_en": "A short film to keep as a memory",
-    "value_et": "Luhifilm, mis jaab teile malestuseks",
+    "value_et": "Lühifilm, mis jääb teile mälestuseks",
     "sort_order": 58
   },
   {
@@ -545,7 +545,7 @@
     "group_name": "Модалки программ",
     "value_ru": "Воспоминания, которые они реально проживут",
     "value_en": "Memories they will truly live",
-    "value_et": "Malestused, mida nad pariston elavad",
+    "value_et": "Mälestused, mida nad päriselt kogevad",
     "sort_order": 61
   },
   {
@@ -581,7 +581,7 @@
     "group_name": "Модалки программ",
     "value_ru": "Приключенческая программа, где ребёнок открывает мир серфинга и учится жить в природе.",
     "value_en": "An adventure programme where the child discovers surfing and learns to live in nature.",
-    "value_et": "Seiklusprogramm, kus laps avastab surfimaailma ja opib looduses elama.",
+    "value_et": "Seiklusprogramm, kus laps avastab surfimaailma ja õpib looduses hakkama saama.",
     "sort_order": 65
   },
   {
@@ -626,7 +626,7 @@
     "group_name": "Модалки программ",
     "value_ru": "Знакомство с гидрокостюмами и уход за ними",
     "value_en": "Introduction to wetsuits and their care",
-    "value_et": "Marjaksuitide tutvustus ja hooldamine",
+    "value_et": "Märjaksüütide tutvustus ja hooldamine",
     "sort_order": 70
   },
   {
@@ -662,7 +662,7 @@
     "group_name": "Модалки программ",
     "value_ru": "Навыки поведения в лесу",
     "value_en": "Forest survival skills",
-    "value_et": "Metsas kaitumise oskused",
+    "value_et": "Metsas käitumise oskused",
     "sort_order": 74
   },
   {
@@ -671,7 +671,7 @@
     "group_name": "Модалки программ",
     "value_ru": "Сборка палатки и организация лагеря",
     "value_en": "Setting up a tent and organising camp",
-    "value_et": "Telgi punjstitamine ja laagri korraldamine",
+    "value_et": "Telgi püstitamine ja laagri korraldamine",
     "sort_order": 75
   },
   {
@@ -680,7 +680,7 @@
     "group_name": "Модалки программ",
     "value_ru": "Разведение костра и базовые навыки выживания",
     "value_en": "Making a fire and basic survival skills",
-    "value_et": "Loke tegemine ja ellujaamise pohioskused",
+    "value_et": "Lõkke tegemine ja baasoskused looduses",
     "sort_order": 76
   },
   {
@@ -770,7 +770,7 @@
     "group_name": "Модалки программ",
     "value_ru": "Классическая программа для тех, кто впервые открывает мир серфинга. Разные виды водного спорта, безопасность и командные игры.",
     "value_en": "The classic programme for those discovering surfing for the first time. Different water sports, safety and team games.",
-    "value_et": "Klassikaline programm neile, kes avastab surfimaailma esimest korda. Erinevad veespordialad, ohutus ja meeskonnamangud.",
+    "value_et": "Klassikaline programm neile, kes avastavad surfimaailma esimest korda. Erinevad veespordialad, ohutus ja meeskonnamängud.",
     "sort_order": 86
   },
   {
@@ -851,7 +851,7 @@
     "group_name": "Модалки программ",
     "value_ru": "Какие бывают гидрокостюмы",
     "value_en": "Types of wetsuits",
-    "value_et": "Marjaksuitide tuubid",
+    "value_et": "Millised märjaksüüdid olemas on",
     "sort_order": 95
   },
   {
@@ -860,7 +860,7 @@
     "group_name": "Модалки программ",
     "value_ru": "Как правильно их надевать",
     "value_en": "How to put them on correctly",
-    "value_et": "Kuidas neid oigesti selga panna",
+    "value_et": "Kuidas neid õigesti selga panna",
     "sort_order": 96
   },
   {
@@ -896,7 +896,7 @@
     "group_name": "Модалки программ",
     "value_ru": "Поддержка друг друга",
     "value_en": "Supporting each other",
-    "value_et": "Uksteise toetamine",
+    "value_et": "Üksteise toetamine",
     "sort_order": 100
   },
   {
@@ -914,7 +914,7 @@
     "group_name": "Модалки программ",
     "value_ru": "Понимание ветра, погоды и природы",
     "value_en": "Understanding wind, weather and nature",
-    "value_et": "Tuule, ilma ja looduse moistmine",
+    "value_et": "Tuule, ilma ja looduse mõistmine",
     "sort_order": 102
   },
   {
@@ -950,7 +950,7 @@
     "group_name": "Модалки программ",
     "value_ru": "Навыки безопасного поведения",
     "value_en": "Safe behaviour skills",
-    "value_et": "Ohutu kaitumise oskused",
+    "value_et": "Ohutu käitumise oskused",
     "sort_order": 106
   },
   {
@@ -977,7 +977,7 @@
     "group_name": "Модалки программ",
     "value_ru": "Сертифицированные инструктора с многолетним опытом работы с детьми на Балтийском море. Умеют мотивировать и поддерживать на каждом этапе.",
     "value_en": "Certified instructors with years of experience working with children on the Baltic Sea. They know how to motivate and support at every stage.",
-    "value_et": "Sertifitseeritud juhendajad mitmeaastase kogemusega laste juhendamisel Lameresel. Oskavad motiveerida ja toetada igas etapis.",
+    "value_et": "Sertifitseeritud juhendajad, kellel on aastatepikkune kogemus lastega Läänemerel. Nad oskavad motiveerida ja igal etapil toetada.",
     "sort_order": 109
   },
   {
@@ -1022,7 +1022,7 @@
     "group_name": "Модалка UI",
     "value_ru": "5 дней - всё включено",
     "value_en": "5 days - all included",
-    "value_et": "5 paeva - koik sees",
+    "value_et": "5 päeva - kõik hinnas",
     "sort_order": 114
   },
   {
@@ -1409,7 +1409,7 @@
     "group_name": "Hero / доверие",
     "value_ru": "В воду дети заходят только в жилете и гидрокостюме. Экипировка входит в цену.",
     "value_en": "Kids enter the water only in a life jacket and wetsuit. Gear is included.",
-    "value_et": "Lapsed lähevad vette ainult päästevesti ja märjaksüidiga. Varustus on hinnas.",
+    "value_et": "Lapsed lähevad vette ainult päästevesti ja märjaksüüdiga. Varustus on hinnas.",
     "sort_order": 157
   },
   {
@@ -1445,7 +1445,7 @@
     "group_name": "Hero / доверие",
     "value_ru": "Ниже - настоящие люди, которые работают с детьми на сменах.",
     "value_en": "Below are the real people working with kids during sessions.",
-    "value_et": "Allpool on päris inimesed, kes vahetustel lastega töötavad.",
+    "value_et": "Selgitame lihtsalt, ei kiirusta ja aitame lapsi, kes vett kardavad.",
     "sort_order": 161
   },
   {
@@ -1463,7 +1463,7 @@
     "group_name": "Hero / доверие",
     "value_ru": "Перед водой повторяем: где стоять, что делать при ветре и как слушать инструктора.",
     "value_en": "Before water we repeat where to stand, what to do in wind and how to listen.",
-    "value_et": "Enne vett kordame, kus olla, mida tuulega teha ja kuidas juhendajat kuulata.",
+    "value_et": "Enne vette minekut kordame, kus olla, mida tuulega teha ja kuidas juhendajat kuulata.",
     "sort_order": 163
   },
   {
@@ -1562,7 +1562,7 @@
     "group_name": "Безопасность",
     "value_ru": "Малые группы",
     "value_en": "Small groups",
-    "value_et": "Väikesed grupid",
+    "value_et": "Instruktorid näevad lapsi vees, rannas ja mängude ajal.",
     "sort_order": 174
   },
   {
@@ -1616,7 +1616,7 @@
     "group_name": "Три программы",
     "value_ru": "Во всех программах есть вода, движение и работа в группе. Отличается вторая часть дня: кино, поход или классический серфинг.",
     "value_en": "Every programme has water, movement and group work. The second half of the day changes: cinema, hike or classic surf.",
-    "value_et": "Igas programmis on vesi, liikumine ja grupitöö. Päeva teine pool muutub: kino, matk või klassikaline surf.",
+    "value_et": "Igas programmis on vesi, liikumine ja grupitöö. Päeva teine pool on erinev: kino, matk või klassikaline surf.",
     "sort_order": 180
   },
   {
@@ -1652,7 +1652,7 @@
     "group_name": "Три программы",
     "value_ru": "SUP, бодиборд и ОФП каждый день",
     "value_en": "SUP, bodyboard and fitness every day",
-    "value_et": "SUP, bodyboard ja ÜKE iga päev",
+    "value_et": "SUP, bodyboard ja üldfüüsiline ettevalmistus iga päev",
     "sort_order": 184
   },
   {
@@ -1706,7 +1706,7 @@
     "group_name": "Три программы",
     "value_ru": "Виндсёрфинг, SUP и кайт",
     "value_en": "Windsurfing, SUP and kite",
-    "value_et": "Purjelaud, SUP ja lohe",
+    "value_et": "Purjelaud, SUP ja lohesurf",
     "sort_order": 190
   },
   {
@@ -1823,7 +1823,7 @@
     "group_name": "Программа дня",
     "value_ru": "Встреча детей, знакомство, настрой на день",
     "value_en": "Meeting kids, introductions, setting the mood",
-    "value_et": "Laste vastuvõtt, tutvumine",
+    "value_et": "Laste vastuvõtt, tutvumine, päevaks valmistumine",
     "sort_order": 203
   },
   {
@@ -1841,7 +1841,7 @@
     "group_name": "Программа дня",
     "value_ru": "Активные тренировки и командные игры на берегу",
     "value_en": "Active training and team games on shore",
-    "value_et": "Aktiivsed treeningud ja meeskonnmängud",
+    "value_et": "Aktiivsed treeningud ja meeskonnamängud kaldal",
     "sort_order": 205
   },
   {
@@ -1859,7 +1859,7 @@
     "group_name": "Программа дня",
     "value_ru": "Теория безопасности, гидрокостюмы, SUP и виндсерфинг",
     "value_en": "Safety theory, wetsuits, SUP and windsurfing",
-    "value_et": "Ohutusteooroia, märjaksüidid, SUP",
+    "value_et": "Ohutusteooria, märjaksüüdid, SUP ja purjelauasõit",
     "sort_order": 207
   },
   {
@@ -1873,11 +1873,11 @@
   },
   {
     "key": "text_209",
-    "label": "Индивидуальные порции с учётом аллергий. Питание от Tark Catering 🍽",
+    "label": "Индивидуальные порции с учётом аллергий. Питание от Tark Catering",
     "group_name": "Программа дня",
-    "value_ru": "Индивидуальные порции с учётом аллергий. Питание от Tark Catering 🍽",
+    "value_ru": "Индивидуальные порции с учётом аллергий. Питание от Tark Catering",
     "value_en": "Individual portions, allergies noted - Tark Catering",
-    "value_et": "Individuaalsed portsjonid - Tark Catering",
+    "value_et": "Individuaalsed portsjonid allergiatega arvestades - Tark Catering",
     "sort_order": 209
   },
   {
@@ -1895,7 +1895,7 @@
     "group_name": "Программа дня",
     "value_ru": "Спокойные и настольные игры, свободное общение",
     "value_en": "Quiet games, free time, conversations",
-    "value_et": "Vaiksed mängud, vaba suhtlemine",
+    "value_et": "Rahulikud lauamängud ja vaba suhtlemine",
     "sort_order": 211
   },
   {
@@ -1913,16 +1913,16 @@
     "group_name": "Программа дня",
     "value_ru": "Виндсёрфинг, кайт, SUP, поход, хайкинг или пляжные игры - зависит от погоды",
     "value_en": "Windsurfing, kite, SUP, hiking or beach games - depends on weather",
-    "value_et": "Purjelaud, kait, SUP, matk või rannamängud",
+    "value_et": "Purjelaud, lohe, SUP, matk või rannamängud - sõltub ilmast",
     "sort_order": 213
   },
   {
     "key": "text_214",
-    "label": "Чаепитие ☕",
+    "label": "Чаепитие",
     "group_name": "Программа дня",
-    "value_ru": "Чаепитие ☕",
-    "value_en": "Tea time в•",
-    "value_et": "Tee aeg в•",
+    "value_ru": "Чаепитие",
+    "value_en": "Tea time",
+    "value_et": "Tee aeg",
     "sort_order": 214
   },
   {
@@ -1931,7 +1931,7 @@
     "group_name": "Программа дня",
     "value_ru": "Перерыв, отдых, свободное общение",
     "value_en": "Break, rest, free conversation",
-    "value_et": "Paus, puhkus, vaba suhtlemine",
+    "value_et": "Paus, puhkus ja vaba suhtlemine",
     "sort_order": 215
   },
   {
@@ -1940,7 +1940,7 @@
     "group_name": "Программа дня",
     "value_ru": "Спокойный блок",
     "value_en": "Calm block",
-    "value_et": "Rahulik plokk",
+    "value_et": "Rahulik osa",
     "sort_order": 216
   },
   {
@@ -1949,16 +1949,16 @@
     "group_name": "Программа дня",
     "value_ru": "Игры, творчество, интеллектуальные задания",
     "value_en": "Games, creativity, intellectual tasks",
-    "value_et": "Mängud, loovus, intellektuaalsed ülesanded",
+    "value_et": "Mängud, loovus ja mõtlemisülesanded",
     "sort_order": 217
   },
   {
     "key": "text_218",
-    "label": "До завтра! 👋",
+    "label": "До завтра!",
     "group_name": "Программа дня",
-    "value_ru": "До завтра! 👋",
-    "value_en": "See you tomorrow! рџ‘‹",
-    "value_et": "Homseni! рџ‘‹",
+    "value_ru": "До завтра!",
+    "value_en": "See you tomorrow!",
+    "value_et": "Homseni!",
     "sort_order": 218
   },
   {
@@ -1994,7 +1994,7 @@
     "group_name": "Все смены",
     "value_ru": "Выберите смену и записывайтесь - места ограничены, группы маленькие.",
     "value_en": "Choose your session and register - spots are limited, groups are small.",
-    "value_et": "Valige vahetus ja registreeruge - kohti on piiratud.",
+    "value_et": "Valige vahetus ja registreeruge - kohti on piiratud, grupid on väikesed.",
     "sort_order": 222
   },
   {
@@ -2057,7 +2057,7 @@
     "group_name": "Цены",
     "value_ru": "3 ДНЯ",
     "value_en": "3 DAYS",
-    "value_et": "3 PГ„EVA",
+    "value_et": "3 PÄEVA",
     "sort_order": 229
   },
   {
@@ -2084,7 +2084,7 @@
     "group_name": "Цены",
     "value_ru": "5 ДНЕЙ",
     "value_en": "5 DAYS",
-    "value_et": "5 PГ„EVA",
+    "value_et": "5 PÄEVA",
     "sort_order": 232
   },
   {
@@ -2111,7 +2111,7 @@
     "group_name": "Цены",
     "value_ru": "4 ДНЯ",
     "value_en": "4 DAYS",
-    "value_et": "4 PГ„EVA",
+    "value_et": "4 PÄEVA",
     "sort_order": 235
   },
   {
@@ -2183,7 +2183,7 @@
     "group_name": "Цены",
     "value_ru": "Гидрокостюмы и жилеты",
     "value_en": "Wetsuits and life jackets",
-    "value_et": "Märjaksüidid ja päästevested",
+    "value_et": "Märjaksüüdid ja päästevestid",
     "sort_order": 243
   },
   {
@@ -2219,7 +2219,7 @@
     "group_name": "Цены",
     "value_ru": "Чаепитие и полдник",
     "value_en": "Tea time and snack",
-    "value_et": "Tee aeg ja eine",
+    "value_et": "Teeaeg ja vahepala",
     "sort_order": 247
   },
   {
@@ -2345,7 +2345,7 @@
     "group_name": "Отзывы",
     "value_ru": "Спасибо! Отзыв отправлен на проверку.",
     "value_en": "Thank you! Your review is pending approval.",
-    "value_et": "Aitäh! Arvustus ootab heakskiitu.",
+    "value_et": "Aitäh! Arvustus ootab kinnitamist.",
     "sort_order": 261
   },
   {
@@ -2507,7 +2507,7 @@
     "group_name": "Локация",
     "value_ru": "Автобусы №40, 48 до остановки Stroomi rand - около 20 минут от центра.",
     "value_en": "Buses 40, 48 to Stroomi rand stop - about 20 minutes from the city centre.",
-    "value_et": "Bussid nr 40, 48 peatuseni Stroomi rand - ~20 min kesklinnast.",
+    "value_et": "Bussid nr 40 ja 48 Stroomi rand peatuseni - umbes 20 minutit kesklinnast.",
     "sort_order": 279
   },
   {
@@ -2525,7 +2525,7 @@
     "group_name": "Локация",
     "value_ru": "Бесплатная парковка у пляжа. В выходные может быть занята - приезжайте заранее.",
     "value_en": "Free parking at the beach. Can be busy on weekends - arrive early.",
-    "value_et": "Tasuta parkimine ranna juures. Nädalavahetustel võib täis olla.",
+    "value_et": "Tasuta parkimine ranna juures. Nädalavahetusel võib parkla täis olla - tulge varem.",
     "sort_order": 281
   },
   {
@@ -2714,7 +2714,7 @@
     "group_name": "CTA",
     "value_ru": "Мы работаем в малых группах, чтобы каждый ребёнок получил внимание инструктора. Ближайшая смена:",
     "value_en": "We work in small groups so every child gets instructor attention. Next session:",
-    "value_et": "Tootame vaikestes gruppides, et iga laps saaks juhendaja tahelepanu. Jargmine vahetus:",
+    "value_et": "Töötame väikestes gruppides, et iga laps saaks juhendaja tähelepanu. Järgmine vahetus:",
     "sort_order": 302
   },
   {
@@ -2741,7 +2741,7 @@
     "group_name": "Hero / доверие",
     "value_ru": "мест занято - Ближайшая смена",
     "value_en": "spots taken - Next:",
-    "value_et": "kohta voetud - Jargmine",
+    "value_et": "kohta täidetud - Järgmine vahetus",
     "sort_order": 305
   }
 ]

@@ -262,7 +262,7 @@ export default function Home() {
   ]
 
   const DATES = dbSessions.length > 0
-    ? dbSessions.map(d => ({ dates: d.dates, type: c(d.type_ru, d.type_en, d.type_et), color: d.color, leaders: d.leaders, hot: d.hot, sold_out: d.sold_out, detail: d.detail }))
+    ? dbSessions.map(d => ({ dates: d.dates, type: c(d.type_ru, d.type_en, d.type_et), color: d.color, leaders: c(d.leaders_ru || d.leaders || '', d.leaders_en || d.leaders || '', d.leaders_et || d.leaders || ''), hot: d.hot, sold_out: d.sold_out, detail: d.detail }))
     : STATIC_DATES
 
   const FAQS = [
@@ -1150,7 +1150,7 @@ export default function Home() {
               <div className="pm-footer">
                 <div>
                   <div className="pm-price">{d.price}</div>
-                  <div className="pm-price-note">{t('text_114', '5 дней - всё включено', '5 days - all included', '5 paeva - koik sees')}</div>
+                  <div className="pm-price-note">{t('text_114', '5 дней - всё включено', '5 days - all included', '5 päeva - kõik hinnas')}</div>
                 </div>
                 <a className="pm-sign" href={regUrl} target="_blank" rel="noopener noreferrer">{t('text_294', 'Записаться', 'Register', 'Registreeru')}</a>
               </div>
@@ -1435,12 +1435,12 @@ export default function Home() {
               {time:'09:00 - 09:30', name:t('text_202', 'Сбор детей', 'Arrival', 'Kogunemine'), desc:t('text_203', 'Встреча детей, знакомство, настрой на день', 'Meeting kids, introductions, setting the mood', 'Laste vastuvõtt, tutvumine')},
               {time:'09:30 - 10:00', name:t('text_204', 'Разминка', 'Warm-up', 'Soojendus'), desc:t('text_205', 'Активные тренировки и командные игры на берегу', 'Active training and team games on shore', 'Aktiivsed treeningud ja meeskonnmängud')},
               {time:'10:00 - 12:00', name:t('text_206', 'Водный блок', 'Water block', 'Vesiplokk'), desc:t('text_207', 'Теория безопасности, гидрокостюмы, SUP и виндсерфинг', 'Safety theory, wetsuits, SUP and windsurfing', 'Ohutusteooroia, märjaksüidid, SUP')},
-              {time:'12:00 - 13:00', name:t('text_208', 'Обед', 'Lunch', 'Lõuna'), desc:t('text_209', 'Индивидуальные порции с учётом аллергий. Питание от Tark Catering 🍽', 'Individual portions, allergies noted - Tark Catering', 'Individuaalsed portsjonid - Tark Catering')},
+              {time:'12:00 - 13:00', name:t('text_208', 'Обед', 'Lunch', 'Lõuna'), desc:t('text_209', 'Индивидуальные порции с учётом аллергий. Питание от Tark Catering', 'Individual portions, allergies noted - Tark Catering', 'Individuaalsed portsjonid allergiatega arvestades - Tark Catering')},
               {time:'13:00 - 13:30', name:t('text_210', 'Отдых после обеда', 'After-lunch rest', 'Puhkus pärast lõunat'), desc:t('text_211', 'Спокойные и настольные игры, свободное общение', 'Quiet games, free time, conversations', 'Vaiksed mängud, vaba suhtlemine')},
               {time:'13:30 - 15:30', name:t('text_212', 'Активная программа', 'Active programme', 'Aktiivne programm'), desc:t('text_213', 'Виндсёрфинг, кайт, SUP, поход, хайкинг или пляжные игры - зависит от погоды', 'Windsurfing, kite, SUP, hiking or beach games - depends on weather', 'Purjelaud, kait, SUP, matk või rannamängud')},
-              {time:'15:30 - 15:45', name:t('text_214', 'Чаепитие ☕', 'Tea time ☕', 'Tee aeg ☕'), desc:t('text_215', 'Перерыв, отдых, свободное общение', 'Break, rest, free conversation', 'Paus, puhkus, vaba suhtlemine')},
-              {time:'15:45 - 16:30', name:t('text_216', 'Спокойный блок', 'Calm block', 'Rahulik plokk'), desc:t('text_217', 'Игры, творчество, интеллектуальные задания', 'Games, creativity, intellectual tasks', 'Mängud, loovus, intellektuaalsed ülesanded')},
-              {time:'16:30', name:t('text_218', 'До завтра! 👋', 'See you tomorrow! 👋', 'Homseni! 👋'), desc:t('text_219', 'Конец программы, ожидание родителей', 'Programme ends, parents pick up', 'Programm lõpeb, vanemad tulevad järele')},
+              {time:'15:30 - 15:45', name:t('text_214', 'Чаепитие', 'Tea time', 'Tee aeg'), desc:t('text_215', 'Перерыв, отдых, свободное общение', 'Break, rest, free conversation', 'Paus, puhkus ja vaba suhtlemine')},
+              {time:'15:45 - 16:30', name:t('text_216', 'Спокойный блок', 'Calm block', 'Rahulik osa'), desc:t('text_217', 'Игры, творчество, интеллектуальные задания', 'Games, creativity, intellectual tasks', 'Mängud, loovus ja mõtlemisülesanded')},
+              {time:'16:30', name:t('text_218', 'До завтра!', 'See you tomorrow!', 'Homseni!'), desc:t('text_219', 'Конец программы, ожидание родителей', 'Programme ends, parents pick up', 'Programm lõpeb, vanemad tulevad järele')},
             ].map((s,i) => (
               <div key={s.time} className={`sched-it sched-it-${i + 1}`}>
                 <div className="sched-num">{String(i + 1).padStart(2,'0')}</div>
