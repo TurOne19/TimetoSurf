@@ -7,7 +7,7 @@ type Tab = 'reviews' | 'sessions' | 'media' | 'pricing' | 'content' | 'faq' | 's
 interface Review { id:number; name:string; text:string; program?:string; rating:number; approved:boolean }
 interface Session { id:number; dates:string; type_ru:string; type_en:string; type_et:string; color:string; leaders?:string; leaders_ru?:string; leaders_en?:string; leaders_et?:string; hot:boolean; sold_out?:boolean; detail:string; sort_order:number }
 interface MediaItem { id:number; url:string; section:string; sort_order:number; media_type?:string; poster_url?:string; title?:string }
-interface AdminMediaItem extends MediaItem { readonly?: boolean }
+interface AdminMediaItem extends MediaItem { readonly?: boolean; hidden?: boolean }
 interface ContentItem { key:string; label:string; group_name:string; value_ru:string; value_en:string; value_et:string; sort_order:number }
 interface FaqItem { id:number; question_ru:string; answer_ru:string; question_en:string; answer_en:string; question_et:string; answer_et:string; sort_order:number; active:boolean }
 
@@ -146,13 +146,37 @@ function SessionsTab() {
 
 function MediaTab() {
   const [items,setItems]=useState<MediaItem[]>([])
+  const [settings,setSettings]=useState<Record<string,string>>({})
   const [form,setForm]=useState({url:'',section:'water',media_type:'image',poster_url:'',title:''})
   const [file,setFile]=useState<File|null>(null)
   const [poster,setPoster]=useState<File|null>(null)
   const [busy,setBusy]=useState(false)
   const [msg,setMsg]=useState('')
   const [err,setErr]=useState('')
-  const load=async()=>{const d=await fetch('/api/gallery').then(r=>r.json()).catch(()=>[]); if(Array.isArray(d)) setItems(d)}
+  const hidden = (() => {
+    try {
+      const parsed = JSON.parse(settings.hidden_default_media_json || '[]')
+      return Array.isArray(parsed) ? parsed as string[] : []
+    } catch {
+      return []
+    }
+  })()
+  const defaultKey = (m:{section:string;url:string}) => `${m.section}:${m.url}`
+  const saveHidden = async(next:string[]) => {
+    const value = JSON.stringify(Array.from(new Set(next)))
+    setSettings({...settings,hidden_default_media_json:value})
+    await fetch('/api/settings',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({settings:{hidden_default_media_json:value}})})
+  }
+  const hideDefault = async(m:AdminMediaItem) => { await saveHidden([...hidden, defaultKey(m)]) }
+  const restoreDefault = async(m:AdminMediaItem) => { await saveHidden(hidden.filter(k => k !== defaultKey(m))) }
+  const load=async()=>{
+    const [d,s]=await Promise.all([
+      fetch('/api/gallery').then(r=>r.json()).catch(()=>[]),
+      fetch('/api/settings').then(r=>r.json()).catch(()=>({})),
+    ])
+    if(Array.isArray(d)) setItems(d)
+    if(s && typeof s === 'object') setSettings(s)
+  }
   useEffect(()=>{load()},[])
   const uploadFile=async(f:File,kind:'media'|'poster')=>{
     const fd=new FormData()
@@ -182,7 +206,7 @@ function MediaTab() {
   const sections: {value:string;label:string;rows:AdminMediaItem[]}[] = mediaSections.map(([value,label]) => ({
     value,
     label,
-    rows: [...defaultMediaItems.filter(m => m.section === value), ...items.filter(m => m.section === value)]
+    rows: [...defaultMediaItems.filter(m => m.section === value).map(m => ({...m,hidden:hidden.includes(defaultKey(m))})), ...items.filter(m => m.section === value)]
   }))
   const unknown = items.filter(m => !mediaSections.some(([value]) => value === m.section))
   if (unknown.length) sections.push({ value:'other', label:'Другое / старые записи', rows:unknown })
@@ -209,12 +233,14 @@ function MediaTab() {
         </div>
         {section.rows.length === 0 ? <div style={{fontSize:13,color:'#8AA5B8'}}>Пока пусто</div> : (
           <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(180px,1fr))',gap:12}}>
-            {section.rows.map(m=><div key={m.id} style={{border:'1px solid #D4E6F1',borderRadius:12,padding:10,background:m.readonly?'#f8fafc':'#fbfdff'}}>
-              {m.media_type==='video'?<video src={m.url} poster={m.poster_url||undefined} controls style={{width:'100%',height:110,objectFit:'cover',borderRadius:10}}/>:<img src={m.url} alt="" style={{width:'100%',height:110,objectFit:'cover',borderRadius:10}}/>}
+            {section.rows.map(m=><div key={m.id} style={{border:`1px solid ${m.hidden?'#fca5a5':'#D4E6F1'}`,borderRadius:12,padding:10,background:m.hidden?'#fff7f7':m.readonly?'#f8fafc':'#fbfdff',opacity:m.hidden?.72:1}}>
+              {m.media_type==='video'?<video src={m.url} poster={m.poster_url||undefined} controls style={{width:'100%',height:110,objectFit:'cover',borderRadius:10,filter:m.hidden?'grayscale(1)':''}}/>:<img src={m.url} alt="" style={{width:'100%',height:110,objectFit:'cover',borderRadius:10,filter:m.hidden?'grayscale(1)':''}}/>}
               {m.title&&<div style={{fontSize:12,fontWeight:900,color:'#0B3D6B',marginTop:7}}>{m.title}</div>}
-              <div style={{fontSize:11,color:'#6B8AA0',marginTop:6,wordBreak:'break-all'}}>{m.media_type||'image'} · {m.readonly?'базовое на сайте':`id ${m.id}`}<br/>{m.url}</div>
+              <div style={{fontSize:11,color:'#6B8AA0',marginTop:6,wordBreak:'break-all'}}>{m.media_type||'image'} · {m.hidden?'скрыто в этой секции':m.readonly?'базовое на сайте':`id ${m.id}`}<br/>{m.url}</div>
               {m.readonly
-                ? <button style={{...S.btn('#e5eef5','#6B8AA0'),marginTop:8,width:'100%',cursor:'default'}} disabled>Базовое медиа сайта</button>
+                ? m.hidden
+                  ? <button style={{...S.btn('#dcfce7','#166534'),marginTop:8,width:'100%'}} onClick={()=>restoreDefault(m)}>Вернуть в эту секцию</button>
+                  : <button style={{...S.btn('#fee2e2','#dc2626'),marginTop:8,width:'100%'}} onClick={()=>hideDefault(m)}>Скрыть из этой секции</button>
                 : <button style={{...S.btn('#fee2e2','#dc2626'),marginTop:8,width:'100%'}} onClick={()=>del(m.id)}>Удалить из этой секции</button>}
             </div>)}
           </div>

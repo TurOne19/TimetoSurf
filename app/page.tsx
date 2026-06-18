@@ -166,21 +166,30 @@ export default function Home() {
     {src:'/optimized/img_6362.webp', alt:'Time to Surf team'},
     {src:'/optimized/img_6438.webp', alt:'Time to Surf team'},
   ]
+  const hiddenDefaultMedia = (() => {
+    try {
+      const parsed = JSON.parse(siteSettings.hidden_default_media_json || '[]')
+      return Array.isArray(parsed) ? parsed as string[] : []
+    } catch {
+      return []
+    }
+  })()
+  const isDefaultHidden = (section: string, url: string) => hiddenDefaultMedia.includes(`${section}:${url}`)
   const uniqStrings = (items: string[]) => Array.from(new Set(items.filter(Boolean)))
   const uniqMedia = <T extends { src: string }>(items: T[]) =>
     items.filter((item, index, arr) => Boolean(item.src) && arr.findIndex(other => other.src === item.src) === index)
   const DB_HERO_PHOTOS = dbGallery.filter(p => p.section === 'hero' && p.media_type !== 'video').map(p => p.url)
-  const DISPLAY_HERO_PHOTOS = uniqStrings([...HERO_PHOTOS, ...DB_HERO_PHOTOS])
+  const DISPLAY_HERO_PHOTOS = uniqStrings([...HERO_PHOTOS.filter(src => !isDefaultHidden('hero', src)), ...DB_HERO_PHOTOS])
   const DB_SAFETY_PHOTOS = dbGallery.filter(p => p.section === 'safety' && p.media_type !== 'video').map(p => ({
     src: p.url,
     alt: p.title || t('text_295', 'Дети в спасательных жилетах на Stroomi rand', 'Children in life jackets at Stroomi Beach', 'Lapsed paastevestides Stroomi rannas')
   }))
-  const DISPLAY_SAFETY_PHOTOS = uniqMedia([...SAFETY_PHOTOS, ...DB_SAFETY_PHOTOS])
+  const DISPLAY_SAFETY_PHOTOS = uniqMedia([...SAFETY_PHOTOS.filter(p => !isDefaultHidden('safety', p.src)), ...DB_SAFETY_PHOTOS])
   const DB_TRUST_PHOTOS = dbGallery.filter(p => p.section === 'trust' && p.media_type !== 'video').map(p => ({
     src: p.url,
     alt: p.title || 'Time to Surf team'
   }))
-  const DISPLAY_TRUST_PHOTOS = uniqMedia([...TRUST_PHOTOS, ...DB_TRUST_PHOTOS])
+  const DISPLAY_TRUST_PHOTOS = uniqMedia([...TRUST_PHOTOS.filter(p => !isDefaultHidden('trust', p.src)), ...DB_TRUST_PHOTOS])
 
   const STATIC_GALLERY_SECTIONS = [
     {
@@ -196,11 +205,11 @@ export default function Home() {
   const GALLERY_SECTIONS = [
     {
       label: t('text_003', 'На воде', 'On the Water', 'Vees'),
-      imgs: uniqStrings([...STATIC_GALLERY_SECTIONS[0].imgs, ...dbGallery.filter(p => p.section === 'water' && p.media_type !== 'video').map(p => p.url)])
+      imgs: uniqStrings([...STATIC_GALLERY_SECTIONS[0].imgs.filter(src => !isDefaultHidden('water', src)), ...dbGallery.filter(p => p.section === 'water' && p.media_type !== 'video').map(p => p.url)])
     },
     {
       label: t('text_004', 'Команда и атмосфера', 'Team & Vibes', 'Meeskond ja atmosfäär'),
-      imgs: uniqStrings([...STATIC_GALLERY_SECTIONS[1].imgs, ...dbGallery.filter(p => p.section === 'team' && p.media_type !== 'video').map(p => p.url)])
+      imgs: uniqStrings([...STATIC_GALLERY_SECTIONS[1].imgs.filter(src => !isDefaultHidden('team', src)), ...dbGallery.filter(p => p.section === 'team' && p.media_type !== 'video').map(p => p.url)])
     },
     {
       label: t('text_005', 'Моменты', 'Moments', 'Hetked'),
@@ -240,7 +249,7 @@ export default function Home() {
     '/optimized/dsc03180.webp',
   ]
   const DB_VIDEOS = dbGallery.filter(p => p.media_type === 'video').map(p => ({ src: p.url, poster: p.poster_url || '/optimized/dsc02825.webp' }))
-  const DEFAULT_VIDEO_ITEMS = GALLERY_VIDEOS.map((src, i) => ({ src, poster: VIDEO_POSTERS[i % VIDEO_POSTERS.length] }))
+  const DEFAULT_VIDEO_ITEMS = GALLERY_VIDEOS.filter(src => !isDefaultHidden('video', src)).map((src, i) => ({ src, poster: VIDEO_POSTERS[i % VIDEO_POSTERS.length] }))
   const GALLERY_VIDEO_ITEMS = uniqMedia([...DEFAULT_VIDEO_ITEMS, ...DB_VIDEOS])
   const heroVideo = siteSettings.hero_video || '/hero-video.mp4'
   const COMPACT_GALLERY = Array.from(new Set([...DISPLAY_HERO_PHOTOS, ...GALLERY_IMGS])).slice(0, 14)
