@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useState, useEffect, useRef } from 'react'
 
 type Lang = 'ru' | 'en' | 'et'
@@ -165,18 +165,21 @@ export default function Home() {
     {src:'/optimized/img_6362.webp', alt:'Time to Surf team'},
     {src:'/optimized/img_6438.webp', alt:'Time to Surf team'},
   ]
+  const uniqStrings = (items: string[]) => Array.from(new Set(items.filter(Boolean)))
+  const uniqMedia = <T extends { src: string }>(items: T[]) =>
+    items.filter((item, index, arr) => Boolean(item.src) && arr.findIndex(other => other.src === item.src) === index)
   const DB_HERO_PHOTOS = dbGallery.filter(p => p.section === 'hero' && p.media_type !== 'video').map(p => p.url)
-  const DISPLAY_HERO_PHOTOS = DB_HERO_PHOTOS.length > 0 ? DB_HERO_PHOTOS : HERO_PHOTOS
+  const DISPLAY_HERO_PHOTOS = uniqStrings([...HERO_PHOTOS, ...DB_HERO_PHOTOS])
   const DB_SAFETY_PHOTOS = dbGallery.filter(p => p.section === 'safety' && p.media_type !== 'video').map(p => ({
     src: p.url,
     alt: p.title || t('text_295', 'Дети в спасательных жилетах на Stroomi rand', 'Children in life jackets at Stroomi Beach', 'Lapsed paastevestides Stroomi rannas')
   }))
-  const DISPLAY_SAFETY_PHOTOS = DB_SAFETY_PHOTOS.length > 0 ? DB_SAFETY_PHOTOS : SAFETY_PHOTOS
+  const DISPLAY_SAFETY_PHOTOS = uniqMedia([...SAFETY_PHOTOS, ...DB_SAFETY_PHOTOS])
   const DB_TRUST_PHOTOS = dbGallery.filter(p => p.section === 'trust' && p.media_type !== 'video').map(p => ({
     src: p.url,
     alt: p.title || 'Time to Surf team'
   }))
-  const DISPLAY_TRUST_PHOTOS = DB_TRUST_PHOTOS.length > 0 ? DB_TRUST_PHOTOS : TRUST_PHOTOS
+  const DISPLAY_TRUST_PHOTOS = uniqMedia([...TRUST_PHOTOS, ...DB_TRUST_PHOTOS])
 
   const STATIC_GALLERY_SECTIONS = [
     {
@@ -189,13 +192,20 @@ export default function Home() {
     },
   ]
 
-  const GALLERY_SECTIONS = dbGallery.length > 0
-    ? [
-        { label: t('text_003', 'На воде', 'On the Water', 'Vees'), imgs: dbGallery.filter(p => p.section === 'water' && p.media_type !== 'video').map(p => p.url) },
-        { label: t('text_004', 'Команда и атмосфера', 'Team & Vibes', 'Meeskond ja atmosfäär'), imgs: dbGallery.filter(p => p.section === 'team' && p.media_type !== 'video').map(p => p.url) },
-        { label: t('text_005', 'Моменты', 'Moments', 'Hetked'), imgs: dbGallery.filter(p => p.section === 'moments' && p.media_type !== 'video').map(p => p.url) },
-      ].filter(s => s.imgs.length > 0)
-    : STATIC_GALLERY_SECTIONS
+  const GALLERY_SECTIONS = [
+    {
+      label: t('text_003', 'На воде', 'On the Water', 'Vees'),
+      imgs: uniqStrings([...STATIC_GALLERY_SECTIONS[0].imgs, ...dbGallery.filter(p => p.section === 'water' && p.media_type !== 'video').map(p => p.url)])
+    },
+    {
+      label: t('text_004', 'Команда и атмосфера', 'Team & Vibes', 'Meeskond ja atmosfäär'),
+      imgs: uniqStrings([...STATIC_GALLERY_SECTIONS[1].imgs, ...dbGallery.filter(p => p.section === 'team' && p.media_type !== 'video').map(p => p.url)])
+    },
+    {
+      label: t('text_005', 'Моменты', 'Moments', 'Hetked'),
+      imgs: uniqStrings(dbGallery.filter(p => p.section === 'moments' && p.media_type !== 'video').map(p => p.url))
+    },
+  ].filter(s => s.imgs.length > 0)
 
   // Flat list for lightbox navigation
   const GALLERY_IMGS = GALLERY_SECTIONS.flatMap(s => s.imgs)
@@ -203,10 +213,22 @@ export default function Home() {
   const GALLERY_VIDEOS = [
     '/IMG_6360.mp4',
     '/IMG_6394.mp4',
+    '/IMG_6481.mp4',
     '/IMG_6697.mp4',
+    '/IMG_6711.mp4',
     '/IMG_6726.mp4',
+    '/IMG_6731.mp4',
     '/IMG_6780.mp4',
+    '/IMG_6784.mp4',
+    '/IMG_6787.mp4',
+    '/IMG_6824.mp4',
     '/IMG_6857.mp4',
+    '/IMG_6866.mp4',
+    '/IMG_8284.mp4',
+    '/IMG_8679.mp4',
+    '/IMG_8700.mp4',
+    '/IMG_8713.mp4',
+    '/IMG_8718.mp4',
   ]
   const VIDEO_POSTERS = [
     '/optimized/img_6362.webp',
@@ -217,7 +239,9 @@ export default function Home() {
     '/optimized/dsc03180.webp',
   ]
   const DB_VIDEOS = dbGallery.filter(p => p.media_type === 'video').map(p => ({ src: p.url, poster: p.poster_url || '/optimized/dsc02825.webp' }))
-  const GALLERY_VIDEO_ITEMS = DB_VIDEOS.length > 0 ? DB_VIDEOS : GALLERY_VIDEOS.map((src, i) => ({ src, poster: VIDEO_POSTERS[i % VIDEO_POSTERS.length] }))
+  const DEFAULT_VIDEO_ITEMS = GALLERY_VIDEOS.map((src, i) => ({ src, poster: VIDEO_POSTERS[i % VIDEO_POSTERS.length] }))
+  const GALLERY_VIDEO_ITEMS = uniqMedia([...DEFAULT_VIDEO_ITEMS, ...DB_VIDEOS])
+  const heroVideo = siteSettings.hero_video || '/hero-video.mp4'
   const COMPACT_GALLERY = Array.from(new Set([...DISPLAY_HERO_PHOTOS, ...GALLERY_IMGS])).slice(0, 14)
   const lightboxPools: Record<LightboxPool, string[]> = {
     hero: DISPLAY_HERO_PHOTOS,
@@ -1232,7 +1256,7 @@ export default function Home() {
       <section className="hero">
         {/* Full-screen background video */}
         <div className="hero-video-bg">
-          <video src="/hero-video.mp4" autoPlay muted loop playsInline preload="auto"
+          <video src={heroVideo} autoPlay muted loop playsInline preload="auto"
             style={{minWidth:'100%',minHeight:'100%'}}/>
         </div>
         <div className="hero-video-overlay"/>
@@ -1572,7 +1596,7 @@ export default function Home() {
               })}
             </div>
             <div className="gallery-video-row">
-              {GALLERY_VIDEO_ITEMS.slice(2,5).map(v => (
+              {GALLERY_VIDEO_ITEMS.slice(2).map(v => (
                 <div key={v.src} className="gallery-video-chip">
                   <video src={v.src} poster={v.poster} muted loop playsInline preload="metadata" controls aria-label="Time to Surf camp video" />
                 </div>
@@ -1773,3 +1797,4 @@ export default function Home() {
     </>
   )
 }
+
