@@ -7,6 +7,7 @@ type Tab = 'reviews' | 'sessions' | 'media' | 'pricing' | 'content' | 'faq' | 's
 interface Review { id:number; name:string; text:string; program?:string; rating:number; approved:boolean }
 interface Session { id:number; dates:string; type_ru:string; type_en:string; type_et:string; color:string; leaders?:string; leaders_ru?:string; leaders_en?:string; leaders_et?:string; hot:boolean; sold_out?:boolean; detail:string; sort_order:number }
 interface MediaItem { id:number; url:string; section:string; sort_order:number; media_type?:string; poster_url?:string; title?:string }
+interface AdminMediaItem extends MediaItem { readonly?: boolean }
 interface ContentItem { key:string; label:string; group_name:string; value_ru:string; value_en:string; value_et:string; sort_order:number }
 interface FaqItem { id:number; question_ru:string; answer_ru:string; question_en:string; answer_en:string; question_et:string; answer_et:string; sort_order:number; active:boolean }
 
@@ -38,6 +39,15 @@ const mediaSections = [
   ['video','Галерея - видео'],
   ['safety','Безопасность'],
   ['trust','Почему родители выбирают нас'],
+]
+
+const defaultMediaItems: AdminMediaItem[] = [
+  ...['/optimized/dsc02825.webp','/optimized/img_6362.webp','/optimized/dsc02878.webp','/optimized/img_6438.webp'].map((url,i)=>({id:-100-i,url,section:'hero',sort_order:i,media_type:'image',title:'Базовое фото hero',readonly:true})),
+  ...['/optimized/dsc02825.webp','/optimized/dsc02878.webp','/optimized/dsc03180.webp','/optimized/img_6751.webp'].map((url,i)=>({id:-200-i,url,section:'water',sort_order:i,media_type:'image',title:'Базовое фото воды',readonly:true})),
+  ...['/optimized/img_6362.webp','/optimized/img_6438.webp','/optimized/img_6865.webp','/optimized/img_8191.webp'].map((url,i)=>({id:-300-i,url,section:'team',sort_order:i,media_type:'image',title:'Базовое фото команды',readonly:true})),
+  ...['/optimized/dsc02825.webp','/optimized/dsc02878.webp','/optimized/img_6362.webp','/optimized/img_6438.webp'].map((url,i)=>({id:-400-i,url,section:'safety',sort_order:i,media_type:'image',title:'Базовое фото безопасности',readonly:true})),
+  ...['/optimized/dsc02825.webp','/optimized/img_6362.webp','/optimized/img_6438.webp'].map((url,i)=>({id:-500-i,url,section:'trust',sort_order:i,media_type:'image',title:'Базовое фото доверия',readonly:true})),
+  ...['/IMG_6360.mp4','/IMG_6394.mp4','/IMG_6481.mp4','/IMG_6697.mp4','/IMG_6711.mp4','/IMG_6726.mp4','/IMG_6731.mp4','/IMG_6780.mp4','/IMG_6784.mp4','/IMG_6787.mp4','/IMG_6824.mp4','/IMG_6857.mp4','/IMG_6866.mp4','/IMG_8284.mp4','/IMG_8679.mp4','/IMG_8700.mp4','/IMG_8713.mp4','/IMG_8718.mp4'].map((url,i)=>({id:-600-i,url,section:'video',sort_order:i,media_type:'video',poster_url:['/optimized/img_6362.webp','/optimized/img_6438.webp','/optimized/img_6751.webp','/optimized/img_6865.webp','/optimized/dsc02878.webp','/optimized/dsc03180.webp'][i % 6],title:'Базовое видео',readonly:true})),
 ]
 
 export default function AdminPage() {
@@ -169,7 +179,11 @@ function MediaTab() {
     }catch(e:any){setErr(e.message||'Ошибка загрузки')}finally{setBusy(false)}
   }
   const del=async(id:number)=>{if(confirm('Удалить медиа?')){await fetch('/api/gallery',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({id})});load()}}
-  const sections = mediaSections.map(([value,label]) => ({ value, label, rows: items.filter(m => m.section === value) }))
+  const sections: {value:string;label:string;rows:AdminMediaItem[]}[] = mediaSections.map(([value,label]) => ({
+    value,
+    label,
+    rows: [...defaultMediaItems.filter(m => m.section === value), ...items.filter(m => m.section === value)]
+  }))
   const unknown = items.filter(m => !mediaSections.some(([value]) => value === m.section))
   if (unknown.length) sections.push({ value:'other', label:'Другое / старые записи', rows:unknown })
   return <section>
@@ -195,10 +209,13 @@ function MediaTab() {
         </div>
         {section.rows.length === 0 ? <div style={{fontSize:13,color:'#8AA5B8'}}>Пока пусто</div> : (
           <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(180px,1fr))',gap:12}}>
-            {section.rows.map(m=><div key={m.id} style={{border:'1px solid #D4E6F1',borderRadius:12,padding:10,background:'#fbfdff'}}>
+            {section.rows.map(m=><div key={m.id} style={{border:'1px solid #D4E6F1',borderRadius:12,padding:10,background:m.readonly?'#f8fafc':'#fbfdff'}}>
               {m.media_type==='video'?<video src={m.url} poster={m.poster_url||undefined} controls style={{width:'100%',height:110,objectFit:'cover',borderRadius:10}}/>:<img src={m.url} alt="" style={{width:'100%',height:110,objectFit:'cover',borderRadius:10}}/>}
-              <div style={{fontSize:11,color:'#6B8AA0',marginTop:6,wordBreak:'break-all'}}>{m.media_type||'image'} · id {m.id}<br/>{m.url}</div>
-              <button style={{...S.btn('#fee2e2','#dc2626'),marginTop:8,width:'100%'}} onClick={()=>del(m.id)}>Удалить из этой секции</button>
+              {m.title&&<div style={{fontSize:12,fontWeight:900,color:'#0B3D6B',marginTop:7}}>{m.title}</div>}
+              <div style={{fontSize:11,color:'#6B8AA0',marginTop:6,wordBreak:'break-all'}}>{m.media_type||'image'} · {m.readonly?'базовое на сайте':`id ${m.id}`}<br/>{m.url}</div>
+              {m.readonly
+                ? <button style={{...S.btn('#e5eef5','#6B8AA0'),marginTop:8,width:'100%',cursor:'default'}} disabled>Базовое медиа сайта</button>
+                : <button style={{...S.btn('#fee2e2','#dc2626'),marginTop:8,width:'100%'}} onClick={()=>del(m.id)}>Удалить из этой секции</button>}
             </div>)}
           </div>
         )}

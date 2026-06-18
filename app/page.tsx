@@ -1628,13 +1628,6 @@ export default function Home() {
                 </button>
               })}
             </div>
-            <div className="gallery-video-row">
-              {GALLERY_VIDEO_ITEMS.slice(2).map((v,i) => (
-                <div key={v.src} className="gallery-video-chip" onClick={() => setVideoLightbox({idx:i + 2})}>
-                  <video src={v.src} poster={v.poster} muted loop playsInline preload="metadata" aria-label="Time to Surf camp video" />
-                </div>
-              ))}
-            </div>
           </div>
           <div className="gallery-more rv">{GALLERY_IMGS.length} {t('text_299', 'фото', 'photos', 'fotot')} + {GALLERY_VIDEO_ITEMS.length} {t('text_300', 'видео в подборке', 'videos in the set', 'videot valikus')}</div>
         </div>
