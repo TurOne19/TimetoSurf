@@ -19,7 +19,7 @@ function useReveal(deps: unknown[] = []) {
 }
 
 interface Review { id: number; name: string; text: string; program?: string; rating: number }
-interface ProgramInstructor { id:string; program:'kino'|'pohod'|'surf'; name_ru:string; name_en:string; name_et:string; bio_ru:string; bio_en:string; bio_et:string; avatar:string; sort_order:number }
+interface ProgramInstructor { id:number; program:'kino'|'pohod'|'surf'; name_ru:string; name_en:string; name_et:string; bio_ru:string; bio_en:string; bio_et:string; avatar_url:string; sort_order:number; active:boolean }
 interface FaqRow {
   id: number
   question_ru: string
@@ -94,6 +94,7 @@ export default function Home() {
   const [siteSettings, setSiteSettings] = useState<Record<string,string>>({})
   const [dbGallery, setDbGallery] = useState<{id:number,url:string,section:string,media_type?:string,poster_url?:string,title?:string}[]>([])
   const [dbFaqs, setDbFaqs] = useState<FaqRow[]>([])
+  const [dbInstructors, setDbInstructors] = useState<ProgramInstructor[] | null>(null)
   const [siteContent, setSiteContent] = useState<Record<string, ContentRow>>({})
 
   const c = (ru: string, en: string, et: string) => lang === 'ru' ? ru : lang === 'en' ? en : et
@@ -139,6 +140,7 @@ export default function Home() {
     fetch('/api/settings').then(r => r.json()).then(d => { if (d && typeof d === 'object') setSiteSettings(d) }).catch(() => {})
     fetch('/api/gallery').then(r => r.json()).then(d => { if (Array.isArray(d) && d.length > 0) setDbGallery(d) }).catch(() => {})
     fetch('/api/faqs').then(r => r.json()).then(d => { if (Array.isArray(d) && d.length > 0) setDbFaqs(d) }).catch(() => {})
+    fetch('/api/instructors').then(r => r.json()).then(d => { if (Array.isArray(d)) setDbInstructors(d) }).catch(() => {})
     fetch('/api/content').then(r => r.json()).then(d => {
       if (Array.isArray(d) && d.length > 0) {
         const map: Record<string, ContentRow> = {}
@@ -452,25 +454,16 @@ export default function Home() {
     }
   }
 
-  const configuredInstructors: ProgramInstructor[] | null = (() => {
-    if (!Object.prototype.hasOwnProperty.call(siteSettings, 'program_instructors_json')) return null
-    try {
-      const parsed = JSON.parse(siteSettings.program_instructors_json || '[]')
-      return Array.isArray(parsed) ? parsed : []
-    } catch {
-      return []
-    }
-  })()
   const instructorsFor = (program: string, fallback: {initials:string,name:string,bio:string}) => {
-    if (configuredInstructors === null) return [{id:`fallback-${program}`,name:fallback.name,bio:fallback.bio,avatar:'',initials:fallback.initials}]
-    return configuredInstructors
-      .filter(item => item.program === program)
+    if (dbInstructors === null) return [{id:`fallback-${program}`,name:fallback.name,bio:fallback.bio,avatar:'',initials:fallback.initials}]
+    return dbInstructors
+      .filter(item => item.program === program && item.active !== false)
       .sort((a,b) => (a.sort_order || 0) - (b.sort_order || 0))
       .map(item => {
         const name = lang === 'ru' ? item.name_ru : lang === 'en' ? (item.name_en || item.name_ru) : (item.name_et || item.name_ru)
         const bio = lang === 'ru' ? item.bio_ru : lang === 'en' ? (item.bio_en || item.bio_ru) : (item.bio_et || item.bio_ru)
         const initials = name.split(/\s+/).filter(Boolean).map(part => part[0]).join('').slice(0,2).toUpperCase()
-        return {id:item.id,name,bio,avatar:item.avatar,initials}
+        return {id:String(item.id),name,bio,avatar:item.avatar_url,initials}
       })
   }
 

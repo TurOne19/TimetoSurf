@@ -8,7 +8,7 @@ interface Review { id:number; name:string; text:string; program?:string; rating:
 interface Session { id:number; dates:string; type_ru:string; type_en:string; type_et:string; color:string; leaders?:string; leaders_ru?:string; leaders_en?:string; leaders_et?:string; hot:boolean; sold_out?:boolean; detail:string; sort_order:number }
 interface MediaItem { id:number; url:string; section:string; sort_order:number; media_type?:string; poster_url?:string; title?:string }
 interface AdminMediaItem extends MediaItem { readonly?: boolean; hidden?: boolean }
-interface InstructorItem { id:string; program:'kino'|'pohod'|'surf'; name_ru:string; name_en:string; name_et:string; bio_ru:string; bio_en:string; bio_et:string; avatar:string; sort_order:number }
+interface InstructorItem { id:number; program:'kino'|'pohod'|'surf'; name_ru:string; name_en:string; name_et:string; bio_ru:string; bio_en:string; bio_et:string; avatar_url:string; sort_order:number; active:boolean }
 interface ContentItem { key:string; label:string; group_name:string; value_ru:string; value_en:string; value_et:string; sort_order:number }
 interface FaqItem { id:number; question_ru:string; answer_ru:string; question_en:string; answer_en:string; question_et:string; answer_et:string; sort_order:number; active:boolean }
 
@@ -50,12 +50,6 @@ const defaultMediaItems: AdminMediaItem[] = [
   ...['/optimized/dsc02825.webp','/optimized/dsc02878.webp','/optimized/img_6362.webp','/optimized/img_6438.webp'].map((url,i)=>({id:-400-i,url,section:'safety',sort_order:i,media_type:'image',title:'Базовое фото безопасности',readonly:true})),
   ...['/optimized/dsc02825.webp','/optimized/img_6362.webp','/optimized/img_6438.webp'].map((url,i)=>({id:-500-i,url,section:'trust',sort_order:i,media_type:'image',title:'Базовое фото доверия',readonly:true})),
   ...['/IMG_6360.mp4','/IMG_6394.mp4','/IMG_6481.mp4','/IMG_6697.mp4','/IMG_6711.mp4','/IMG_6726.mp4','/IMG_6731.mp4','/IMG_6780.mp4','/IMG_6784.mp4','/IMG_6787.mp4','/IMG_6824.mp4','/IMG_6857.mp4','/IMG_6866.mp4','/IMG_8284.mp4','/IMG_8679.mp4','/IMG_8700.mp4','/IMG_8713.mp4','/IMG_8718.mp4'].map((url,i)=>({id:-600-i,url,section:'video',sort_order:i,media_type:'video',poster_url:['/optimized/img_6362.webp','/optimized/img_6438.webp','/optimized/img_6751.webp','/optimized/img_6865.webp','/optimized/dsc02878.webp','/optimized/dsc03180.webp'][i % 6],title:'Базовое видео',readonly:true})),
-]
-
-const defaultInstructors: InstructorItem[] = [
-  {id:'kino-natalia',program:'kino',name_ru:'Наталья Карасёва',name_en:'Natalia Karaseva',name_et:'Natalia Karaseva',bio_ru:'Тележурналист, 20 лет на ТВ в двух странах, автор подкаста "Cozy with Tasha", создатель видеоконтента и документального короткого жанра.',bio_en:'TV journalist with 20 years of experience in two countries, podcast author and video content creator.',bio_et:'Teleajakirjanik, 20 aastat televisioonis kahes riigis, taskuhäälingu autor ja videosisu looja.',avatar:'',sort_order:1},
-  {id:'pohod-vitaliy',program:'pohod',name_ru:'Виталий Холстинин',name_en:'Vitaliy Kholstinin',name_et:'Vitaliy Kholstinin',bio_ru:'Предприниматель, хайкер, основатель Join The Hike. Более 10 лет опыта.',bio_en:'Entrepreneur, hiker and founder of Join The Hike. More than 10 years of experience.',bio_et:'Ettevõtja, matkaja ja Join The Hike asutaja. Üle 10 aasta kogemust.',avatar:'',sort_order:1},
-  {id:'surf-team',program:'surf',name_ru:'Надежда + Григорий',name_en:'Nadezhda + Grigory',name_et:'Nadezhda + Grigory',bio_ru:'Сертифицированные инструкторы с многолетним опытом работы с детьми на Балтийском море.',bio_en:'Certified instructors with years of experience working with children on the Baltic Sea.',bio_et:'Sertifitseeritud juhendajad mitmeaastase kogemusega lastega Läänemerel.',avatar:'',sort_order:1},
 ]
 
 export default function AdminPage() {
@@ -260,28 +254,16 @@ function MediaTab() {
 }
 
 function InstructorsTab() {
-  const blank: InstructorItem = {id:'',program:'surf',name_ru:'',name_en:'',name_et:'',bio_ru:'',bio_en:'',bio_et:'',avatar:'',sort_order:1}
+  const blank: InstructorItem = {id:0,program:'surf',name_ru:'',name_en:'',name_et:'',bio_ru:'',bio_en:'',bio_et:'',avatar_url:'',sort_order:1,active:true}
   const [items,setItems]=useState<InstructorItem[]>([])
   const [form,setForm]=useState<InstructorItem>(blank)
-  const [editing,setEditing]=useState<string|null>(null)
+  const [editing,setEditing]=useState<number|null>(null)
   const [avatarFile,setAvatarFile]=useState<File|null>(null)
   const [busy,setBusy]=useState(false)
   const [msg,setMsg]=useState('')
   const [err,setErr]=useState('')
-  const load=async()=>{
-    const s=await fetch('/api/settings').then(r=>r.json()).catch(()=>({}))
-    if(Object.prototype.hasOwnProperty.call(s||{},'program_instructors_json')){
-      try{const parsed=JSON.parse(s.program_instructors_json);setItems(Array.isArray(parsed)?parsed:[])}catch{setItems([])}
-    }else setItems(defaultInstructors)
-  }
+  const load=async()=>{const d=await fetch('/api/instructors').then(r=>r.json()).catch(()=>[]);if(Array.isArray(d))setItems(d);else setErr(d.error||'Сначала запусти SQL-файл program_instructors')}
   useEffect(()=>{load()},[])
-  const persist=async(next:InstructorItem[],notice:string)=>{
-    const ordered=[...next].sort((a,b)=>(a.sort_order||0)-(b.sort_order||0))
-    const res=await fetch('/api/settings',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({settings:{program_instructors_json:JSON.stringify(ordered)}})})
-    const data=await res.json().catch(()=>({}))
-    if(!res.ok) throw new Error(data.error||'Не удалось сохранить инструкторов')
-    setItems(ordered);setMsg(notice);setTimeout(()=>setMsg(''),2500)
-  }
   const uploadAvatar=async(file:File)=>{
     const fd=new FormData();fd.append('file',file);fd.append('kind','instructor')
     const res=await fetch('/api/upload',{method:'POST',body:fd})
@@ -293,28 +275,33 @@ function InstructorsTab() {
     if(!form.name_ru.trim()){setErr('Укажи имя на русском');return}
     setBusy(true);setErr('')
     try{
-      const avatar=avatarFile?await uploadAvatar(avatarFile):form.avatar
-      const row={...form,id:editing||`instructor-${Date.now()}`,avatar,sort_order:Number(form.sort_order)||1}
-      const next=editing?items.map(i=>i.id===editing?row:i):[...items,row]
-      await persist(next,editing?'Инструктор изменён':'Инструктор добавлен')
+      const avatar_url=avatarFile?await uploadAvatar(avatarFile):form.avatar_url
+      if(!avatar_url) throw new Error('Аватарка обязательна: выбери файл или укажи URL')
+      const row={...form,avatar_url,sort_order:Number(form.sort_order)||1}
+      const res=await fetch('/api/instructors',{method:editing?'PATCH':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(row)})
+      const data=await res.json().catch(()=>({}))
+      if(!res.ok) throw new Error(data.error||'Не удалось сохранить карточку')
+      await load();setMsg(editing?'Инструктор изменён':'Инструктор добавлен');setTimeout(()=>setMsg(''),2500)
       setForm(blank);setEditing(null);setAvatarFile(null)
     }catch(e:any){setErr(e.message||'Ошибка')}finally{setBusy(false)}
   }
   const edit=(item:InstructorItem)=>{setEditing(item.id);setForm(item);setAvatarFile(null);window.scrollTo({top:0,behavior:'smooth'})}
-  const del=async(item:InstructorItem)=>{if(confirm(`Удалить инструктора ${item.name_ru}?`)){try{await persist(items.filter(i=>i.id!==item.id),'Инструктор удалён')}catch(e:any){setErr(e.message||'Ошибка удаления')}}}
+  const del=async(item:InstructorItem)=>{if(confirm(`Удалить карточку инструктора ${item.name_ru}?`)){const res=await fetch('/api/instructors',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:item.id})});const data=await res.json().catch(()=>({}));if(!res.ok)setErr(data.error||'Ошибка удаления');else{setMsg('Карточка удалена');load()}}}
   const programLabel=(p:string)=>p==='kino'?'Серфинг + Кино':p==='pohod'?'Серфинг + Поход':'Серфинг лагерь'
   return <section>
     <Title sub="Инструкторы отображаются в модалках «Подробнее» соответствующей программы. Можно добавить несколько человек в одну программу.">Инструкторы</Title>
     <Toast msg={msg}/><ErrorBox msg={err}/>
     <div style={S.card}>
+      <h3 style={{margin:'0 0 4px',color:'#0B3D6B'}}>{editing?'Редактировать карточку':'Добавить новую карточку инструктора'}</h3>
+      <p style={{margin:'0 0 16px',fontSize:12,color:'#6B8AA0'}}>Выбери программу, заполни тексты и обязательно загрузи аватарку или укажи её URL.</p>
       <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
         <div><label style={S.label}>Программа</label><select style={S.input} value={form.program} onChange={e=>setForm({...form,program:e.target.value as InstructorItem['program']})}><option value="surf">Серфинг лагерь</option><option value="kino">Серфинг + Кино</option><option value="pohod">Серфинг + Поход</option></select></div>
         <Field label="Порядок" v={String(form.sort_order)} set={v=>setForm({...form,sort_order:Number(v)||1})}/>
         <Field label="Имя RU" v={form.name_ru} set={v=>setForm({...form,name_ru:v})}/>
         <Field label="Name EN" v={form.name_en} set={v=>setForm({...form,name_en:v})}/>
         <Field label="Nimi ET" v={form.name_et} set={v=>setForm({...form,name_et:v})}/>
-        <Field label="URL аватарки" v={form.avatar} set={v=>setForm({...form,avatar:v})}/>
-        <div style={{gridColumn:'1 / -1'}}><label style={S.label}>Аватарка с устройства</label><input style={S.input} type="file" accept="image/*" onChange={e=>setAvatarFile(e.target.files?.[0]||null)}/></div>
+        <Field label="URL аватарки (обязательно)" v={form.avatar_url} set={v=>setForm({...form,avatar_url:v})}/>
+        <div style={{gridColumn:'1 / -1'}}><label style={S.label}>Аватарка с устройства (обязательно)</label><input style={S.input} type="file" accept="image/*" onChange={e=>setAvatarFile(e.target.files?.[0]||null)}/></div>
         <Text label="Описание RU" v={form.bio_ru} set={v=>setForm({...form,bio_ru:v})}/>
         <Text label="Description EN" v={form.bio_en} set={v=>setForm({...form,bio_en:v})}/>
         <Text label="Kirjeldus ET" v={form.bio_et} set={v=>setForm({...form,bio_et:v})}/>
@@ -325,7 +312,7 @@ function InstructorsTab() {
     {(['kino','pohod','surf'] as const).map(program=><div key={program} style={S.card}>
       <h3 style={{margin:'0 0 14px',color:'#0B3D6B'}}>{programLabel(program)}</h3>
       {items.filter(i=>i.program===program).length===0?<div style={{color:'#8AA5B8',fontSize:13}}>Инструкторов пока нет</div>:<div style={{display:'grid',gap:10}}>{items.filter(i=>i.program===program).sort((a,b)=>a.sort_order-b.sort_order).map(item=><div key={item.id} style={{display:'flex',alignItems:'center',gap:12,border:'1px solid #D4E6F1',borderRadius:12,padding:12}}>
-        {item.avatar?<img src={item.avatar} alt="" style={{width:58,height:58,borderRadius:'50%',objectFit:'cover',flexShrink:0}}/>:<div style={{width:58,height:58,borderRadius:'50%',background:'#0B3D6B',color:'white',display:'grid',placeItems:'center',fontWeight:900,flexShrink:0}}>{item.name_ru.split(' ').map(x=>x[0]).join('').slice(0,2)}</div>}
+        <img src={item.avatar_url} alt={item.name_ru} style={{width:58,height:58,borderRadius:'50%',objectFit:'cover',flexShrink:0,background:'#e5eef5'}}/>
         <div style={{flex:1,minWidth:0}}><strong style={{color:'#0B3D6B'}}>{item.name_ru}</strong><div style={{fontSize:12,color:'#6B8AA0',marginTop:3}}>{item.bio_ru}</div></div>
         <button style={S.btn('#e0f2fe','#0B3D6B')} onClick={()=>edit(item)}>Изменить</button>
         <button style={S.btn('#fee2e2','#dc2626')} onClick={()=>del(item)}>Удалить</button>
