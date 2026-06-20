@@ -19,6 +19,7 @@ function useReveal(deps: unknown[] = []) {
 }
 
 interface Review { id: number; name: string; text: string; program?: string; rating: number }
+interface ProgramInstructor { id:string; program:'kino'|'pohod'|'surf'; name_ru:string; name_en:string; name_et:string; bio_ru:string; bio_en:string; bio_et:string; avatar:string; sort_order:number }
 interface FaqRow {
   id: number
   question_ru: string
@@ -451,6 +452,28 @@ export default function Home() {
     }
   }
 
+  const configuredInstructors: ProgramInstructor[] | null = (() => {
+    if (!Object.prototype.hasOwnProperty.call(siteSettings, 'program_instructors_json')) return null
+    try {
+      const parsed = JSON.parse(siteSettings.program_instructors_json || '[]')
+      return Array.isArray(parsed) ? parsed : []
+    } catch {
+      return []
+    }
+  })()
+  const instructorsFor = (program: string, fallback: {initials:string,name:string,bio:string}) => {
+    if (configuredInstructors === null) return [{id:`fallback-${program}`,name:fallback.name,bio:fallback.bio,avatar:'',initials:fallback.initials}]
+    return configuredInstructors
+      .filter(item => item.program === program)
+      .sort((a,b) => (a.sort_order || 0) - (b.sort_order || 0))
+      .map(item => {
+        const name = lang === 'ru' ? item.name_ru : lang === 'en' ? (item.name_en || item.name_ru) : (item.name_et || item.name_ru)
+        const bio = lang === 'ru' ? item.bio_ru : lang === 'en' ? (item.bio_en || item.bio_ru) : (item.bio_et || item.bio_ru)
+        const initials = name.split(/\s+/).filter(Boolean).map(part => part[0]).join('').slice(0,2).toUpperCase()
+        return {id:item.id,name,bio,avatar:item.avatar,initials}
+      })
+  }
+
   const CSS = `
     @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,400;0,600;0,700;0,800;1,700;1,800&display=swap');
     :root {
@@ -812,8 +835,10 @@ export default function Home() {
     .pm-sec-title:first-of-type{margin-top:0}
     .pm-item{display:flex;gap:9px;align-items:flex-start;font-size:13px;color:var(--mid);line-height:1.6;margin-bottom:6px}
     .pm-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);flex-shrink:0;margin-top:6px}
-    .pm-leader{display:flex;align-items:center;gap:12px;background:var(--sand-lt);border-radius:12px;padding:14px;margin-top:18px;border:1.5px solid var(--bwarm)}
+    .pm-leaders{display:grid;gap:10px;margin-top:18px}
+    .pm-leader{display:flex;align-items:center;gap:12px;background:var(--sand-lt);border-radius:12px;padding:14px;border:1.5px solid var(--bwarm)}
     .pm-leader-av{width:48px;height:48px;border-radius:50%;background:var(--ocean);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:800;color:rgba(255,255,255,.8)}
+    .pm-leader-av img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block}
     .pm-leader-name{font-size:14px;font-weight:700;color:var(--ocean);margin-bottom:3px}
     .pm-leader-bio{font-size:12px;color:var(--mid);line-height:1.55}
     .pm-footer{padding:16px 24px 22px;display:flex;align-items:center;gap:12px;border-top:1px solid var(--border);flex-wrap:wrap}
@@ -1189,6 +1214,7 @@ export default function Home() {
       {/* PROGRAM MODAL */}
       {programModal && PROGRAM_DATA[programModal] && (() => {
         const d = PROGRAM_DATA[programModal]
+        const instructors = instructorsFor(programModal, d.leader)
         return (
           <div className="pm-overlay" onClick={() => setProgramModal(null)}>
             <div className="pm-box" onClick={e => e.stopPropagation()}>
@@ -1217,13 +1243,15 @@ export default function Home() {
                     ))}
                   </div>
                 ))}
-                <div className="pm-leader">
-                  <div className="pm-leader-av">{d.leader.initials}</div>
-                  <div>
-                    <div className="pm-leader-name">{d.leader.name}</div>
-                    <div className="pm-leader-bio">{d.leader.bio}</div>
-                  </div>
-                </div>
+                {instructors.length > 0 && <div className="pm-leaders">
+                  {instructors.map(instructor => <div className="pm-leader" key={instructor.id}>
+                    <div className="pm-leader-av">{instructor.avatar?<img src={instructor.avatar} alt={instructor.name}/>:instructor.initials}</div>
+                    <div>
+                      <div className="pm-leader-name">{instructor.name}</div>
+                      <div className="pm-leader-bio">{instructor.bio}</div>
+                    </div>
+                  </div>)}
+                </div>}
               </div>
               <div className="pm-footer">
                 <div>
