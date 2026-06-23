@@ -1,79 +1,59 @@
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
 
-const siteUrl = 'https://camp.timetosurf.ee'
+const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || 'https://timetosurf.ee').replace(/\/$/, '')
 const regUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSf-HIXlcSpWy0v0MfJ7HpFNcn_fGDd2Hns2JeHe4kZkNVtqDA/viewform'
 
-export const viewport: Viewport = { width: 'device-width', initialScale: 1 }
+export const viewport: Viewport = { width: 'device-width', initialScale: 1, themeColor: '#0B3D6B' }
 
 const defaultMetadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: 'Детский лагерь в Таллине у моря | Time to Surf - Stroomi rand 2026',
+    default: 'Laste surfilaager Tallinnas 2026 | Time to Surf Stroomi',
     template: '%s | Time to Surf',
   },
-  description:
-    'Time to Surf - детский летний серфинг лагерь в Таллине на Stroomi rand. Возраст 7-14 лет, малые группы 12-16 детей, жилеты, гидрокостюмы, питание и инструкторы включены. Kids summer camp Tallinn, surfilaager lastele, suvelaager Tallinn.',
+  description: 'Time to Surf on laste surfilaager Stroomi rannas Tallinnas. Suvelaager 7-14-aastastele: väikesed grupid, professionaalsed juhendajad, päästevestid, märgülikonnad ja toitlustus. Suvi 2026, alates 190 €.',
+  applicationName: 'Time to Surf',
+  authors: [{ name: 'Time to Surf', url: siteUrl }],
+  creator: 'Time to Surf',
+  publisher: 'Time to Surf',
   keywords: [
-    'детский лагерь Таллин',
-    'летний лагерь Таллин',
-    'серфинг лагерь для детей',
-    'детский спортивный лагерь',
-    'лагерь у моря Таллин',
-    'lastelaager Tallinn',
-    'surfilaager lastele',
-    'suvelaager Tallinn',
-    'spordilaager Tallinn',
-    'Stroomi lastelaager',
-    'kids summer camp Tallinn',
-    'surf camp Tallinn',
-    'Stroomi rand',
-    'Time to Surf',
+    'lastelaager Tallinn', 'surfilaager lastele', 'suvelaager Tallinn', 'spordilaager Tallinn',
+    'Stroomi lastelaager', 'laste surfilaager Tallinn', 'laste suvelaager mere ääres',
+    'детский лагерь Таллин', 'летний лагерь Таллин', 'серфинг лагерь для детей',
+    'kids summer camp Tallinn', 'surf camp Tallinn', 'Stroomi rand', 'Time to Surf',
   ],
-  alternates: { canonical: siteUrl },
+  alternates: { canonical: '/' },
   robots: {
     index: true,
     follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
-      'max-video-preview': -1,
-    },
+    googleBot: { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1, 'max-video-preview': -1 },
   },
   openGraph: {
-    title: 'Time to Surf - детский лагерь у моря в Таллине',
-    description:
-      'Летний серфинг лагерь для детей 7-14 лет на Stroomi rand. Малые группы, инструкторы, жилеты, гидрокостюмы и питание включены.',
-    url: siteUrl,
+    title: 'Laste surfilaager Tallinnas - Time to Surf',
+    description: 'Turvaline ja aktiivne suvelaager Stroomi rannas 7-14-aastastele. Surf, meri, sõbrad ja professionaalsed juhendajad. Suvi 2026.',
+    url: '/',
     type: 'website',
-    locale: 'ru_RU',
+    locale: 'et_EE',
+    alternateLocale: ['ru_RU', 'en_GB'],
     siteName: 'Time to Surf',
-    images: [
-      {
-        url: '/optimized/dsc02825.webp',
-        width: 1000,
-        height: 667,
-        alt: 'Детский серфинг лагерь Time to Surf на Stroomi rand в Таллине',
-      },
-    ],
+    images: [{ url: '/og-hero.jpg', width: 1200, height: 630, alt: 'Time to Surf laste surfilaager Stroomi rannas Tallinnas' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Time to Surf - kids summer camp Tallinn',
-    description:
-      'Surf camp Tallinn for children 7-14 at Stroomi Beach. Small groups, instructors, wetsuits, life jackets and meals included.',
-    images: ['/optimized/dsc02825.webp'],
+    title: 'Laste surfilaager Tallinnas - Time to Surf',
+    description: 'Suvelaager Stroomi rannas 7-14-aastastele. Surf, meri, sõbrad ja turvaline keskkond.',
+    images: ['/og-hero.jpg'],
   },
-  category: 'sports camp',
+  category: 'laste spordilaager',
+  manifest: '/manifest.webmanifest',
+  icons: { icon: '/favicon.png', shortcut: '/favicon.png', apple: '/favicon.png' },
   other: {
+    'content-language': 'et-EE',
     'geo.region': 'EE-37',
     'geo.placename': 'Time to Surf Stroomi, Tallinn',
     'geo.position': '59.4363311;24.6806022',
     ICBM: '59.4363311, 24.6806022',
-    'og:locality': 'Tallinn',
-    'og:country-name': 'Estonia',
   },
 }
 
@@ -82,35 +62,36 @@ async function getSeoSettings() {
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL
     const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
     if (!url || !key) return {}
-    const res = await fetch(`${url}/rest/v1/site_settings?select=key,value&key=in.(seo_title,seo_description,og_title,og_description,registration_url,phone)`, {
+    const names = 'seo_title_et,seo_description_et,og_title_et,og_description_et,registration_url,phone'
+    const res = await fetch(`${url}/rest/v1/site_settings?select=key,value&key=in.(${names})`, {
       headers: { apikey: key, Authorization: `Bearer ${key}` },
-      next: { revalidate: 60 },
+      next: { revalidate: 300 },
     })
     if (!res.ok) return {}
     const rows = await res.json()
     const out: Record<string, string> = {}
-    if (Array.isArray(rows)) rows.forEach((r) => { if (r?.key) out[r.key] = r.value || '' })
+    if (Array.isArray(rows)) rows.forEach((row) => { if (row?.key) out[row.key] = row.value || '' })
     return out
-  } catch {
-    return {}
-  }
+  } catch { return {} }
 }
 
 export async function generateMetadata(): Promise<Metadata> {
   const seo = await getSeoSettings()
+  const title = seo.seo_title_et || defaultMetadata.title
+  const description = seo.seo_description_et || defaultMetadata.description
   return {
     ...defaultMetadata,
-    title: seo.seo_title || defaultMetadata.title,
-    description: seo.seo_description || defaultMetadata.description,
+    title,
+    description,
     openGraph: {
       ...defaultMetadata.openGraph,
-      title: seo.og_title || seo.seo_title || defaultMetadata.openGraph?.title,
-      description: seo.og_description || seo.seo_description || defaultMetadata.openGraph?.description,
+      title: seo.og_title_et || seo.seo_title_et || defaultMetadata.openGraph?.title,
+      description: seo.og_description_et || seo.seo_description_et || defaultMetadata.openGraph?.description,
     },
     twitter: {
       ...defaultMetadata.twitter,
-      title: seo.og_title || seo.seo_title || defaultMetadata.twitter?.title,
-      description: seo.og_description || seo.seo_description || defaultMetadata.twitter?.description,
+      title: seo.og_title_et || seo.seo_title_et || defaultMetadata.twitter?.title,
+      description: seo.og_description_et || seo.seo_description_et || defaultMetadata.twitter?.description,
     },
   }
 }
@@ -121,132 +102,72 @@ const schemaOrg = {
     {
       '@type': ['LocalBusiness', 'SportsActivityLocation'],
       '@id': `${siteUrl}/#organization`,
-      name: 'Time to Surf',
+      name: 'Time to Surf Stroomi',
+      alternateName: ['Time to Surf', 'Time to Surf lastelaager'],
       url: siteUrl,
-      image: `${siteUrl}/optimized/dsc02825.webp`,
-      logo: `${siteUrl}/logo.jpeg`,
+      logo: `${siteUrl}/favicon.png`,
+      image: [`${siteUrl}/og-hero.jpg`, `${siteUrl}/optimized/dsc02825.webp`],
       telephone: '+37255512872',
       email: 'info@timetosurf.ee',
       priceRange: '190-265 EUR',
-      description:
-        'Детский летний серфинг лагерь Time to Surf на пляже Stroomi rand в Таллине. Kids summer camp Tallinn, surfilaager lastele, suvelaager Tallinn.',
-      address: {
-        '@type': 'PostalAddress',
-        streetAddress: 'Time to Surf Stroomi, Stroomi rand',
-        addressLocality: 'Tallinn',
-        addressCountry: 'EE',
-      },
-      geo: {
-        '@type': 'GeoCoordinates',
-        latitude: 59.4363311,
-        longitude: 24.6806022,
-      },
-      areaServed: ['Tallinn', 'Estonia', 'Stroomi rand', 'Põhja-Tallinn'],
-      sameAs: [
-        'https://timetosurf.ee',
-        'https://www.instagram.com/timetosurf.ee',
-        'https://www.facebook.com/timetosurf.ee',
-      ],
+      description: 'Laste surfilaager ja suvelaager Stroomi rannas Tallinnas. Turvaline veesport, väikesed grupid ja professionaalsed juhendajad.',
+      address: { '@type': 'PostalAddress', streetAddress: 'Stroomi rand', addressLocality: 'Tallinn', addressRegion: 'Harjumaa', addressCountry: 'EE' },
+      geo: { '@type': 'GeoCoordinates', latitude: 59.4363311, longitude: 24.6806022 },
+      hasMap: 'https://www.google.com/maps/place/Time+to+Surf+Stroomi/@59.4363311,24.6806022,15z',
+      areaServed: [{ '@type': 'City', name: 'Tallinn' }, { '@type': 'AdministrativeArea', name: 'Harjumaa' }],
+      knowsLanguage: ['et', 'ru', 'en'],
+      sameAs: ['https://timetosurf.ee', 'https://www.instagram.com/timetosurf.ee', 'https://www.facebook.com/timetosurf.ee'],
     },
     {
       '@type': 'Event',
       '@id': `${siteUrl}/#summer-camp-2026`,
-      name: 'Time to Surf детский летний лагерь 2026',
-      description:
-        'Серфинг лагерь для детей 7-14 лет в Таллине на Stroomi rand. Малые группы, инструкторы, жилеты, гидрокостюмы и питание включены.',
+      name: 'Time to Surf laste surfilaager Tallinnas 2026',
+      description: 'Laste surfilaager 7-14-aastastele Stroomi rannas. Surf, veesport, ohutus, toitlustus ja juhendajad.',
       eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
       eventStatus: 'https://schema.org/EventScheduled',
       startDate: '2026-06-15',
       endDate: '2026-08-21',
-      image: [`${siteUrl}/optimized/dsc02825.webp`],
+      image: [`${siteUrl}/og-hero.jpg`],
       location: {
-        '@type': 'Place',
-        name: 'Time to Surf Stroomi',
-        address: {
-          '@type': 'PostalAddress',
-          addressLocality: 'Tallinn',
-          addressCountry: 'EE',
-        },
-        geo: {
-          '@type': 'GeoCoordinates',
-          latitude: 59.4363311,
-          longitude: 24.6806022,
-        },
+        '@type': 'Place', name: 'Time to Surf Stroomi',
+        address: { '@type': 'PostalAddress', streetAddress: 'Stroomi rand', addressLocality: 'Tallinn', addressCountry: 'EE' },
+        geo: { '@type': 'GeoCoordinates', latitude: 59.4363311, longitude: 24.6806022 },
       },
       organizer: { '@id': `${siteUrl}/#organization` },
       offers: {
-        '@type': 'Offer',
-        url: regUrl,
-        price: '265',
-        priceCurrency: 'EUR',
-        availability: 'https://schema.org/LimitedAvailability',
-        validFrom: '2026-01-01',
+        '@type': 'AggregateOffer', url: regUrl, lowPrice: '190', highPrice: '265', priceCurrency: 'EUR',
+        availability: 'https://schema.org/LimitedAvailability', offerCount: '3',
       },
-      audience: {
-        '@type': 'PeopleAudience',
-        suggestedMinAge: 7,
-        suggestedMaxAge: 14,
-      },
+      audience: { '@type': 'PeopleAudience', suggestedMinAge: 7, suggestedMaxAge: 14 },
+      inLanguage: ['et', 'ru', 'en'],
     },
     {
-      '@type': 'FAQPage',
-      '@id': `${siteUrl}/#faq`,
+      '@type': 'FAQPage', '@id': `${siteUrl}/#faq`, inLanguage: 'et',
       mainEntity: [
-        {
-          '@type': 'Question',
-          name: 'Нужен ли опыт серфинга?',
-          acceptedAnswer: {
-            '@type': 'Answer',
-            text: 'Нет. Лагерь подходит новичкам. Инструкторы объясняют правила и помогают детям спокойно зайти в воду.',
-          },
-        },
-        {
-          '@type': 'Question',
-          name: 'Какой возраст подходит?',
-          acceptedAnswer: {
-            '@type': 'Answer',
-            text: 'Основной возраст - 7-14 лет. Группы маленькие, 12-16 детей.',
-          },
-        },
-        {
-          '@type': 'Question',
-          name: 'Что входит в цену?',
-          acceptedAnswer: {
-            '@type': 'Answer',
-            text: 'Программа, питание, гидрокостюм, спасательный жилет, оборудование и работа инструкторов.',
-          },
-        },
-        {
-          '@type': 'Question',
-          name: 'Где проходит лагерь?',
-          acceptedAnswer: {
-            '@type': 'Answer',
-            text: 'Лагерь проходит на Stroomi rand в Таллине, Эстония.',
-          },
-        },
+        { '@type': 'Question', name: 'Kas surfikogemus on vajalik?', acceptedAnswer: { '@type': 'Answer', text: 'Ei. Laager sobib algajatele ja juhendajad õpetavad kõike samm-sammult.' } },
+        { '@type': 'Question', name: 'Millisele vanusele laager sobib?', acceptedAnswer: { '@type': 'Answer', text: 'Laager sobib 7-14-aastastele lastele. Grupid on väikesed, tavaliselt 12-16 last.' } },
+        { '@type': 'Question', name: 'Mis on hinna sees?', acceptedAnswer: { '@type': 'Answer', text: 'Programm, toitlustus, märgülikond, päästevest, varustus ja juhendajate töö.' } },
+        { '@type': 'Question', name: 'Kus laager toimub?', acceptedAnswer: { '@type': 'Answer', text: 'Laager toimub Time to Surf surfijaamas Stroomi rannas Tallinnas.' } },
       ],
     },
     {
-      '@type': 'WebSite',
-      '@id': `${siteUrl}/#website`,
-      url: siteUrl,
-      name: 'Time to Surf',
-      inLanguage: ['ru', 'et', 'en'],
-      publisher: { '@id': `${siteUrl}/#organization` },
+      '@type': 'WebSite', '@id': `${siteUrl}/#website`, url: siteUrl, name: 'Time to Surf',
+      inLanguage: ['et', 'ru', 'en'], publisher: { '@id': `${siteUrl}/#organization` },
+    },
+    {
+      '@type': 'WebPage', '@id': `${siteUrl}/#webpage`, url: siteUrl,
+      name: 'Laste surfilaager Tallinnas 2026 | Time to Surf Stroomi', inLanguage: ['et', 'ru', 'en'],
+      isPartOf: { '@id': `${siteUrl}/#website` }, about: { '@id': `${siteUrl}/#organization` },
+      primaryImageOfPage: { '@type': 'ImageObject', url: `${siteUrl}/og-hero.jpg`, width: 1200, height: 630 },
     },
   ],
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ru">
+    <html lang="et">
       <head>
-        <link rel="canonical" href={siteUrl} />
-        <link rel="preload" as="image" href="/optimized/dsc02825.webp" />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaOrg) }}
-        />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaOrg) }} />
       </head>
       <body>{children}</body>
     </html>

@@ -335,7 +335,7 @@ function PricingTab() {
 }
 
 function SeoTab() {
-  return <SettingsEditor title="SEO / CTA" sub="Title, description, ссылки CTA, телефон, Telegram, ближайшая смена." keys={[['seo_title','SEO title'],['seo_description','Meta description'],['og_title','Open Graph title'],['og_description','Open Graph description'],['hero_video','Видео hero'],['registration_url','Ссылка Записать ребёнка'],['question_url','Ссылка Задать вопрос'],['phone','Телефон'],['telegram','Telegram'],['next_session_date','Ближайшая смена коротко'],['next_session_date_full','Ближайшая смена полностью']]}/>
+  return <SettingsEditor title="SEO / CTA" sub="Эстонский поисковый сниппет, Open Graph, CTA и контакты." keys={[['seo_title_et','SEO title ET'],['seo_description_et','Meta description ET'],['og_title_et','Open Graph title ET'],['og_description_et','Open Graph description ET'],['seo_title','Старый SEO title'],['seo_description','Старый meta description'],['hero_video','Видео hero'],['registration_url','Ссылка Записать ребёнка'],['question_url','Ссылка Задать вопрос'],['phone','Телефон'],['telegram','Telegram'],['next_session_date','Ближайшая смена коротко'],['next_session_date_full','Ближайшая смена полностью']]}/>
 }
 
 function SettingsEditor({title,sub,keys}:{title:string;sub:string;keys:[string,string][]}) {

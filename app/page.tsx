@@ -7,9 +7,9 @@ const REG = 'https://docs.google.com/forms/d/e/1FAIpQLSf-HIXlcSpWy0v0MfJ7HpFNcn_
 const MAP_URL = 'https://www.google.com/maps/place/Time+to+Surf+Stroomi/@59.437299,24.682363,13z/data=!4m6!3m5!1s0x4692955380633d83:0xa1aa05ed4600829!8m2!3d59.4363311!4d24.6806022!16s%2Fg%2F11ygnnj2j3?hl=ru&entry=ttu'
 const MAP_EMBED = 'https://www.google.com/maps?q=Time+to+Surf+Stroomi%4059.4363311,24.6806022&z=15&output=embed'
 const PROGRAM_IMAGES: Record<'kino'|'pohod'|'surf', string> = {
-  kino: '/programs/surf-cinema.png',
-  pohod: '/programs/surf-hike.png',
-  surf: '/programs/surf-camp.png',
+  kino: '/programs/surf-cinema.webp',
+  pohod: '/programs/surf-hike.webp',
+  surf: '/programs/surf-camp.webp',
 }
 
 function useReveal(deps: unknown[] = []) {
@@ -1338,7 +1338,7 @@ export default function Home() {
       <section className="hero">
         {/* Full-screen background video */}
         <div className="hero-video-bg">
-          <video src={heroVideo} autoPlay muted loop playsInline preload="auto"
+          <video src={heroVideo} poster="/optimized/dsc02825.webp" autoPlay muted loop playsInline preload="metadata"
             style={{minWidth:'100%',minHeight:'100%'}}/>
         </div>
         <div className="hero-video-overlay"/>
