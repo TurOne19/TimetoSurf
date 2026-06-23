@@ -6,6 +6,11 @@ type LightboxPool = 'gallery' | 'hero' | 'safety' | 'trust'
 const REG = 'https://docs.google.com/forms/d/e/1FAIpQLSf-HIXlcSpWy0v0MfJ7HpFNcn_fGDd2Hns2JeHe4kZkNVtqDA/viewform'
 const MAP_URL = 'https://www.google.com/maps/place/Time+to+Surf+Stroomi/@59.437299,24.682363,13z/data=!4m6!3m5!1s0x4692955380633d83:0xa1aa05ed4600829!8m2!3d59.4363311!4d24.6806022!16s%2Fg%2F11ygnnj2j3?hl=ru&entry=ttu'
 const MAP_EMBED = 'https://www.google.com/maps?q=Time+to+Surf+Stroomi%4059.4363311,24.6806022&z=15&output=embed'
+const PROGRAM_IMAGES: Record<'kino'|'pohod'|'surf', string> = {
+  kino: '/programs/surf-cinema.png',
+  pohod: '/programs/surf-hike.png',
+  surf: '/programs/surf-camp.png',
+}
 
 function useReveal(deps: unknown[] = []) {
   useEffect(() => {
@@ -89,6 +94,7 @@ export default function Home() {
   const [showReviewForm, setShowReviewForm] = useState(false)
   const [galleryLightbox, setGalleryLightbox] = useState<{src:string,idx:number,pool:LightboxPool} | null>(null)
   const [videoLightbox, setVideoLightbox] = useState<{idx:number} | null>(null)
+  const [programImageLightbox, setProgramImageLightbox] = useState<string | null>(null)
   const [programModal, setProgramModal] = useState<string | null>(null)
   const [dbSessions, setDbSessions] = useState<any[]>([])
   const [siteSettings, setSiteSettings] = useState<Record<string,string>>({})
@@ -129,7 +135,7 @@ export default function Home() {
     return () => window.removeEventListener('scroll', fn)
   }, [])
 
-  useEffect(() => { document.body.style.overflow = (menuOpen || galleryLightbox !== null || videoLightbox !== null || programModal !== null) ? 'hidden' : '' }, [menuOpen, galleryLightbox, videoLightbox, programModal])
+  useEffect(() => { document.body.style.overflow = (menuOpen || galleryLightbox !== null || videoLightbox !== null || programImageLightbox !== null || programModal !== null) ? 'hidden' : '' }, [menuOpen, galleryLightbox, videoLightbox, programImageLightbox, programModal])
 
   useEffect(() => {
     fetch('/api/reviews').then(r => r.json()).then(d => { if (Array.isArray(d)) setReviews(d) }).catch(() => {})
@@ -294,6 +300,13 @@ export default function Home() {
     return () => window.removeEventListener('keydown', handler)
   }, [videoLightbox, GALLERY_VIDEO_ITEMS.length])
 
+  useEffect(() => {
+    if (!programImageLightbox) return
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') setProgramImageLightbox(null) }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [programImageLightbox])
+
   const go = (id: string) => {
     setMenuOpen(false)
     setTimeout(() => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80)
@@ -346,7 +359,7 @@ export default function Home() {
     kino: {
       title: t('text_039', 'Серфинг + Кино', 'Surf + Cinema', 'Surf + Kino'),
       sub: t('text_040', 'Лагерь, где дети не просто отдыхают - а становятся героями своего фильма. 5 дней приключений.', 'A camp where kids don\'t just rest - they become heroes of their own film. 5 days of adventure.', 'Laager, kus lapsed ei puhka lihtsalt - nad saavad oma filmi kangelasteks. 5 paeva seiklusi.'),
-      photo: '/optimized/img_6362.webp',
+      photo: PROGRAM_IMAGES.kino,
       price: '265€', age: t('text_041', '7-12 лет', '7-12 years', '7-12 aastat'),
       dates: ['15.06 - 19.06.2026', '29.06 - 03.07.2026'],
       sections: [
@@ -384,7 +397,7 @@ export default function Home() {
     pohod: {
       title: t('text_064', 'Серфинг + Поход', 'Surf + Hike', 'Surf + Matk'),
       sub: t('text_065', 'Приключенческая программа, где ребёнок открывает мир серфинга и учится жить в природе.', 'An adventure programme where the child discovers surfing and learns to live in nature.', 'Seiklusprogramm, kus laps avastab surfimaailma ja opib looduses elama.'),
-      photo: '/optimized/img_6438.webp',
+      photo: PROGRAM_IMAGES.pohod,
       price: '265€', age: t('text_066', '7-14 лет', '7-14 years', '7-14 aastat'),
       dates: ['13.07 - 17.07.2026', '17.08 - 21.08.2026'],
       sections: [
@@ -417,7 +430,7 @@ export default function Home() {
     surf: {
       title: t('text_085', 'Серфинг лагерь', 'Surf Camp', 'Surfilaager'),
       sub: t('text_086', 'Классическая программа для тех, кто впервые открывает мир серфинга. Разные виды водного спорта, безопасность и командные игры.', 'The classic programme for those discovering surfing for the first time. Different water sports, safety and team games.', 'Klassikaline programm neile, kes avastab surfimaailma esimest korda. Erinevad veespordialad, ohutus ja meeskonnamangud.'),
-      photo: '/optimized/dsc02878.webp',
+      photo: PROGRAM_IMAGES.surf,
       price: '265€', age: t('text_087', '7-12 лет', '7-12 years', '7-12 aastat'),
       dates: ['06.07', '20.07', '27.07', '03.08', '10.08'],
       sections: [
@@ -633,6 +646,10 @@ export default function Home() {
     .fcard-banner{height:180px;display:flex;flex-direction:column;justify-content:flex-end;padding:20px;position:relative;overflow:hidden;background:#0B3D6B}
     .fcard-banner img.fb-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
     .fcard-banner::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.6) 0%,transparent 60%);pointer-events:none;z-index:1}
+    .program-card-image{display:block;width:100%;height:auto;aspect-ratio:16/9;padding:0;border:0;background:#061828;cursor:zoom-in;overflow:hidden}
+    .program-card-image::after{display:none}
+    .program-card-image img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 320ms var(--ease),filter 220ms}
+    .program-card-image:hover img{transform:scale(1.025);filter:saturate(1.06)}
     .fcard-banner-empty{background:rgba(11,61,107,.12);border-bottom:2px dashed var(--border);justify-content:center;align-items:center}
     .fcard-banner-empty::after{display:none}
     .fcard-banner-ph{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
@@ -809,9 +826,9 @@ export default function Home() {
     /* PROGRAM MODAL */
     .pm-overlay{position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.72);display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;animation:lbIn 220ms ease}
     .pm-box{background:white;border-radius:20px;max-width:620px;width:100%;position:relative;margin:auto}
-    .pm-hero{height:200px;position:relative;overflow:hidden;border-radius:20px 20px 0 0;flex-shrink:0}
-    .pm-hero img{width:100%;height:100%;object-fit:cover}
-    .pm-hero::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.65) 0%,transparent 55%)}
+    .pm-hero{height:auto;aspect-ratio:16/9;position:relative;overflow:hidden;border-radius:20px 20px 0 0;flex-shrink:0;background:#061828}
+    .pm-hero img{width:100%;height:100%;object-fit:contain}
+    .pm-hero::after{display:none}
     .pm-hero-txt{position:absolute;bottom:18px;left:22px;right:52px;z-index:1}
     .pm-hero-lbl{font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:5px}
     .pm-hero-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:26px;font-weight:800;color:white;line-height:1.1;letter-spacing:-.02em}
@@ -1186,6 +1203,12 @@ export default function Home() {
         )
       })()}
 
+      {/* PROGRAM IMAGE LIGHTBOX - one image, no navigation */}
+      {programImageLightbox && <div className="lb-overlay" onClick={() => setProgramImageLightbox(null)}>
+        <button className="lb-close" onClick={() => setProgramImageLightbox(null)}>✕</button>
+        <img src={programImageLightbox} alt="" onClick={e => e.stopPropagation()} />
+      </div>}
+
       {/* VIDEO LIGHTBOX */}
       {videoLightbox && (() => {
         const item = GALLERY_VIDEO_ITEMS[videoLightbox.idx]
@@ -1213,10 +1236,6 @@ export default function Home() {
             <div className="pm-box" onClick={e => e.stopPropagation()}>
               <div className="pm-hero">
                 <img src={d.photo} alt={d.title} />
-                <div className="pm-hero-txt">
-                  <div className="pm-hero-lbl">Time to Surf - {t('text_110', 'Программа', 'Programme', 'Programm')}</div>
-                  <div className="pm-hero-title">{d.title}</div>
-                </div>
               </div>
               <button className="pm-close" onClick={() => setProgramModal(null)}>✕</button>
               <div className="pm-body">
@@ -1494,16 +1513,14 @@ export default function Home() {
           </div>
           <div className="fg sg">
             {[
-              {key:'kino', lbl:t('text_181', 'Серфинг + творчество', 'Surfing + creativity', 'Surf + loovus'), title:t('text_182', 'Серфинг + Кино', 'Surf + Cinema', 'Surf + Kino'), desc:t('text_183', 'Утром - вода и серфинг. После обеда дети пробуют роли ведущего, оператора, сценариста и монтажёра. В конце - короткий фильм для родителей.', 'Morning - water and surfing. After lunch kids try being host, camera operator, writer and editor. At the end - a short film for parents.', 'Hommikul - vesi ja surf. Pärast lõunat proovivad lapsed saatejuhi, operaatori, stsenaristi ja monteerija rolle. Lõpus - lühifilm vanematele.'), items:[t('text_184', 'SUP, бодиборд и ОФП каждый день', 'SUP, bodyboard and fitness every day', 'SUP, bodyboard ja ÜKE iga päev'), t('text_185', 'Интервью и съёмки в команде', 'Interviews and filming in a team', 'Intervjuud ja filmimine tiimis'), t('text_186', 'Ведущая - Наталья Карасева, ТВ-журналист', 'Lead - Natalia Karaseva, TV journalist', 'Juhendaja - Natalia Karaseva, teleajakirjanik')]},
-              {key:'pohod', lbl:t('text_187', 'Серфинг + приключение', 'Surfing + adventure', 'Surf + seiklus'), title:t('text_188', 'Серфинг + Поход', 'Surf + Hike', 'Surf + Matk'), desc:t('text_189', 'Вода, игры и простые походные навыки: карта, компас, костёр, палатка. Подходит детям, которым хочется больше природы и движения.', 'Water, games and simple outdoor skills: map, compass, fire, tent. For kids who want more nature and movement.', 'Vesi, mängud ja lihtsad matkioskused: kaart, kompass, lõke, telk. Lastele, kes tahavad rohkem loodust ja liikumist.'), items:[t('text_190', 'Виндсёрфинг, SUP и кайт', 'Windsurfing, SUP and kite', 'Purjelaud, SUP ja lohe'), t('text_191', 'Ориентирование и командные задания', 'Navigation and team tasks', 'Orienteerumine ja tiimiülesanded'), t('text_192', 'Ведущий - Виталий, Join The Hike', 'Lead - Vitaliy, Join The Hike', 'Juhendaja - Vitaliy, Join The Hike')]},
-              {key:'surf', lbl:t('text_193', 'Классика для старта', 'Classic first step', 'Klassika alustuseks'), title:t('text_194', 'Серфинг лагерь', 'Surf Camp', 'Surfilaager'), desc:t('text_195', 'Для первого знакомства с водой и доской. Дети пробуют разные водные виды спорта, учатся правилам безопасности и играют в команде.', 'A first step into water and boards. Kids try different water sports, learn safety rules and play as a team.', 'Esimene samm vee ja laua juurde. Lapsed proovivad eri veespordialasid, õpivad ohutust ja mängivad tiimis.'), items:[t('text_196', 'SUP, виндсёрфинг, бодиборд', 'SUP, windsurfing, bodyboard', 'SUP, purjelaud, bodyboard'), t('text_197', 'Правила воды простым языком', 'Water rules in simple words', 'Vee reeglid lihtsas keeles'), t('text_198', 'Подходит новичкам', 'Good for beginners', 'Sobib algajatele')]},
+              {key:'kino', photo:PROGRAM_IMAGES.kino, title:t('text_182', 'Серфинг + Кино', 'Surf + Cinema', 'Surf + Kino'), desc:t('text_183', 'Утром - вода и серфинг. После обеда дети пробуют роли ведущего, оператора, сценариста и монтажёра. В конце - короткий фильм для родителей.', 'Morning - water and surfing. After lunch kids try being host, camera operator, writer and editor. At the end - a short film for parents.', 'Hommikul - vesi ja surf. Pärast lõunat proovivad lapsed saatejuhi, operaatori, stsenaristi ja monteerija rolle. Lõpus - lühifilm vanematele.'), items:[t('text_184', 'SUP, бодиборд и ОФП каждый день', 'SUP, bodyboard and fitness every day', 'SUP, bodyboard ja ÜKE iga päev'), t('text_185', 'Интервью и съёмки в команде', 'Interviews and filming in a team', 'Intervjuud ja filmimine tiimis'), t('text_186', 'Ведущая - Наталья Карасева, ТВ-журналист', 'Lead - Natalia Karaseva, TV journalist', 'Juhendaja - Natalia Karaseva, teleajakirjanik')]},
+              {key:'pohod', photo:PROGRAM_IMAGES.pohod, title:t('text_188', 'Серфинг + Поход', 'Surf + Hike', 'Surf + Matk'), desc:t('text_189', 'Вода, игры и простые походные навыки: карта, компас, костёр, палатка. Подходит детям, которым хочется больше природы и движения.', 'Water, games and simple outdoor skills: map, compass, fire, tent. For kids who want more nature and movement.', 'Vesi, mängud ja lihtsad matkioskused: kaart, kompass, lõke, telk. Lastele, kes tahavad rohkem loodust ja liikumist.'), items:[t('text_190', 'Виндсёрфинг, SUP и кайт', 'Windsurfing, SUP and kite', 'Purjelaud, SUP ja lohe'), t('text_191', 'Ориентирование и командные задания', 'Navigation and team tasks', 'Orienteerumine ja tiimiülesanded'), t('text_192', 'Ведущий - Виталий, Join The Hike', 'Lead - Vitaliy, Join The Hike', 'Juhendaja - Vitaliy, Join The Hike')]},
+              {key:'surf', photo:PROGRAM_IMAGES.surf, title:t('text_194', 'Серфинг лагерь', 'Surf Camp', 'Surfilaager'), desc:t('text_195', 'Для первого знакомства с водой и доской. Дети пробуют разные водные виды спорта, учатся правилам безопасности и играют в команде.', 'A first step into water and boards. Kids try different water sports, learn safety rules and play as a team.', 'Esimene samm vee ja laua juurde. Lapsed proovivad eri veespordialasid, õpivad ohutust ja mängivad tiimis.'), items:[t('text_196', 'SUP, виндсёрфинг, бодиборд', 'SUP, windsurfing, bodyboard', 'SUP, purjelaud, bodyboard'), t('text_197', 'Правила воды простым языком', 'Water rules in simple words', 'Vee reeglid lihtsas keeles'), t('text_198', 'Подходит новичкам', 'Good for beginners', 'Sobib algajatele')]},
             ].map(f => (
               <div key={f.key} className={`fcard fcard-${f.key}`}>
-                <div className="fcard-banner placeholder">
-                  <div className="fcard-orbit" aria-hidden="true" />
-                  <div className="fcard-blbl">{f.lbl}</div>
-                  <div className="fcard-bt">{f.title}</div>
-                </div>
+                <button type="button" className="fcard-banner program-card-image" onClick={() => setProgramImageLightbox(f.photo)} aria-label={`${t('text_199', 'Открыть изображение программы', 'Open programme image', 'Ava programmi pilt')}: ${f.title}`}>
+                  <img src={f.photo} alt={f.title} loading="lazy" />
+                </button>
                 <div className="fcard-body">
                   <p className="fcard-desc">{f.desc}</p>
                   <div className="fcard-list">
