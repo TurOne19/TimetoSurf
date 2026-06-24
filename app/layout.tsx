@@ -9,7 +9,7 @@ export const viewport: Viewport = { width: 'device-width', initialScale: 1, them
 const defaultMetadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: 'Laste surfilaager Tallinnas 2026 | Time to Surf Stroomi',
+    default: 'Laste surfilaager Tallinnas | Time to Surf Stroomi',
     template: '%s | Time to Surf',
   },
   description: 'Time to Surf on laste surfilaager Stroomi rannas Tallinnas. Suvelaager 7-14-aastastele: väikesed grupid, professionaalsed juhendajad, päästevestid, märgülikonnad ja toitlustus. Suvi 2026, alates 190 €.',
@@ -156,7 +156,7 @@ const schemaOrg = {
     },
     {
       '@type': 'WebPage', '@id': `${siteUrl}/#webpage`, url: siteUrl,
-      name: 'Laste surfilaager Tallinnas 2026 | Time to Surf Stroomi', inLanguage: ['et', 'ru', 'en'],
+      name: 'Laste surfilaager Tallinnas | Time to Surf Stroomi', inLanguage: ['et', 'ru', 'en'],
       isPartOf: { '@id': `${siteUrl}/#website` }, about: { '@id': `${siteUrl}/#organization` },
       primaryImageOfPage: { '@type': 'ImageObject', url: `${siteUrl}/og-hero.jpg`, width: 1200, height: 630 },
     },
