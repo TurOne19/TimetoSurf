@@ -6,10 +6,22 @@ type LightboxPool = 'gallery' | 'hero' | 'safety' | 'trust'
 const REG = 'https://docs.google.com/forms/d/e/1FAIpQLSf-HIXlcSpWy0v0MfJ7HpFNcn_fGDd2Hns2JeHe4kZkNVtqDA/viewform'
 const MAP_URL = 'https://www.google.com/maps/place/Time+to+Surf+Stroomi/@59.437299,24.682363,13z/data=!4m6!3m5!1s0x4692955380633d83:0xa1aa05ed4600829!8m2!3d59.4363311!4d24.6806022!16s%2Fg%2F11ygnnj2j3?hl=ru&entry=ttu'
 const MAP_EMBED = 'https://www.google.com/maps?q=Time+to+Surf+Stroomi%4059.4363311,24.6806022&z=15&output=embed'
-const PROGRAM_IMAGES: Record<'kino'|'pohod'|'surf', string> = {
-  kino: '/programs/surf-cinema.webp',
-  pohod: '/programs/surf-hike.webp',
-  surf: '/programs/surf-camp.webp',
+const PROGRAM_IMAGES_BY_LANG: Record<'kino'|'pohod'|'surf', Record<Lang, string>> = {
+  kino: {
+    ru: '/programs/surf-cinema.webp',
+    en: '/programs/surf-cinema-en.webp',
+    et: '/programs/surf-cinema-et.webp',
+  },
+  pohod: {
+    ru: '/programs/surf-hike.webp',
+    en: '/programs/surf-hike-en.webp',
+    et: '/programs/surf-hike-et.webp',
+  },
+  surf: {
+    ru: '/programs/surf-camp.webp',
+    en: '/programs/surf-camp-en.webp',
+    et: '/programs/surf-camp-et.webp',
+  },
 }
 
 function useReveal(deps: unknown[] = []) {
@@ -82,6 +94,11 @@ function FloatingBubbles() {
 
 export default function Home() {
   const [lang, setLang] = useState<Lang>('ru')
+  const PROGRAM_IMAGES = {
+    kino: PROGRAM_IMAGES_BY_LANG.kino[lang],
+    pohod: PROGRAM_IMAGES_BY_LANG.pohod[lang],
+    surf: PROGRAM_IMAGES_BY_LANG.surf[lang],
+  }
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [openFaq, setOpenFaq] = useState<number | null>(null)
